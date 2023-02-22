@@ -1,1 +1,1 @@
-# Beggining of Reddit`s clone web app.
+# My personal ReactJs+Typescript Template with typescript and vitest
