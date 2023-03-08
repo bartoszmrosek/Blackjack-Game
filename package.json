@@ -1,8 +1,9 @@
 {
-  "name": "frontend",
+  "name": "template",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.2",
   "type": "module",
+  "description": "ReactJs & Vite template",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
