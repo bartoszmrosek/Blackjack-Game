@@ -1,14 +1,14 @@
 {
-  "name": "template",
+  "name": "blackjack-game",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.1",
   "type": "module",
-  "description": "ReactJs & Vite template",
+  "description": "Black jack game for Evolutions Engineering camp",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest --watch",
     "coverage": "vitest run --coverage",
     "lint": "eslint"
   },
