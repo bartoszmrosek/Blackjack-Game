@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest --watch --passWithNoTests",
     "coverage": "vitest run --coverage",
-    "lint": "eslint"
+    "lint": "eslint --fix"
   },
   "dependencies": {
     "eslint-config-airbnb": "^19.0.4",
