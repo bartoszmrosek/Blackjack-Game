@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest --watch",
+    "test": "vitest --watch --passWithNoTests",
     "coverage": "vitest run --coverage",
     "lint": "eslint"
   },
