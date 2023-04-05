@@ -1,15 +1,16 @@
 import React, { useCallback, useReducer, useState } from "react";
-import { selectUser } from "../../App/userSlice";
-import { useAppSelector } from "../../hooks/reduxHooks";
+import { addReservedBalance, gameFundReservation, removeReservedBalance, selectUser } from "../../App/userSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { UserSeat } from "./UserSeat/UserSeat";
 import styles from "./GameRoom.module.css";
-import { gameRoomReducer, initialRoomState, Player, PlayerActionKind } from "./gameRoomReducer";
+import { gameRoomReducer, initialRoomState, Player, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
 import { BetOverlay } from "./BetOverlay/BetOverlay";
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
     const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
     const currentUser = useAppSelector(selectUser);
+    const currentUserDispatch = useAppDispatch();
 
     const removeUserFromGame = useCallback((player: Player) => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
@@ -18,24 +19,46 @@ const GameRoom: React.FC = () => {
                 return bet.id !== player.id && bet.seatNumber !== player.seatNumber;
             });
         });
-    }, []);
+        currentUserDispatch(removeReservedBalance(player.bet.currentBet));
+    }, [currentUserDispatch]);
 
     const addBetToUpdate = useCallback((player: Player) => {
         setBetsToUpdate(bets => [...bets, player]);
     }, []);
 
     const joinUserToGame = useCallback((seatId: number) => {
-        dispatch({ type: PlayerActionKind.JOIN, payload: { ...currentUser, bet: { currentBet: 0, previousBet: 0 }, seatNumber: seatId } });
+        const newPlayer: Player = {
+            id: currentUser.id,
+            name: currentUser.name,
+            bet: { currentBet: 0, previousBet: 0 },
+            seatNumber: seatId,
+        };
+        dispatch({ type: PlayerActionKind.JOIN, payload: newPlayer });
         addBetToUpdate({ ...currentUser, seatNumber: seatId, bet: { currentBet: 0, previousBet: 0 } });
     }, [addBetToUpdate, currentUser]);
 
     const updateBet = useCallback((player: Player) => {
-        dispatch({ type: PlayerActionKind.UPDATE_BET, payload: player });
-        setBetsToUpdate(bets => [...bets.slice(1)]);
-    }, []);
+        const currentBetChange = player.bet.currentBet - player.bet.previousBet;
+        if (currentUser.reservedBalance + currentBetChange <= currentUser.balance) {
+            dispatch({ type: PlayerActionKind.UPDATE_BET, payload: player });
+            setBetsToUpdate(bets => [...bets.slice(1)]);
+            currentUserDispatch(addReservedBalance(currentBetChange));
+        }
+    }, [currentUser.balance, currentUser.reservedBalance, currentUserDispatch]);
+
+    const switchIsGamePlayed = useCallback(() => {
+        if (gameRoomState.isGameStarted) {
+            const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
+            setBetsToUpdate(previouslyPlacedBets.map((bet) => ({ ...bet, bet: { currentBet: 0, previousBet: bet.bet.currentBet } })));
+        } else {
+            currentUserDispatch(gameFundReservation());
+        }
+        dispatch({ type: PresenterActionKind.SWITCH_IS_PLAYED });
+    }, [currentUserDispatch, gameRoomState.isGameStarted, gameRoomState.playersSeats]);
 
     return (
         <div className={styles.background}>
+            <button onClick={switchIsGamePlayed}>{!gameRoomState.isGameStarted ? "Start game" : "Stop game"}</button>
             {gameRoomState.playersSeats.map((seat, index) => {
                 const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
                 return (

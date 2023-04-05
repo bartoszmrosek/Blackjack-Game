@@ -26,8 +26,10 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
     }, [actions, seatId, user]);
 
     const handleBetChg = useCallback(() => {
-        actions.userChgBet(user);
-    }, [actions, user]);
+        if (!isGameStarted) {
+            actions.userChgBet(user);
+        }
+    }, [actions, isGameStarted, user]);
 
     return isEmpty ? (
         <button onClick={handleJoin}>

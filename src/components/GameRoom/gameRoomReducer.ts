@@ -4,6 +4,10 @@ export enum PlayerActionKind {
     UPDATE_BET = "UPDATE_BET",
 }
 
+export enum PresenterActionKind {
+    SWITCH_IS_PLAYED = "SWITCH_IS_PLAYED",
+}
+
 export interface Player {
     id: string;
     name: string;
@@ -15,8 +19,12 @@ export interface Player {
 }
 
 export interface PlayerActions {
-    type: PlayerActionKind.JOIN | PlayerActionKind.LEAVE | PlayerActionKind.UPDATE_BET;
+    type: PlayerActionKind;
     payload: Player;
+}
+
+export interface PresenterActions {
+    type: PresenterActionKind.SWITCH_IS_PLAYED;
 }
 
 export interface GameRoomState {
@@ -29,10 +37,12 @@ export const initialRoomState: GameRoomState = {
     isGameStarted: false,
 };
 
-export function gameRoomReducer(state: GameRoomState, action: PlayerActions): GameRoomState {
-    const { type, payload } = action;
+export function gameRoomReducer(state: GameRoomState, action: PlayerActions | PresenterActions): GameRoomState {
+    const { type } = action;
     switch (type) {
         case PlayerActionKind.JOIN:
+        {
+            const { payload } = action;
             if (payload.seatNumber < 0 || payload.seatNumber > 6 || state.playersSeats.at(payload.seatNumber) !== "empty") {
                 return state;
             }
@@ -44,8 +54,10 @@ export function gameRoomReducer(state: GameRoomState, action: PlayerActions): Ga
                     payload,
                     ...state.playersSeats.slice(payload.seatNumber + 1)],
             };
+        }
         case PlayerActionKind.LEAVE:
         {
+            const { payload } = action;
             const searchedSeat = state.playersSeats.at(payload.seatNumber);
             if (searchedSeat !== "empty" && searchedSeat?.id === payload.id) {
                 return {
@@ -61,6 +73,7 @@ export function gameRoomReducer(state: GameRoomState, action: PlayerActions): Ga
         }
         case PlayerActionKind.UPDATE_BET:
         {
+            const { payload } = action;
             const searchedSeat = state.playersSeats.at(payload.seatNumber);
             if (searchedSeat !== "empty" && searchedSeat?.id === payload.id) {
                 return {
@@ -74,5 +87,20 @@ export function gameRoomReducer(state: GameRoomState, action: PlayerActions): Ga
             }
             return state;
         }
+        case PresenterActionKind.SWITCH_IS_PLAYED:
+            return {
+                ...state,
+                playersSeats: state.isGameStarted ? [...state.playersSeats.map((seat) => {
+                    if (seat === "empty") { return seat; }
+                    return {
+                        ...seat,
+                        bet: {
+                            currentBet: 0,
+                            previousBet: seat.bet.currentBet,
+                        },
+                    };
+                })] : state.playersSeats,
+                isGameStarted: !state.isGameStarted,
+            };
     }
 }
