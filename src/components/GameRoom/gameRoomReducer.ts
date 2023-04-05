@@ -1,17 +1,21 @@
 export enum PlayerActionKind {
     JOIN = "JOIN",
     LEAVE = "LEAVE",
+    UPDATE_BET = "UPDATE_BET",
 }
 
 export interface Player {
     id: string;
     name: string;
-    bet: number;
+    bet: {
+        currentBet: number;
+        previousBet: number;
+    };
     seatNumber: number;
 }
 
 export interface PlayerActions {
-    type: PlayerActionKind.JOIN | PlayerActionKind.LEAVE;
+    type: PlayerActionKind.JOIN | PlayerActionKind.LEAVE | PlayerActionKind.UPDATE_BET;
     payload: Player;
 }
 
@@ -41,6 +45,7 @@ export function gameRoomReducer(state: GameRoomState, action: PlayerActions): Ga
                     ...state.playersSeats.slice(payload.seatNumber + 1)],
             };
         case PlayerActionKind.LEAVE:
+        {
             const searchedSeat = state.playersSeats.at(payload.seatNumber);
             if (searchedSeat !== "empty" && searchedSeat?.id === payload.id) {
                 return {
@@ -53,5 +58,21 @@ export function gameRoomReducer(state: GameRoomState, action: PlayerActions): Ga
                 };
             }
             return state;
+        }
+        case PlayerActionKind.UPDATE_BET:
+        {
+            const searchedSeat = state.playersSeats.at(payload.seatNumber);
+            if (searchedSeat !== "empty" && searchedSeat?.id === payload.id) {
+                return {
+                    ...state,
+                    playersSeats: [
+                        ...state.playersSeats.slice(0, payload.seatNumber),
+                        payload,
+                        ...state.playersSeats.slice(payload.seatNumber + 1),
+                    ],
+                };
+            }
+            return state;
+        }
     }
 }

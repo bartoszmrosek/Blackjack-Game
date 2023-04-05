@@ -2,18 +2,20 @@ import React from "react";
 import { vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { UserSeat } from "./UserSeat";
-import { renderWithProviders } from "../../utils/test-utils";
+import { renderWithProviders } from "../../../utils/test-utils";
 
 const defaultMock = vi.fn();
 describe("UserSeat", () => {
     const testingUser = {
         id: "1",
         name: "mock",
-        bet: 5,
+        bet: { currentBet: 5, previousBet: 0 },
+        seatNumber: 2,
     };
     const testingActions = {
         userJoin: defaultMock,
         userLeave: defaultMock,
+        userChgBet: defaultMock,
     };
     describe("displays proper text based on props", () => {
         it("Seat is empty and game didn`t start yet", () => {
