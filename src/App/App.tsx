@@ -1,10 +1,11 @@
 import React from "react";
-import "./App.css";
+import { GameRoom } from "../components/GameRoom/GameRoom";
+import "./App.module.css";
 
 export const App: React.FC = () => {
     return (
         <main>
-            Work in progress
+            <GameRoom />
         </main>
     );
 };
