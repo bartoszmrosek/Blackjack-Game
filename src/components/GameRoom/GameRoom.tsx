@@ -3,12 +3,15 @@ import { addReservedBalance, gameFundReservation, removeReservedBalance, selectU
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { UserSeat } from "./UserSeat/UserSeat";
 import styles from "./GameRoom.module.css";
-import { gameRoomReducer, initialRoomState, Player, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
+import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
 import { BetOverlay } from "./BetOverlay/BetOverlay";
+import { Player } from "../../types/Player";
+import { useGameLogic } from "../../hooks/useGameLogic";
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
     const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
+    const [setCurrentPlayers, roundPlayers, currentlyAsking] = useGameLogic();
     const currentUser = useAppSelector(selectUser);
     const currentUserDispatch = useAppDispatch();
 
@@ -34,7 +37,7 @@ const GameRoom: React.FC = () => {
             seatNumber: seatId,
         };
         dispatch({ type: PlayerActionKind.JOIN, payload: newPlayer });
-        addBetToUpdate({ ...currentUser, seatNumber: seatId, bet: { currentBet: 0, previousBet: 0 } });
+        addBetToUpdate(newPlayer);
     }, [addBetToUpdate, currentUser]);
 
     const updateBet = useCallback((player: Player) => {
@@ -53,10 +56,14 @@ const GameRoom: React.FC = () => {
             ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
         } else {
             currentUserDispatch(gameFundReservation());
+            const allCurrentPlayers = gameRoomState.playersSeats.filter(player => player !== "empty") as Player[];
+            setCurrentPlayers(allCurrentPlayers);
         }
         dispatch({ type: PresenterActionKind.SWITCH_IS_PLAYED });
-    }, [currentUserDispatch, gameRoomState.isGameStarted, gameRoomState.playersSeats]);
+    }, [currentUserDispatch, gameRoomState.isGameStarted, gameRoomState.playersSeats, setCurrentPlayers]);
 
+    console.log(roundPlayers);
+    console.log(currentlyAsking);
     return (
         <div className={styles.background}>
             <button onClick={switchIsGamePlayed}>{!gameRoomState.isGameStarted ? "Start game" : "Stop game"}</button>
@@ -82,6 +89,7 @@ const GameRoom: React.FC = () => {
             </div>
             {betsToUpdate.length > 0 &&
             !gameRoomState.isGameStarted &&
+            currentUser.balance > 0 &&
                 <BetOverlay playerInformations={betsToUpdate} updateBet={updateBet} undoHandler={removeUserFromGame} />}
         </div>
     );

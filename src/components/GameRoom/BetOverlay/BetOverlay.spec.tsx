@@ -2,7 +2,7 @@ import { vi } from "vitest";
 import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "../../../utils/test-utils";
-import { Player } from "../gameRoomReducer";
+import { Player } from "../../../types/Player";
 import { BetOverlay } from "./BetOverlay";
 
 it.todo("Soltution for innerText inside jsdom");
@@ -58,21 +58,6 @@ describe("BetOverlay", () => {
             );
             expect(updateMock).toHaveBeenCalledTimes(1);
         });
-    });
-    it("if no founds display proper message", () => {
-        const { getByText } = renderWithProviders(
-            <BetOverlay playerInformations={[testingPlayer]} updateBet={defaultMock} undoHandler={defaultMock} />,
-            {
-                preloadedState: {
-                    user: {
-                        id: "1",
-                        name: "name",
-                        balance: 0,
-                        reservedBalance: 0,
-                    },
-                },
-            });
-        expect(getByText("No funds left"));
     });
 });
 

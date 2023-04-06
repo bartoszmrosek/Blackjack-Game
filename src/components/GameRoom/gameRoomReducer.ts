@@ -1,3 +1,5 @@
+import { Player } from "../../types/Player";
+
 export enum PlayerActionKind {
     JOIN = "JOIN",
     LEAVE = "LEAVE",
@@ -6,16 +8,6 @@ export enum PlayerActionKind {
 
 export enum PresenterActionKind {
     SWITCH_IS_PLAYED = "SWITCH_IS_PLAYED",
-}
-
-export interface Player {
-    id: string;
-    name: string;
-    bet: {
-        currentBet: number;
-        previousBet: number;
-    };
-    seatNumber: number;
 }
 
 export interface PlayerActions {
