@@ -15,4 +15,4 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Run Vitest tests
-        run: yarn test
+        run: yarn test:all
