@@ -1,0 +1,15 @@
+.overlayWrapper{
+    position: absolute;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1%;
+
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(2px);
+}

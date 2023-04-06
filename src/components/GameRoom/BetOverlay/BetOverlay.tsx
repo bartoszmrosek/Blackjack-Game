@@ -1,13 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 import { Player } from "../gameRoomReducer";
+import styles from "./BetOverlay.module.css";
 
 interface BetOverlayProps {
     playerInformations: Player[];
     updateBet: (player: Player) => void;
+    undoHandler: (player: Player) => void;
 }
 
-const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet }) => {
+const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, undoHandler }) => {
     const [canRepeat, setCanRepeat] = useState<boolean>(
         playerInformations[0].bet.currentBet === 0 &&
         playerInformations[0].bet.previousBet !== 0);
@@ -35,17 +37,26 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet }
         }
     }, [canRepeat, playerInformations, updateBet]);
 
+    const handleUndoButton = useCallback(() => {
+        undoHandler(playerInformations[0]);
+    }, [playerInformations, undoHandler]);
+
     return (
-        <div>
+        <div className={styles.overlayWrapper}>
             {userBalance > 0 ? (
                 <>
+                    <button onClick={handleUndoButton}>Undo</button>
                     <button onClick={buttonHandler}>1</button>
                     <button onClick={buttonHandler}>5</button>
                     <button onClick={buttonHandler}>10</button>
                     <button onClick={buttonHandler}>25</button>
                     <button onClick={buttonHandler}>100</button>
                     <button onClick={buttonHandler}>500</button>
-                    <button onClick={handleSpecialBtn}>{canRepeat ? "Repeat" : "2x"}</button>
+                    <button
+                        onClick={handleSpecialBtn}
+                        disabled={!playerInformations[0].bet.previousBet && !playerInformations[0].bet.currentBet}
+                    >{canRepeat ? "Repeat" : "2x"}
+                    </button>
                 </>
             ) : <p>No funds left</p>}
         </div>

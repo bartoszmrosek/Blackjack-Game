@@ -62,6 +62,7 @@ describe("UserSeat", () => {
                         id: testingUser.id,
                         name: testingUser.name,
                         balance: 1000,
+                        reservedBalance: 0,
                     },
                 },
             });
@@ -103,6 +104,7 @@ describe("UserSeat", () => {
                         id: testingUser.id,
                         name: testingUser.name,
                         balance: 1000,
+                        reservedBalance: 0,
                     },
                 },
             });

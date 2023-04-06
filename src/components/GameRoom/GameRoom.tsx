@@ -49,7 +49,8 @@ const GameRoom: React.FC = () => {
     const switchIsGamePlayed = useCallback(() => {
         if (gameRoomState.isGameStarted) {
             const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
-            setBetsToUpdate(previouslyPlacedBets.map((bet) => ({ ...bet, bet: { currentBet: 0, previousBet: bet.bet.currentBet } })));
+            setBetsToUpdate(previouslyPlacedBets.map((bettingPlayer) =>
+            ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
         } else {
             currentUserDispatch(gameFundReservation());
         }
@@ -59,25 +60,29 @@ const GameRoom: React.FC = () => {
     return (
         <div className={styles.background}>
             <button onClick={switchIsGamePlayed}>{!gameRoomState.isGameStarted ? "Start game" : "Stop game"}</button>
-            {gameRoomState.playersSeats.map((seat, index) => {
-                const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
-                return (
-                    <UserSeat
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={index}
-                        isGameStarted={gameRoomState.isGameStarted}
-                        isEmpty={seat === "empty"}
-                        seatId={index}
-                        user={user}
-                        actions={{
-                            userJoin: joinUserToGame,
-                            userLeave: removeUserFromGame,
-                            userChgBet: addBetToUpdate,
-                        }}
-                    />
-                );
-            })}
-            {betsToUpdate.length > 0 && <BetOverlay playerInformations={betsToUpdate} updateBet={updateBet} />}
+            <div className={styles.userSeats}>
+                {gameRoomState.playersSeats.map((seat, index) => {
+                    const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
+                    return (
+                        <UserSeat
+                    // eslint-disable-next-line react/no-array-index-key
+                            key={index}
+                            isGameStarted={gameRoomState.isGameStarted}
+                            isEmpty={seat === "empty"}
+                            seatId={index}
+                            user={user}
+                            actions={{
+                                userJoin: joinUserToGame,
+                                userLeave: removeUserFromGame,
+                                userChgBet: addBetToUpdate,
+                            }}
+                        />
+                    );
+                })}
+            </div>
+            {betsToUpdate.length > 0 &&
+            !gameRoomState.isGameStarted &&
+                <BetOverlay playerInformations={betsToUpdate} updateBet={updateBet} undoHandler={removeUserFromGame} />}
         </div>
     );
 };
