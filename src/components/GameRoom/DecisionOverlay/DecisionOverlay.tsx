@@ -3,28 +3,29 @@ import { useAppSelector } from "../../../hooks/reduxHooks";
 import styles from "./DecisionOverlay.module.css";
 
 interface DecisionOverlayProps {
-    decisionCb: (decision: "hit" | "stand" | "doubleDown") => void;
+    decisionCb: (theirIndex: number, decision: "hit" | "stand" | "doubleDown") => void;
     presenterScore: number;
     playerScore: number | undefined;
     currentBet: number;
+    theirIndex: number;
 }
 
-const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, presenterScore, playerScore, currentBet }) => {
+const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, presenterScore, playerScore, currentBet, theirIndex }) => {
     const userBalance = useAppSelector(state => state.user.balance);
     const canDoubleDown = userBalance - currentBet >= 0;
     const makeDecision = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         switch (e.currentTarget.id) {
             case "decision-hit":
-                decisionCb("hit");
+                decisionCb(theirIndex, "hit");
                 break;
             case "decision-stand":
-                if (canDoubleDown) { decisionCb("stand"); }
+                decisionCb(theirIndex, "stand");
                 break;
             case "decision-doubledown":
-                decisionCb("doubleDown");
+                if (canDoubleDown) { decisionCb(theirIndex, "doubleDown"); }
                 break;
         }
-    }, [canDoubleDown, decisionCb]);
+    }, [canDoubleDown, decisionCb, theirIndex]);
 
     return (
         <div className={styles.decisionOverlay}>

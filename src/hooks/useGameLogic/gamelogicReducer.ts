@@ -9,8 +9,8 @@ export interface RoundPlayer extends Player {
 }
 
 export interface CurrentlyAskingState {
-    currentlyAsking: Pick<RoundPlayer, "id" | "seatNumber" | "cardsScore" | "bet">;
-    makeDecision: (decision: "hit" | "stand" | "doubleDown") => void;
+    currentlyAsking: Pick<RoundPlayer, "id" | "seatNumber" | "cardsScore" | "bet"> & { theirIndex: number; };
+    makeDecision: (theirIndex: number, decision: "hit" | "stand" | "doubleDown") => void;
 }
 
 export enum GameActionKind {

@@ -13,7 +13,7 @@ import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKin
 import { BetOverlay } from "./BetOverlay/BetOverlay";
 import { Player } from "../../types/Player";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
-import { DecisionOverlay } from "./DecisionOverlay/DescisionOverlay";
+import { DecisionOverlay } from "./DecisionOverlay/DecisionOverlay";
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
@@ -36,7 +36,7 @@ const GameRoom: React.FC = () => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
         setBetsToUpdate(bets => {
             return bets.filter((bet) => {
-                return bet.id !== player.id && bet.seatNumber !== player.seatNumber;
+                return !(bet.id === player.id && bet.seatNumber === player.seatNumber);
             });
         });
         currentUserDispatch(removeReservedBalance(player.bet.currentBet));
@@ -115,6 +115,7 @@ const GameRoom: React.FC = () => {
             {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
                 <DecisionOverlay
                     decisionCb={currentlyAsking.makeDecision}
+                    theirIndex={currentlyAsking.currentlyAsking.theirIndex}
                     presenterScore={presenterScore}
                     playerScore={
                         gamePlayers.find(

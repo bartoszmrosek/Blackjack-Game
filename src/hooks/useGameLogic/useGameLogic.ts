@@ -38,22 +38,25 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
         }
     }, [shouldAskPlayers]);
 
+    const makeDecision = useCallback((playerToAskIndex: number, decision: "hit" | "stand" | "doubleDown") => {
+        dispatchLogicUpdate({
+            type: GameActionKind.UPDATE_PLAYER_STATE,
+            payload: {
+                playerIndex: playerToAskIndex,
+                decision,
+            },
+        });
+    }, []);
+
     if (shouldAskPlayers && gamePlayers.length > 0) {
         const playerToAskIndex = gamePlayers.findIndex(
             (player) => !player.hasMadeFinalDecision && player.currentStatus === "playing",
         );
         if (playerToAskIndex !== -1) {
             const decidingPlayer = gamePlayers[playerToAskIndex];
-            const makeDecisionFn = (decision: "hit" | "stand" | "doubleDown") => {
-                dispatchLogicUpdate({
-                    type: GameActionKind.UPDATE_PLAYER_STATE,
-                    payload: {
-                        playerIndex: playerToAskIndex,
-                        decision,
-                    },
-                });
-            };
-            if (decidingPlayer.id !== askingState?.currentlyAsking.id) {
+            if (decidingPlayer.id !== askingState?.currentlyAsking.id ||
+                decidingPlayer.seatNumber !== askingState?.currentlyAsking.seatNumber
+            ) {
                 dispatchLogicUpdate({
                     type: GameActionKind.ASK_FOR_PLAYER_DECISION,
                     payload:
@@ -63,8 +66,9 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
                             seatNumber: decidingPlayer.seatNumber,
                             cardsScore: decidingPlayer.cardsScore,
                             bet: decidingPlayer.bet,
+                            theirIndex: playerToAskIndex,
                         },
-                        makeDecision: makeDecisionFn,
+                        makeDecision,
                     },
                 });
             }
