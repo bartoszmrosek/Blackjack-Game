@@ -7,7 +7,8 @@ export enum PlayerActionKind {
 }
 
 export enum PresenterActionKind {
-    SWITCH_IS_PLAYED = "SWITCH_IS_PLAYED",
+    START_GAME = "START_GAME",
+    STOP_GAME = "STOP_GAME",
 }
 
 export interface PlayerActions {
@@ -16,7 +17,7 @@ export interface PlayerActions {
 }
 
 export interface PresenterActions {
-    type: PresenterActionKind.SWITCH_IS_PLAYED;
+    type: PresenterActionKind;
 }
 
 export interface GameRoomState {
@@ -79,10 +80,15 @@ export function gameRoomReducer(state: GameRoomState, action: PlayerActions | Pr
             }
             return state;
         }
-        case PresenterActionKind.SWITCH_IS_PLAYED:
+        case PresenterActionKind.START_GAME:
             return {
                 ...state,
-                playersSeats: state.isGameStarted ? [...state.playersSeats.map((seat) => {
+                isGameStarted: true,
+            };
+        case PresenterActionKind.STOP_GAME:
+            return {
+                ...state,
+                playersSeats: [...state.playersSeats.map((seat) => {
                     if (seat === "empty") { return seat; }
                     return {
                         ...seat,
@@ -91,8 +97,8 @@ export function gameRoomReducer(state: GameRoomState, action: PlayerActions | Pr
                             previousBet: seat.bet.currentBet,
                         },
                     };
-                })] : state.playersSeats,
-                isGameStarted: !state.isGameStarted,
+                })],
+                isGameStarted: false,
             };
     }
 }

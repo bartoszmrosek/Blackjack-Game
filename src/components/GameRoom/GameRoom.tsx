@@ -6,14 +6,23 @@ import styles from "./GameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
 import { BetOverlay } from "./BetOverlay/BetOverlay";
 import { Player } from "../../types/Player";
-import { useGameLogic } from "../../hooks/useGameLogic";
+import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
+import { DecisionOverlay } from "./DecisionOverlay/DescisionOverlay";
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
     const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
-    const [setCurrentPlayers, roundPlayers, currentlyAsking] = useGameLogic();
     const currentUser = useAppSelector(selectUser);
     const currentUserDispatch = useAppDispatch();
+
+    const stopGame = useCallback(() => {
+        dispatch({ type: PresenterActionKind.STOP_GAME });
+        const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
+        setBetsToUpdate(previouslyPlacedBets.map((bettingPlayer) =>
+            ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
+    }, [gameRoomState.playersSeats]);
+
+    const [setCurrentPlayers,, currentlyAsking, presenterScore] = useGameLogic(stopGame);
 
     const removeUserFromGame = useCallback((player: Player) => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
@@ -49,24 +58,20 @@ const GameRoom: React.FC = () => {
         }
     }, [currentUser.balance, currentUser.reservedBalance, currentUserDispatch]);
 
-    const switchIsGamePlayed = useCallback(() => {
-        if (gameRoomState.isGameStarted) {
-            const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
-            setBetsToUpdate(previouslyPlacedBets.map((bettingPlayer) =>
-            ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
-        } else {
+    const startGame = useCallback(() => {
+        if (!gameRoomState.isGameStarted) {
             currentUserDispatch(gameFundReservation());
             const allCurrentPlayers = gameRoomState.playersSeats.filter(player => player !== "empty") as Player[];
-            setCurrentPlayers(allCurrentPlayers);
+            if (allCurrentPlayers.length > 0) {
+                setCurrentPlayers(allCurrentPlayers);
+                dispatch({ type: PresenterActionKind.START_GAME });
+            }
         }
-        dispatch({ type: PresenterActionKind.SWITCH_IS_PLAYED });
     }, [currentUserDispatch, gameRoomState.isGameStarted, gameRoomState.playersSeats, setCurrentPlayers]);
 
-    console.log(roundPlayers);
-    console.log(currentlyAsking);
     return (
         <div className={styles.background}>
-            <button onClick={switchIsGamePlayed}>{!gameRoomState.isGameStarted ? "Start game" : "Stop game"}</button>
+            <button onClick={startGame} disabled={gameRoomState.isGameStarted}>Start game</button>
             <div className={styles.userSeats}>
                 {gameRoomState.playersSeats.map((seat, index) => {
                     const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
@@ -91,6 +96,13 @@ const GameRoom: React.FC = () => {
             !gameRoomState.isGameStarted &&
             currentUser.balance > 0 &&
                 <BetOverlay playerInformations={betsToUpdate} updateBet={updateBet} undoHandler={removeUserFromGame} />}
+            {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
+                <DecisionOverlay
+                    decisionCb={currentlyAsking.makeDecision}
+                    presenterScore={presenterScore}
+                    playerScore={currentlyAsking.currentlyAsking.cardsScore}
+                />
+            )}
         </div>
     );
 };
