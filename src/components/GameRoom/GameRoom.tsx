@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useRef, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import {
     addBalance,
     addReservedBalance,
@@ -20,20 +20,17 @@ const GameRoom: React.FC = () => {
     const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
     const currentUser = useAppSelector(selectUser);
     const currentUserDispatch = useAppDispatch();
-    const didAddAlready = useRef(false);
+    const [fundsToAdd, setFundsToAdd] = useState<number>(0);
 
-    const stopGame = useCallback((fundsToAdd: number) => {
+    const stopGame = useCallback((funds: number) => {
         dispatch({ type: PresenterActionKind.STOP_GAME });
         const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
         setBetsToUpdate(previouslyPlacedBets.map((bettingPlayer) =>
             ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
-        if (!didAddAlready.current) {
-            currentUserDispatch(addBalance(fundsToAdd));
-            didAddAlready.current = true;
-        }
-    }, [currentUserDispatch, gameRoomState.playersSeats]);
+        setFundsToAdd(funds);
+    }, [gameRoomState.playersSeats]);
 
-    const [setCurrentPlayers,, currentlyAsking, presenterScore] = useGameLogic(stopGame);
+    const [setCurrentPlayers, gamePlayers, currentlyAsking, presenterScore] = useGameLogic(stopGame);
 
     const removeUserFromGame = useCallback((player: Player) => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
@@ -76,11 +73,16 @@ const GameRoom: React.FC = () => {
             if (allCurrentPlayers.length > 0) {
                 setCurrentPlayers(allCurrentPlayers);
                 dispatch({ type: PresenterActionKind.START_GAME });
-                didAddAlready.current = false;
             }
         }
     }, [currentUserDispatch, gameRoomState.isGameStarted, gameRoomState.playersSeats, setCurrentPlayers]);
 
+    useEffect(() => {
+        if (fundsToAdd > 0) {
+            currentUserDispatch(addBalance(fundsToAdd));
+            setFundsToAdd(0);
+        }
+    }, [currentUserDispatch, fundsToAdd]);
     return (
         <div className={styles.background}>
             <button onClick={startGame} disabled={gameRoomState.isGameStarted}>Start game</button>
@@ -104,15 +106,22 @@ const GameRoom: React.FC = () => {
                     );
                 })}
             </div>
+
             {betsToUpdate.length > 0 &&
             !gameRoomState.isGameStarted &&
             currentUser.balance > 0 &&
                 <BetOverlay playerInformations={betsToUpdate} updateBet={updateBet} undoHandler={removeUserFromGame} />}
+
             {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
                 <DecisionOverlay
                     decisionCb={currentlyAsking.makeDecision}
                     presenterScore={presenterScore}
-                    playerScore={currentlyAsking.currentlyAsking.cardsScore}
+                    playerScore={
+                        gamePlayers.find(
+                            (player) => player.id === currentlyAsking.currentlyAsking.id &&
+                            player.seatNumber === currentlyAsking.currentlyAsking.seatNumber)?.cardsScore
+                        }
+                    currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
                 />
             )}
         </div>

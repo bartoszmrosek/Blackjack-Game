@@ -4,20 +4,20 @@ import { getRandomInt } from "../../utils/getRandomInt";
 export interface RoundPlayer extends Player {
     cards: number[];
     cardsScore: number;
-    didDoubleDown: boolean;
-    hasMadeDecisionInCurrentRound: boolean;
+    hasMadeFinalDecision: boolean;
     currentStatus: "won" | "lost" | "playing";
 }
 
 export interface CurrentlyAskingState {
-    currentlyAsking: Pick<RoundPlayer, "id" | "seatNumber" | "cardsScore">;
+    currentlyAsking: Pick<RoundPlayer, "id" | "seatNumber" | "cardsScore" | "bet">;
     makeDecision: (decision: "hit" | "stand" | "doubleDown") => void;
 }
 
 export enum GameActionKind {
     SET_GAME_PLAYERS = "SET_GAME_PLAYERS",
+    SWITCH_GAME_STATE = "SWITCH_GAME_STATE",
     RESET_GAME = "RESET_GAME",
-    NEXT_ROUND = "NEXT_ROUND",
+    ALL_ASKING_DONE = "ALL_ASKING_DONE",
     ASK_FOR_PLAYER_DECISION = "ASK_FOR_PLAYER_DECISION",
     UPDATE_PLAYER_STATE = "UPDATE_PLAYER_STATE",
 }
@@ -32,92 +32,79 @@ export type GameActions = {
     type: GameActionKind.UPDATE_PLAYER_STATE;
     payload: { playerIndex: number; decision: "hit" | "stand" | "doubleDown"; };
 } | {
-    type: GameActionKind.RESET_GAME | GameActionKind.NEXT_ROUND;
+    type: GameActionKind.ALL_ASKING_DONE;
+    payload: { currentUserId: string; resultsCb: (funds: number) => void; };
+} | {
+    type: GameActionKind.RESET_GAME | GameActionKind.SWITCH_GAME_STATE;
 };
 
 export interface GameRoomState {
-    roundInProgress: number;
+    shouldAskPlayers: boolean;
     gamePlayers: RoundPlayer[];
     presenterState: { cards: number[]; score: number; };
     askingState: CurrentlyAskingState | null;
 }
 
 export const initialGameState: GameRoomState = {
-    roundInProgress: 0,
+    shouldAskPlayers: false,
     gamePlayers: [],
     presenterState: { cards: [], score: 0 },
     askingState: null,
 };
 
-function checkGameScoreRules(playerScore: number, presenterScore: number): RoundPlayer["currentStatus"] {
-    if (presenterScore <= 17) {
-        if (playerScore > 21) { return "lost"; }
-        return "playing";
-    }
-    if (playerScore > 21 && playerScore < presenterScore) { return "lost"; }
+function checkCardRules(
+    player: { status: RoundPlayer["currentStatus"]; score: number; }, presenterScore: number,
+): RoundPlayer["currentStatus"] {
+    if (player.status === "lost" || player.score > 21) { return "lost"; }
+    if (presenterScore > 21) { return "won"; }
+    if (player.score < presenterScore) { return "lost"; }
     return "won";
 }
 
 export function gameLogicReducer(state: GameRoomState, action: GameActions): GameRoomState {
     switch (action.type) {
         case GameActionKind.SET_GAME_PLAYERS:
-            return { ...initialGameState, roundInProgress: 1, gamePlayers: action.payload };
-        case GameActionKind.ASK_FOR_PLAYER_DECISION:
-            return { ...state, askingState: action.payload };
-        case GameActionKind.RESET_GAME:
-            return { ...initialGameState, gamePlayers: state.gamePlayers, presenterState: state.presenterState };
-        case GameActionKind.NEXT_ROUND:
+        {
             const newPresenterCard = getRandomInt(1, 10);
             return {
-                ...state,
-                roundInProgress: state.roundInProgress + 1,
-                gamePlayers: state.gamePlayers.map((player) =>
-                    ({
-                        ...player,
-                        hasMadeDecisionInCurrentRound: false,
-                        didDoubleDown: false,
-                        currentStatus: checkGameScoreRules(player.cardsScore, state.presenterState.score + newPresenterCard),
-                    })),
-                presenterState: {
-                    cards: [...state.presenterState.cards, newPresenterCard],
-                    score: state.presenterState.score + newPresenterCard,
-                },
+                ...initialGameState,
+                gamePlayers: [
+                    ...action.payload.map((newPlayer) => {
+                        const newInitialCards = [getRandomInt(1, 10), getRandomInt(1, 10)];
+                        return {
+                            ...newPlayer,
+                            cards: newInitialCards,
+                            cardsScore: newInitialCards[0] + newInitialCards[1],
+                        };
+                    })],
+                presenterState: { cards: [newPresenterCard], score: newPresenterCard },
+                shouldAskPlayers: true,
             };
+        }
+        case GameActionKind.ASK_FOR_PLAYER_DECISION:
+            return { ...state, askingState: action.payload };
+        case GameActionKind.SWITCH_GAME_STATE:
+            return { ...state, shouldAskPlayers: !state.shouldAskPlayers };
+        case GameActionKind.RESET_GAME:
+            return { ...initialGameState, gamePlayers: state.gamePlayers, presenterState: state.presenterState };
         case GameActionKind.UPDATE_PLAYER_STATE:
         {
-            const { decision, playerIndex } = action.payload;
-            const pickedUser = state.gamePlayers[playerIndex];
+            const { playerIndex, decision } = action.payload;
+            const decidingPlayer = state.gamePlayers[playerIndex];
             switch (decision) {
                 case "hit":
                 {
                     const newCard = getRandomInt(1, 10);
                     return {
                         ...state,
-                        askingState: null,
                         gamePlayers: [
                             ...state.gamePlayers.slice(0, playerIndex),
                             {
-                                ...pickedUser,
-                                hasMadeDecisionInCurrentRound: true,
-                                cards: [...pickedUser.cards, newCard],
-                                cardsScore: pickedUser.cardsScore + newCard,
-                                currentStatus: checkGameScoreRules(pickedUser.cardsScore + newCard, state.presenterState.score),
-                            },
-                            ...state.gamePlayers.slice(playerIndex + 1),
-                        ],
-                    };
-                }
-                case "stand":
-                {
-                    return {
-                        ...state,
-                        askingState: null,
-                        gamePlayers: [
-                            ...state.gamePlayers.slice(0, playerIndex),
-                            {
-                                ...pickedUser,
-                                hasMadeDecisionInCurrentRound: true,
-                                currentStatus: checkGameScoreRules(pickedUser.cardsScore, state.presenterState.score),
+                                ...decidingPlayer,
+                                cards: [...decidingPlayer.cards, newCard],
+                                cardsScore: decidingPlayer.cardsScore + newCard,
+                                currentStatus: decidingPlayer.cardsScore + newCard > 21 ? "lost" : "playing",
+                                hasMadeFinalDecision: decidingPlayer.cardsScore + newCard > 21,
                             },
                             ...state.gamePlayers.slice(playerIndex + 1),
                         ],
@@ -128,22 +115,69 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
                     const newCard = getRandomInt(1, 10);
                     return {
                         ...state,
-                        askingState: null,
                         gamePlayers: [
                             ...state.gamePlayers.slice(0, playerIndex),
                             {
-                                ...pickedUser,
-                                hasMadeDecisionInCurrentRound: true,
-                                cards: [...pickedUser.cards, newCard],
-                                cardsScore: pickedUser.cardsScore + newCard,
-                                currentStatus: checkGameScoreRules(pickedUser.cardsScore + newCard, state.presenterState.score),
-                                didDoubleDown: true,
+                                ...decidingPlayer,
+                                bet: { ...decidingPlayer.bet, currentBet: decidingPlayer.bet.currentBet * 2 },
+                                cards: [...decidingPlayer.cards, newCard],
+                                cardsScore: decidingPlayer.cardsScore + newCard,
+                                currentStatus: decidingPlayer.cardsScore + newCard > 21 ? "lost" : "playing",
+                                hasMadeFinalDecision: true,
                             },
                             ...state.gamePlayers.slice(playerIndex + 1),
                         ],
                     };
                 }
+                case "stand":
+                {
+                    return {
+                        ...state,
+                        gamePlayers: [
+                            ...state.gamePlayers.slice(0, playerIndex),
+                            { ...decidingPlayer, hasMadeFinalDecision: true },
+                            ...state.gamePlayers.slice(playerIndex + 1),
+                        ],
+                    };
+                }
             }
+            return state;
+        }
+        case GameActionKind.ALL_ASKING_DONE:
+        {
+            const mutatedPresenterState = { ...state.presenterState };
+            const updatePresenterState = (presenter: GameRoomState["presenterState"]) => {
+                if (presenter.score < 17) {
+                    const newCard = getRandomInt(1, 10);
+                    mutatedPresenterState.cards.push(newCard);
+                    mutatedPresenterState.score += newCard;
+                    updatePresenterState(presenter);
+                }
+            };
+            updatePresenterState(mutatedPresenterState);
+
+            const newState = {
+                ...state,
+                presenterState: mutatedPresenterState,
+                shouldAskPlayers: false,
+                askingState: null,
+                gamePlayers: state.gamePlayers.map((player) => (
+                    {
+                        ...player,
+                        currentStatus: checkCardRules(
+                            { status: player.currentStatus, score: player.cardsScore }, mutatedPresenterState.score,
+                        ),
+                    }
+                )),
+            };
+
+            const balanceToAdd = newState.gamePlayers.reduce((acc, player) => {
+                if (player.id === action.payload.currentUserId &&
+                    player.currentStatus === "won") { return acc + player.bet.currentBet * 2; }
+                return acc;
+            }, 0);
+            action.payload.resultsCb(balanceToAdd);
+            return newState;
         }
     }
 }
