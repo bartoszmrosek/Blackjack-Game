@@ -1,5 +1,11 @@
-import React, { useCallback, useReducer, useState } from "react";
-import { addReservedBalance, gameFundReservation, removeReservedBalance, selectUser } from "../../App/userSlice";
+import React, { useCallback, useReducer, useRef, useState } from "react";
+import {
+    addBalance,
+    addReservedBalance,
+    gameFundReservation,
+    removeReservedBalance,
+    selectUser,
+} from "../../App/userSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { UserSeat } from "./UserSeat/UserSeat";
 import styles from "./GameRoom.module.css";
@@ -14,13 +20,18 @@ const GameRoom: React.FC = () => {
     const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
     const currentUser = useAppSelector(selectUser);
     const currentUserDispatch = useAppDispatch();
+    const didAddAlready = useRef(false);
 
-    const stopGame = useCallback(() => {
+    const stopGame = useCallback((fundsToAdd: number) => {
         dispatch({ type: PresenterActionKind.STOP_GAME });
         const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
         setBetsToUpdate(previouslyPlacedBets.map((bettingPlayer) =>
             ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
-    }, [gameRoomState.playersSeats]);
+        if (!didAddAlready.current) {
+            currentUserDispatch(addBalance(fundsToAdd));
+            didAddAlready.current = true;
+        }
+    }, [currentUserDispatch, gameRoomState.playersSeats]);
 
     const [setCurrentPlayers,, currentlyAsking, presenterScore] = useGameLogic(stopGame);
 
@@ -65,6 +76,7 @@ const GameRoom: React.FC = () => {
             if (allCurrentPlayers.length > 0) {
                 setCurrentPlayers(allCurrentPlayers);
                 dispatch({ type: PresenterActionKind.START_GAME });
+                didAddAlready.current = false;
             }
         }
     }, [currentUserDispatch, gameRoomState.isGameStarted, gameRoomState.playersSeats, setCurrentPlayers]);

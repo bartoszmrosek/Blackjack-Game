@@ -1,5 +1,6 @@
 import { useCallback, useReducer } from "react";
 import { Player } from "../../types/Player";
+import { useAppSelector } from "../reduxHooks";
 import {
     CurrentlyAskingState,
     GameActionKind,
@@ -17,9 +18,10 @@ type UseGameLogicReturn = Readonly<
 ]
 >;
 
-const useGameLogic = (stopGameCb: () => void): UseGameLogicReturn => {
+const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn => {
     const [gameLogicState, dispatchLogicUpdate] = useReducer(gameLogicReducer, initialGameState);
     const { roundInProgress, gamePlayers, askingState } = gameLogicState;
+    const currentUserId = useAppSelector(state => state.user.id);
 
     const setPlayersForGame = useCallback((players: Player[]) => {
         if (roundInProgress) { return; }
@@ -37,7 +39,13 @@ const useGameLogic = (stopGameCb: () => void): UseGameLogicReturn => {
     }, [roundInProgress]);
 
     if (gamePlayers.every(player => player.currentStatus !== "playing") && roundInProgress !== 0) {
-        stopGameCb();
+        const balanceToAdd = gamePlayers.reduce((acc, player) => {
+            if (player.id === currentUserId) {
+                return acc + player.bet.currentBet * 2;
+            }
+            return acc;
+        }, 0);
+        stopGameCb(balanceToAdd);
         dispatchLogicUpdate({ type: GameActionKind.RESET_GAME });
     }
 
@@ -86,13 +94,6 @@ const useGameLogic = (stopGameCb: () => void): UseGameLogicReturn => {
         }
     }
 
-    // is round in progress ?
-    // on start draw cards for everyone including game presenter
-    // take all players and go from playerArr.length -1 to playerArr[0] (from right to left)
-    // give them decision to make, no further updates untill decision is made (has to be timelimit for one)
-    // take decision and update player informations, like card array and other things
-    // play untill everyone either wins or loses, the game presenter draws up to 17 and then stops
-    // at the end of round check who won and who lost and dispatch proper updates to balance
     return [setPlayersForGame, gamePlayers, askingState, gameLogicState.presenterState.score] as const;
 };
 
