@@ -14,7 +14,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
         playerInformations[0].bet.previousBet !== 0);
 
     const buttonHandler = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-        const betAmount = parseInt(event.currentTarget.innerText, 10);
+        const betAmount = parseInt(event.currentTarget.id.split("-")[1], 10);
         if (betAmount > 0 && betAmount <= 1000 && !Number.isNaN(betAmount)) {
             updateBet({ ...playerInformations[0], bet: { previousBet: playerInformations[0].bet.currentBet, currentBet: betAmount } });
         }
@@ -43,12 +43,12 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
         <div className={styles.overlayWrapper}>
             <>
                 <button onClick={handleUndoButton}>Undo</button>
-                <button onClick={buttonHandler}>1</button>
-                <button onClick={buttonHandler}>5</button>
-                <button onClick={buttonHandler}>10</button>
-                <button onClick={buttonHandler}>25</button>
-                <button onClick={buttonHandler}>100</button>
-                <button onClick={buttonHandler}>500</button>
+                <button onClick={buttonHandler} id="bet-1" className={styles.betButton}>1</button>
+                <button onClick={buttonHandler} id="bet-5" className={styles.betButton}>5</button>
+                <button onClick={buttonHandler} id="bet-10" className={styles.betButton}>10</button>
+                <button onClick={buttonHandler} id="bet-25" className={styles.betButton}>25</button>
+                <button onClick={buttonHandler} id="bet-100" className={styles.betButton}>100</button>
+                <button onClick={buttonHandler} id="bet-500" className={styles.betButton}>500</button>
                 <button
                     onClick={handleSpecialBtn}
                     disabled={!playerInformations[0].bet.previousBet && !playerInformations[0].bet.currentBet}

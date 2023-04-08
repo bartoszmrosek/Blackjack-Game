@@ -2,7 +2,7 @@
 ## Key assumptions:
 1. Whole app is done in ReactJs Library with Redux as global state manager
 2.  At least key features are covered in unit and possibly e2e tests
-3.  Game can be viewed on both mobile and desktop devices (RWD)
+3.  Game can be viewed on both mobile and desktop devices (RWD) <- nut sure how to make it look on mobile
 ## Plan and features in descending order:
 1. Implementation of blackjack game and its rules <- pure funcionality, no animations and fancy stuff just game engine
 2. Creation of connection to [FireBase](https://firebase.google.com/) backend, and support for game host and other players <- multiplayer support

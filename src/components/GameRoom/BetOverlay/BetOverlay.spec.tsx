@@ -4,10 +4,7 @@ import { fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "../../../utils/test-utils";
 import { Player } from "../../../types/Player";
 import { BetOverlay } from "./BetOverlay";
-
-it.todo("Soltution for innerText inside jsdom");
-
-// Due to beeing not implemented in jsdom, my solution for BetOverlay wouldn`t work with tests.
+import styles from "./BetOverlay.module.css";
 
 const defaultMock = vi.fn();
 const testingPlayer: Player = {
@@ -20,7 +17,7 @@ const testingPlayer: Player = {
     seatNumber: 1,
 };
 describe("BetOverlay", () => {
-    describe("operations if there are funds", () => {
+    describe("operations on special buttons", () => {
         it("handles undo button", () => {
             const undoMock = vi.fn();
             const { getByRole } = renderWithProviders(
@@ -58,6 +55,15 @@ describe("BetOverlay", () => {
             );
             expect(updateMock).toHaveBeenCalledTimes(1);
         });
+    });
+    it("handles all betting options", () => {
+        const betPlacingMock = vi.fn();
+        renderWithProviders(<BetOverlay undoHandler={defaultMock} playerInformations={[testingPlayer]} updateBet={betPlacingMock} />);
+        const allBetBtns = document.getElementsByClassName(styles.betButton);
+        for (const betBtn of allBetBtns) {
+            fireEvent.click(betBtn);
+        }
+        expect(betPlacingMock).toHaveBeenCalledTimes(6);
     });
 });
 
