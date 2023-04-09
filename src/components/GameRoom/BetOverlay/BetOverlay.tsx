@@ -43,7 +43,12 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
     return (
         <div className={styles.overlayWrapper}>
             <>
-                <button onClick={handleUndoButton} className={styles.betOperations}>Undo</button>
+                <div className={`${styles.betOperations} ${styles.undoWrapper}`}>
+                    <span>UNDO</span>
+                    <button onClick={handleUndoButton} className={styles.undoButton}>
+                        <img height="40px" width="40px" src="./Graphics/undo.svg" alt="Undo button" />
+                    </button>
+                </div>
                 <button onClick={buttonHandler} id="bet-1" className={`${styles.betButton} ${styles.betOperations}`}>
                     <BetSpriteLoader height="70px" width="70px" type="bet-1" />
                 </button>
@@ -63,7 +68,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                     <BetSpriteLoader height="70px" width="70px" type="bet-500" />
                 </button>
                 <button
-                    className={styles.betOperations}
+                    className={`${styles.betOperations} ${styles.specialBtn}`}
                     onClick={handleSpecialBtn}
                     disabled={!playerInformations[0].bet.previousBet && !playerInformations[0].bet.currentBet}
                 >{canRepeat ? "Repeat" : "2x"}

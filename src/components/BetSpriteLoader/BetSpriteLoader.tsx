@@ -13,7 +13,7 @@ const BetSpriteLoader: React.FC<BetSpriteLoaderProps> = ({ classNames, type, wid
             return (
                 <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                     <use
-                        href="./chipSprite.svg#chip-pink-g"
+                        href="./Graphics/chipSprite.svg#chip-pink-g"
                         style={{ transform: "translate(-72px, -9px)" }}
                         className={classNames}
                     />
@@ -23,7 +23,7 @@ const BetSpriteLoader: React.FC<BetSpriteLoaderProps> = ({ classNames, type, wid
             return (
                 <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                     <use
-                        href="./chipSprite.svg#chip-red-g"
+                        href="./Graphics/chipSprite.svg#chip-red-g"
                         style={{ transform: "translate(-136px, -74px)" }}
                         className={classNames}
                     />
@@ -33,7 +33,7 @@ const BetSpriteLoader: React.FC<BetSpriteLoaderProps> = ({ classNames, type, wid
             return (
                 <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                     <use
-                        href="./chipSprite.svg#chip-cyan-g"
+                        href="./Graphics/chipSprite.svg#chip-cyan-g"
                         style={{ transform: "translate(-7px, -74px)" }}
                         className={classNames}
                     />
@@ -43,7 +43,7 @@ const BetSpriteLoader: React.FC<BetSpriteLoaderProps> = ({ classNames, type, wid
             return (
                 <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                     <use
-                        href="./chipSprite.svg#chip-darkred-g"
+                        href="./Graphics/chipSprite.svg#chip-darkred-g"
                         style={{ transform: "translate(-7px, -8px)" }}
                         className={classNames}
                     />
@@ -53,7 +53,7 @@ const BetSpriteLoader: React.FC<BetSpriteLoaderProps> = ({ classNames, type, wid
             return (
                 <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                     <use
-                        href="./chipSprite.svg#chip-blue-g"
+                        href="./Graphics/chipSprite.svg#chip-blue-g"
                         style={{ transform: "translate(-136px, -8px)" }}
                         className={classNames}
                     />
@@ -63,7 +63,7 @@ const BetSpriteLoader: React.FC<BetSpriteLoaderProps> = ({ classNames, type, wid
             return (
                 <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                     <use
-                        href="./chipSprite.svg#chip-purple-g"
+                        href="./Graphics/chipSprite.svg#chip-purple-g"
                         style={{ transform: "translate(-72px, -74px)" }}
                         className={classNames}
                     />

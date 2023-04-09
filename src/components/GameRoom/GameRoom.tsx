@@ -83,6 +83,15 @@ const GameRoom: React.FC = () => {
             setFundsToAdd(0);
         }
     }, [currentUserDispatch, fundsToAdd]);
+
+    useEffect(() => {
+        if (currentUser.balance <= 0) {
+            betsToUpdate.forEach((player) => {
+                if (player.id === currentUser.id) { removeUserFromGame(player); }
+            });
+        }
+    }, [betsToUpdate, currentUser.balance, currentUser.id, removeUserFromGame]);
+
     return (
         <div className={styles.background}>
             <button onClick={startGame} disabled={gameRoomState.isGameStarted}>Start game</button>

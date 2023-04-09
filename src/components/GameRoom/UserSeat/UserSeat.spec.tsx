@@ -2,7 +2,7 @@ import React from "react";
 import { vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { UserSeat } from "./UserSeat";
-import { renderWithProviders } from "../../../utils/test-utils";
+import { initialUserState, renderWithProviders } from "../../../utils/test-utils";
 
 const defaultMock = vi.fn();
 describe("UserSeat", () => {
@@ -70,7 +70,7 @@ describe("UserSeat", () => {
         });
     });
     describe("handles user interactions", () => {
-        it("user joining game", () => {
+        test("user joining game", () => {
             const joinMock = vi.fn();
             const mockedActions = {
                 ...testingActions,
@@ -86,7 +86,7 @@ describe("UserSeat", () => {
             fireEvent.click(getByRole("button", { name: "Join now" }));
             expect(joinMock).toHaveBeenCalledWith(1);
         });
-        it("user leaving game", () => {
+        test("user leaving game", () => {
             const leaveMock = vi.fn();
             const mockedActions = {
                 ...testingActions,
@@ -110,6 +110,23 @@ describe("UserSeat", () => {
             });
             fireEvent.click(getByRole("button", { name: "X" }));
             expect(leaveMock).toHaveBeenCalledWith({ ...testingUser, seatNumber: 1 });
+        });
+        it("is disabled when no funds can be found", () => {
+            const { getByRole } = renderWithProviders(<UserSeat
+                isEmpty={true}
+                seatId={1}
+                isGameStarted={false}
+                user={testingUser}
+                actions={testingActions}
+            />, {
+                preloadedState: {
+                    user: {
+                        ...initialUserState,
+                        balance: 0,
+                    },
+                },
+            });
+            expect(getByRole("button", { name: "No funds left" })).toBeDisabled();
         });
     });
 });

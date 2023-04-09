@@ -20,9 +20,9 @@ describe("BetOverlay", () => {
     describe("operations on special buttons", () => {
         it("handles undo button", () => {
             const undoMock = vi.fn();
-            const { getByRole } = renderWithProviders(
+            const { getByAltText } = renderWithProviders(
                 <BetOverlay playerInformations={[testingPlayer]} updateBet={defaultMock} undoHandler={undoMock} />);
-            fireEvent.click(getByRole("button", { name: "Undo" }));
+            fireEvent.click(getByAltText("Undo button"));
             expect(undoMock).toHaveBeenCalledWith(testingPlayer);
             expect(undoMock).toHaveBeenCalledTimes(1);
         });

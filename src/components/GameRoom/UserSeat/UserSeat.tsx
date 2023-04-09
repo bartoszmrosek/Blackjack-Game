@@ -16,7 +16,7 @@ interface UserSeatProps {
 }
 
 const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted }) => {
-    const currentUserId = useAppSelector((state) => state.user.id);
+    const currentUser = useAppSelector((state) => state.user);
 
     const handleJoin = useCallback(() => {
         actions.userJoin(seatId);
@@ -33,14 +33,21 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
     }, [actions, isGameStarted, user]);
 
     return isEmpty ? (
-        <button onClick={handleJoin} className={`${styles.joinBtn} ${styles.seat}`}>
-            {isGameStarted ? "Join in next round" : "Join now"}
+        <button
+            onClick={handleJoin}
+            className={`${styles.joinBtn} ${styles.seat}`}
+            disabled={currentUser.balance <= 0}
+        >
+            {
+                currentUser.balance <= 0 ? "No funds left" :
+                    isGameStarted ? "Join in next round" : "Join now"
+            }
         </button>
     ) : (
         <div className={`${styles.activePlayer} ${styles.seat}`}>
             <h1>{user.name}</h1>
             <h2 onClick={handleBetChg}>{user.bet.currentBet}</h2>
-            {currentUserId === user.id && !isGameStarted && <button onClick={handleLeave}>X</button>}
+            {currentUser.id === user.id && !isGameStarted && <button onClick={handleLeave}>X</button>}
         </div>
     );
 };
