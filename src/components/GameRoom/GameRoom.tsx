@@ -106,6 +106,7 @@ const GameRoom: React.FC = () => {
                     );
                 })}
             </div>
+            <p>User balance: {currentUser.balance}</p>
 
             {betsToUpdate.length > 0 &&
             !gameRoomState.isGameStarted &&

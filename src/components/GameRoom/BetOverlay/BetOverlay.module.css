@@ -10,8 +10,28 @@
     align-items: center;
     gap: 1%;
 
-    background-color: rgba(0,0,0,0.4);
-    backdrop-filter: blur(2px);
+    background-color: rgba(0,0,0,0.2);
 }
 
-.betButton{}
+.betButton{
+    border: 0;
+    background-color: transparent;
+    filter: drop-shadow(0 0 0.5rem black);
+
+    transition: 1s ease-in-out filter;
+}
+
+.betButton:hover{
+    filter: drop-shadow(0 0 0.5rem wheat);
+}
+
+.betOperations:nth-child(2) , .betOperations:nth-child(7){
+    transform: translate(0, -20%);
+}
+.betOperations:nth-child(3), .betOperations:nth-child(6){
+    transform: translate(0, -50%);
+}
+.betOperations:nth-child(4), .betOperations:nth-child(5){
+    transform: translate(0, -70%);
+
+}

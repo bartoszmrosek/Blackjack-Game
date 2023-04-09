@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { Player } from "../gameRoomReducer";
+import { Player } from "../../../types/Player";
 import styles from "./UserSeat.module.css";
 
 interface UserSeatProps {
@@ -33,11 +33,11 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
     }, [actions, isGameStarted, user]);
 
     return isEmpty ? (
-        <button onClick={handleJoin}>
+        <button onClick={handleJoin} className={`${styles.joinBtn} ${styles.seat}`}>
             {isGameStarted ? "Join in next round" : "Join now"}
         </button>
     ) : (
-        <div className={styles.activePlayer}>
+        <div className={`${styles.activePlayer} ${styles.seat}`}>
             <h1>{user.name}</h1>
             <h2 onClick={handleBetChg}>{user.bet.currentBet}</h2>
             {currentUserId === user.id && !isGameStarted && <button onClick={handleLeave}>X</button>}
