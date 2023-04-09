@@ -29,15 +29,15 @@ describe("BetOverlay", () => {
         it("handles repeat button", () => {
             const playerWithPreviousBet: Player = { ...testingPlayer, bet: { currentBet: 0, previousBet: 500 } };
             const updateMock = vi.fn();
-            const { getByRole } = renderWithProviders(
+            const { getByAltText, getByText } = renderWithProviders(
                 <BetOverlay playerInformations={[playerWithPreviousBet]} updateBet={updateMock} undoHandler={defaultMock} />);
-            const specialButton = getByRole("button", { name: "Repeat" });
+            const specialButton = getByAltText("Repeat icon");
             fireEvent.click(specialButton);
             expect(updateMock).toHaveBeenCalledWith(
                 { ...playerWithPreviousBet, bet: { currentBet: playerWithPreviousBet.bet.previousBet, previousBet: 0 } },
             );
             expect(updateMock).toHaveBeenCalledTimes(1);
-            expect(specialButton).toHaveTextContent("2x");
+            expect(getByText("2x")).toBeInTheDocument();
         });
         it("handles 2x button", () => {
             const playerWithCurrentBet: Player = { ...testingPlayer, bet: { currentBet: 250, previousBet: 0 } };

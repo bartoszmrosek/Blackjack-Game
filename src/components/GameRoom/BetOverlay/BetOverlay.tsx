@@ -73,8 +73,15 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                         onClick={handleSpecialBtn}
                         disabled={!playerInformations[0].bet.previousBet && !playerInformations[0].bet.currentBet}
                     >
-                        {canRepeat ?
-                            <img src="./Graphics/repeat.svg" width="40px" height="40px" className={styles.repeatBtn} /> :
+                        {canRepeat ? (
+                            <img
+                                src="./Graphics/repeat.svg"
+                                width="40px"
+                                height="40px"
+                                className={styles.repeatBtn}
+                                alt="Repeat icon"
+                            />
+                        ) :
                             <span>2x</span>}
                     </button>
                     <span className={styles.additionalText}>{canRepeat ? "REPEAT" : "DOUBLE"}</span>
