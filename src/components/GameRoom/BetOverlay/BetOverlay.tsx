@@ -50,7 +50,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                     </button>
                 </div>
                 <button onClick={buttonHandler} id="bet-1" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <BetSpriteLoader height="70px" width="70px" type="bet-1" />
+                    <BetSpriteLoader height="70px" width="70px" type="bet-1" overWriteNumber={7} />
                 </button>
                 <button onClick={buttonHandler} id="bet-5" className={`${styles.betButton} ${styles.betOperations}`}>
                     <BetSpriteLoader height="70px" width="70px" type="bet-5" />

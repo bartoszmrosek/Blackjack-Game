@@ -17,23 +17,23 @@
 }
 
 .seat:nth-child(1){
-    transform: rotate(25deg);
+    transform: rotate(25deg) translate(0, -160%);
 }
 .seat:nth-child(2){
-    transform: rotate(17.5deg);
+    transform: rotate(17.5deg) translate(0, -80%);
 }
 .seat:nth-child(3){
-    transform: rotate(10deg);
+    transform: rotate(10deg) translate(0, -20%);
 }
 .seat:nth-child(4){
     transform: rotate(0);
 }
 .seat:nth-child(5){
-    transform: rotate(-10deg);
+    transform: rotate(-10deg) translate(0, -20%);
 }
 .seat:nth-child(6){
-    transform: rotate(-17.5deg);
+    transform: rotate(-17.5deg) translate(0, -80%);
 }
 .seat:nth-child(7){
-    transform: rotate(-25deg);
+    transform: rotate(-25deg) translate(0, -160%);
 }
