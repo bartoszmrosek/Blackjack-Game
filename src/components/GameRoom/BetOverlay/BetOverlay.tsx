@@ -71,7 +71,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                     className={`${styles.betOperations} ${styles.specialBtn}`}
                     onClick={handleSpecialBtn}
                     disabled={!playerInformations[0].bet.previousBet && !playerInformations[0].bet.currentBet}
-                >{canRepeat ? "Repeat" : "2x"}
+                ><span>{canRepeat ? "Repeat" : "2x"}</span>
                 </button>
             </>
         </div>
