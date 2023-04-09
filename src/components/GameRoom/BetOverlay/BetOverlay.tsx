@@ -43,8 +43,8 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
     return (
         <div className={styles.overlayWrapper}>
             <>
-                <div className={`${styles.betOperations} ${styles.undoWrapper}`}>
-                    <span>UNDO</span>
+                <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
+                    <span className={styles.additionalText}>UNDO</span>
                     <button onClick={handleUndoButton} className={styles.undoButton}>
                         <img height="40px" width="40px" src="./Graphics/undo.svg" alt="Undo button" />
                     </button>
@@ -67,12 +67,18 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                 <button onClick={buttonHandler} id="bet-500" className={`${styles.betButton} ${styles.betOperations}`}>
                     <BetSpriteLoader height="70px" width="70px" type="bet-500" />
                 </button>
-                <button
-                    className={`${styles.betOperations} ${styles.specialBtn}`}
-                    onClick={handleSpecialBtn}
-                    disabled={!playerInformations[0].bet.previousBet && !playerInformations[0].bet.currentBet}
-                ><span>{canRepeat ? "Repeat" : "2x"}</span>
-                </button>
+                <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
+                    <button
+                        className={`${styles.specialBtn} ${canRepeat && styles.repeatBtnWrapper}`}
+                        onClick={handleSpecialBtn}
+                        disabled={!playerInformations[0].bet.previousBet && !playerInformations[0].bet.currentBet}
+                    >
+                        {canRepeat ?
+                            <img src="./Graphics/repeat.svg" width="40px" height="40px" className={styles.repeatBtn} /> :
+                            <span>2x</span>}
+                    </button>
+                    <span className={styles.additionalText}>{canRepeat ? "REPEAT" : "DOUBLE"}</span>
+                </div>
             </>
         </div>
     );
