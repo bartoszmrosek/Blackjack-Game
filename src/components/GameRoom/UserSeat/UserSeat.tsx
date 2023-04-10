@@ -85,7 +85,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
                         onClick={handleLeave}
                         className={styles.leaveBtn}
                     >
-                        &times;
+                        ×
                     </button>
                 )}
             </div>

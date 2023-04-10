@@ -19,7 +19,7 @@ describe("GameRoom", () => {
             fireEvent.click(document.getElementById("bet-25")!);
             expect(getByText("100")).toBeInTheDocument();
             expect(getByText("25")).toBeInTheDocument();
-            const leavingButtons = getAllByRole("button", { name: "X" });
+            const leavingButtons = getAllByRole("button", { name: "×" });
             leavingButtons.forEach((btn) => fireEvent.click(btn));
             expect(leavingButtons[0]).not.toBeInTheDocument();
             expect(leavingButtons[1]).not.toBeInTheDocument();

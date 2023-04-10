@@ -66,7 +66,7 @@ describe("UserSeat", () => {
                     },
                 },
             });
-            expect(getByRole("button", { name: "X" })).toBeInTheDocument();
+            expect(getByRole("button", { name: "×" })).toBeInTheDocument();
         });
     });
     describe("handles user interactions", () => {
@@ -108,7 +108,7 @@ describe("UserSeat", () => {
                     },
                 },
             });
-            fireEvent.click(getByRole("button", { name: "X" }));
+            fireEvent.click(getByRole("button", { name: "×" }));
             expect(leaveMock).toHaveBeenCalledWith({ ...testingUser, seatNumber: 1 });
         });
         it("is disabled when no funds can be found", () => {
