@@ -1,12 +1,12 @@
 import React from "react";
-import { ChipDefinitions } from "./chipDefinitions";
+import { ChipDefinitions } from "./ChipDefinitions";
 import { ChipProps } from "./ChipProps";
 
 const QuaternaryChip: React.FC<ChipProps> = ({ height = "70px", width = "70px", overWriteNumber, classNames }) => {
     return (
         <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" className={classNames}>
             <ChipDefinitions />
-            <g style={{ transform: `translate(-7px, -8px)` }}>
+            <g style={{ transform: `translate(-7px, -11px)` }}>
                 <g id="chip-darkred-g" transform="matrix(.039855 0 0 -.040455 214.82 166.47)">
                     <g id="chip-brown" transform="translate(-5244.5 -278.1)" strokeWidth=".87857">
                         <g clipPath="url(#clipPath12456-2)" strokeWidth=".87857" />

@@ -16,6 +16,19 @@
     border-radius: 75%;
 }
 
+.pickedChip{
+    border-radius: 50%;
+    border: 1px solid yellow;
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    aspect-ratio: 1/1;
+}
+
 .seat:nth-child(1){
     transform: rotate(25deg) translate(0, -160%);
 }

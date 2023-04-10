@@ -1,6 +1,12 @@
 import React, { useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 import { Player } from "../../../types/Player";
+import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
+import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
+import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";
+import { SecondaryChip } from "../../ChipSvgs/SecondaryChip";
+import { SenaryChip } from "../../ChipSvgs/SenaryChip";
+import { TertiaryChip } from "../../ChipSvgs/TertiaryChip";
 import styles from "./UserSeat.module.css";
 
 interface UserSeatProps {
@@ -32,10 +38,34 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         }
     }, [actions, isGameStarted, user]);
 
+    const pickBetChip = useCallback(() => {
+        if (!isEmpty) {
+            const betValue = user.bet.currentBet;
+            if (betValue < 5) {
+                return <PrimaryChip overWriteNumber={betValue} />;
+            }
+            if (betValue < 10) {
+                return <SecondaryChip overWriteNumber={betValue} />;
+            }
+            if (betValue < 25) {
+                return <TertiaryChip overWriteNumber={betValue} />;
+            }
+            if (betValue < 100) {
+                return <QuaternaryChip overWriteNumber={betValue} />;
+            }
+            if (betValue < 500) {
+                return <QuinaryChip overWriteNumber={betValue} />;
+            }
+            return <SenaryChip overWriteNumber={betValue} />;
+        }
+        return null;
+    }, [isEmpty, user.bet.currentBet]);
+    const PickedChip = pickBetChip();
+
     return isEmpty ? (
         <button
             onClick={handleJoin}
-            className={`${styles.joinBtn} ${styles.seat}`}
+            className={`${styles.joinBtn}`}
             disabled={currentUser.balance <= 0}
         >
             {
@@ -45,8 +75,10 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         </button>
     ) : (
         <div className={`${styles.activePlayer} ${styles.seat}`}>
+            <div className={styles.pickedChip} onClick={handleBetChg}>
+                {PickedChip}
+            </div>
             <h1>{user.name}</h1>
-            <h2 onClick={handleBetChg}>{user.bet.currentBet}</h2>
             {currentUser.id === user.id && !isGameStarted && <button onClick={handleLeave}>X</button>}
         </div>
     );

@@ -1,12 +1,12 @@
 import React from "react";
-import { ChipDefinitions } from "./chipDefinitions";
+import { ChipDefinitions } from "./ChipDefinitions";
 import { ChipProps } from "./ChipProps";
 
 const SenaryChip: React.FC<ChipProps> = ({ width = "70px", height = "70px", overWriteNumber, classNames }) => {
     return (
         <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" className={classNames}>
             <ChipDefinitions />
-            <g style={{ transform: `translate(-72px, -74px)` }}>
+            <g style={{ transform: `translate(-72px, -78px)` }}>
                 <g id="chip-purple-g" transform="matrix(.039855 0 0 -.040455 214.82 166.47)">
                     <g id="chip-purple" transform="translate(-5244.5 -278.1)" strokeWidth=".87857">
                         <g clipPath="url(#clipPath12110-1)" strokeWidth=".87857" />

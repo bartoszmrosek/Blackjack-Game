@@ -1,13 +1,13 @@
 /* eslint-disable max-len */
 import React from "react";
-import { ChipDefinitions } from "./chipDefinitions";
+import { ChipDefinitions } from "./ChipDefinitions";
 import { ChipProps } from "./ChipProps";
 
 const PrimaryChip: React.FC<ChipProps> = ({ width = "70px", height = "70px", overWriteNumber, classNames }) => {
     return (
         <svg width={width} height={height} viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" className={classNames}>
             <ChipDefinitions />
-            <g style={{ transform: `translate(-72px, -9px)` }}>
+            <g style={{ transform: `translate(-72px, -10px)` }}>
                 <g
                     id="chip-pink-g"
                     style={{ transform: `matrix(0.039855, 0, 0, -0.040455, 214.82, 166.47)` }}
