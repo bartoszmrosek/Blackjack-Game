@@ -27,3 +27,14 @@ body {
 button{
   cursor: pointer;
 }
+
+.svgChipText{
+  font-variant-caps:normal;
+  font-variant-east-asian:normal;
+  font-variant-ligatures:normal;
+  font-variant-numeric:normal;
+  mix-blend-mode:normal;
+  shape-inside:url(#rect68330-4);
+  white-space:pre;
+  text-align: center;
+}

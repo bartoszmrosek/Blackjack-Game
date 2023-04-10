@@ -1,6 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { Player } from "../../../types/Player";
-import { BetSpriteLoader } from "../../BetSpriteLoader/BetSpriteLoader";
+import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
+import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
+import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";
+import { SecondaryChip } from "../../ChipSvgs/SecondaryChip";
+import { SenaryChip } from "../../ChipSvgs/SenaryChip";
+import { TertiaryChip } from "../../ChipSvgs/TertiaryChip";
 import styles from "./BetOverlay.module.css";
 
 interface BetOverlayProps {
@@ -50,22 +55,22 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                     </button>
                 </div>
                 <button onClick={buttonHandler} id="bet-1" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <BetSpriteLoader height="70px" width="70px" type="bet-1" overWriteNumber={7} />
+                    <PrimaryChip />
                 </button>
                 <button onClick={buttonHandler} id="bet-5" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <BetSpriteLoader height="70px" width="70px" type="bet-5" />
+                    <SecondaryChip />
                 </button>
                 <button onClick={buttonHandler} id="bet-10" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <BetSpriteLoader height="70px" width="70px" type="bet-10" />
+                    <TertiaryChip />
                 </button>
                 <button onClick={buttonHandler} id="bet-25" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <BetSpriteLoader height="70px" width="70px" type="bet-25" />
+                    <QuaternaryChip />
                 </button>
                 <button onClick={buttonHandler} id="bet-100" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <BetSpriteLoader height="70px" width="70px" type="bet-100" />
+                    <QuinaryChip />
                 </button>
                 <button onClick={buttonHandler} id="bet-500" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <BetSpriteLoader height="70px" width="70px" type="bet-500" />
+                    <SenaryChip />
                 </button>
                 <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
                     <button
