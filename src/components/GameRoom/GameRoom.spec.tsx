@@ -17,7 +17,9 @@ describe("GameRoom", () => {
             fireEvent.click(document.getElementById("bet-100")!);
             fireEvent.click(joiningButtons[1]);
             fireEvent.click(document.getElementById("bet-25")!);
-            expect(getByText("100")).toBeInTheDocument();
+            expect(getByText((content, element) => {
+                return element?.tagName.toLowerCase() === "tspan" && content === "100";
+            })).toBeInTheDocument();
             expect(getByText("25")).toBeInTheDocument();
             const leavingButtons = getAllByRole("button", { name: "×" });
             leavingButtons.forEach((btn) => fireEvent.click(btn));
@@ -29,9 +31,14 @@ describe("GameRoom", () => {
             const joiningButtons = getAllByRole("button", { name: "Join now" });
             fireEvent.click(joiningButtons[2]);
             fireEvent.click(document.getElementById("bet-100")!);
-            fireEvent.click(getByText("100"));
+            fireEvent.click(getByText((content, element) => {
+                return element?.tagName.toLowerCase() === "tspan" && content === "100";
+            }));
             fireEvent.click(document.getElementById("bet-25")!);
-            expect(getByText("25")).toBeInTheDocument();
+            expect(getByText((content, element) => {
+                return element?.tagName.toLowerCase() === "tspan" && content === "25";
+            })).toBeInTheDocument();
         });
     });
+    it.todo("handle total bet update as well on bet changes");
 });

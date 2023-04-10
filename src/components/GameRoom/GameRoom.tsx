@@ -115,7 +115,20 @@ const GameRoom: React.FC = () => {
                     );
                 })}
             </div>
-            <p>User balance: {currentUser.balance}</p>
+            <div>
+                <p>User balance: {currentUser.balance}</p>
+                <p>
+                    <span>TOTAL BET</span>
+                    <span>
+                        {gameRoomState.playersSeats.reduce((acc, player) => {
+                            if (player !== "empty") {
+                                return player.bet.currentBet + acc;
+                            }
+                            return acc;
+                        }, 0)}
+                    </span>
+                </p>
+            </div>
 
             {betsToUpdate.length > 0 &&
             !gameRoomState.isGameStarted &&
