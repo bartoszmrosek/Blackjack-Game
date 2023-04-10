@@ -78,8 +78,17 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
             <div className={styles.pickedChip} onClick={handleBetChg}>
                 {PickedChip}
             </div>
-            <h1>{user.name}</h1>
-            {currentUser.id === user.id && !isGameStarted && <button onClick={handleLeave}>X</button>}
+            <div className={styles.playerWrapper}>
+                <h1 className={styles.playerName}>{user.name}</h1>
+                {currentUser.id === user.id && !isGameStarted && (
+                    <button
+                        onClick={handleLeave}
+                        className={styles.leaveBtn}
+                    >
+                        &times;
+                    </button>
+                )}
+            </div>
         </div>
     );
 };
