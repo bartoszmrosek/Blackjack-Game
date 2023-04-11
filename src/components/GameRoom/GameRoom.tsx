@@ -29,12 +29,6 @@ const GameRoom: React.FC = () => {
         setFundsToAdd(funds);
     }, [gameRoomState.playersSeats]);
 
-    const resetGame = useCallback(() => {
-        dispatch({ type: PresenterActionKind.STOP_GAME });
-    }, []);
-
-    const [setCurrentPlayers, currentPlayers, currentlyAsking] = useGameLogic(stopGame, resetGame);
-
     const removeUserFromGame = useCallback((player: Player) => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
         setBetsToUpdate(bets => {
@@ -44,6 +38,17 @@ const GameRoom: React.FC = () => {
         });
         currentUserDispatch(removeReservedBalance(player.bet.currentBet));
     }, [currentUserDispatch]);
+
+    const resetGame = useCallback(() => {
+        dispatch({ type: PresenterActionKind.STOP_GAME });
+        if (currentUser.balance <= 0) {
+            betsToUpdate.forEach((player) => {
+                if (player.id === currentUser.id) { removeUserFromGame(player); }
+            });
+        }
+    }, [betsToUpdate, currentUser.balance, currentUser.id, removeUserFromGame]);
+
+    const [setCurrentPlayers, currentPlayers, currentlyAsking] = useGameLogic(stopGame, resetGame);
 
     const addBetToUpdate = useCallback((player: Player) => {
         setBetsToUpdate(bets => [...bets, player]);
@@ -104,14 +109,6 @@ const GameRoom: React.FC = () => {
         }
     }, [currentUserDispatch, fundsToAdd]);
 
-    useEffect(() => {
-        if (currentUser.balance <= 0) {
-            betsToUpdate.forEach((player) => {
-                if (player.id === currentUser.id) { removeUserFromGame(player); }
-            });
-        }
-    }, [betsToUpdate, currentUser.balance, currentUser.id, removeUserFromGame]);
-
     return (
         <div className={styles.background}>
             <button onClick={startGame} disabled={gameRoomState.isGameStarted}>Start game</button>
@@ -120,6 +117,7 @@ const GameRoom: React.FC = () => {
                     const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
                     const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
                     const cards = isUserPlayerIndex !== -1 ? currentPlayers[isUserPlayerIndex].cards : [];
+                    const playerStatus = isUserPlayerIndex !== -1 ? currentPlayers[isUserPlayerIndex].currentStatus : null;
                     return (
                         <UserSeat
                     // eslint-disable-next-line react/no-array-index-key
@@ -134,6 +132,7 @@ const GameRoom: React.FC = () => {
                                 userChgBet: addBetToUpdate,
                             }}
                             cards={cards}
+                            status={playerStatus}
                         />
                     );
                 })}

@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
+import { RoundPlayer } from "../../../hooks/useGameLogic/gamelogicReducer";
 import { Player } from "../../../types/Player";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
@@ -20,9 +21,10 @@ interface UserSeatProps {
     };
     isGameStarted: boolean;
     cards?: string[];
+    status?: RoundPlayer["currentStatus"];
 }
 
-const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, cards = [] }) => {
+const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, cards = [], status = "playing" }) => {
     const currentUser = useAppSelector((state) => state.user);
 
     const handleJoin = useCallback(() => {
@@ -78,6 +80,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         <div className={`${styles.activePlayer}`}>
             <div>
                 {cards}
+                {status}
             </div>
             <div className={styles.pickedChip} onClick={handleBetChg}>
                 {PickedChip}
