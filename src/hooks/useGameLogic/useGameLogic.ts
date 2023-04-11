@@ -1,4 +1,4 @@
-import { useCallback, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 import { addBalance } from "../../App/userSlice";
 import { Player } from "../../types/Player";
 import { useAppDispatch, useAppSelector } from "../reduxHooks";
@@ -19,14 +19,14 @@ type UseGameLogicReturn = Readonly<
 ]
 >;
 
-const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn => {
+const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => void): UseGameLogicReturn => {
     const [gameLogicState, dispatchLogicUpdate] = useReducer(gameLogicReducer, initialGameState);
-    const { gamePlayers, askingState, shouldAskPlayers } = gameLogicState;
+    const { gamePlayers, askingState, isGameStarted, isShowingResults } = gameLogicState;
     const currentUserId = useAppSelector(state => state.user.id);
     const dispatchUserAction = useAppDispatch();
 
     const setPlayersForGame = useCallback((players: Player[]) => {
-        if (!shouldAskPlayers) {
+        if (!isGameStarted) {
             const expandedPlayersState: RoundPlayer[] = players.map((player) => (
                 {
                     ...player,
@@ -38,7 +38,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
             ));
             dispatchLogicUpdate({ type: GameActionKind.SET_GAME_PLAYERS, payload: expandedPlayersState });
         }
-    }, [shouldAskPlayers]);
+    }, [isGameStarted]);
 
     const makeDecision = useCallback((playerToAskIndex: number, decision: "hit" | "stand" | "doubleDown") => {
         if (decision === "doubleDown") {
@@ -53,7 +53,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
         });
     }, [dispatchUserAction, gamePlayers]);
 
-    if (shouldAskPlayers && gamePlayers.length > 0) {
+    if (isGameStarted && gamePlayers.length > 0 && !isShowingResults) {
         const playerToAskIndex = gamePlayers.findIndex(
             (player) => !player.hasMadeFinalDecision && player.currentStatus === "playing",
         );
@@ -81,6 +81,17 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
             dispatchLogicUpdate({ type: GameActionKind.ALL_ASKING_DONE, payload: { currentUserId, resultsCb: stopGameCb } });
         }
     }
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (isShowingResults) {
+            timer = setTimeout(() => {
+                dispatchLogicUpdate({ type: GameActionKind.RESET_GAME });
+                resetGameCb();
+            }, 5000);
+        }
+        return () => clearTimeout(timer);
+    }, [isShowingResults, resetGameCb]);
 
     return [setPlayersForGame, gamePlayers, askingState, gameLogicState.presenterState.score] as const;
 };

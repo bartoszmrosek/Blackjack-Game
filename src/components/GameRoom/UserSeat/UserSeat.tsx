@@ -63,7 +63,6 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
     }, [user.bet.currentBet]);
     const PickedChip = pickBetChip();
 
-    if (false) { console.log(cards); }
     return isEmpty ? (
         <button
             onClick={handleJoin}
@@ -77,6 +76,9 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         </button>
     ) : (
         <div className={`${styles.activePlayer}`}>
+            <div>
+                {cards}
+            </div>
             <div className={styles.pickedChip} onClick={handleBetChg}>
                 {PickedChip}
             </div>

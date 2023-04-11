@@ -42,7 +42,8 @@ export type GameActions = {
 };
 
 export interface GameRoomState {
-    shouldAskPlayers: boolean;
+    isGameStarted: boolean;
+    isShowingResults: boolean;
     gamePlayers: RoundPlayer[];
     presenterState: { cards: string[]; score: number[]; };
     askingState: CurrentlyAskingState | null;
@@ -50,7 +51,8 @@ export interface GameRoomState {
 }
 
 export const initialGameState: GameRoomState = {
-    shouldAskPlayers: false,
+    isGameStarted: false,
+    isShowingResults: false,
     gamePlayers: [],
     presenterState: { cards: [], score: [0] },
     askingState: null,
@@ -101,14 +103,14 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
                         };
                     })],
                 presenterState: { cards: [newPresenterCard], score: getCardValues(newPresenterCard) },
-                shouldAskPlayers: true,
+                isGameStarted: true,
                 cardsInPlay: [...mutableCardsInPlay],
             };
         }
         case GameActionKind.ASK_FOR_PLAYER_DECISION:
             return { ...state, askingState: action.payload };
         case GameActionKind.SWITCH_GAME_STATE:
-            return { ...state, shouldAskPlayers: !state.shouldAskPlayers };
+            return { ...state, isGameStarted: !state.isGameStarted };
         case GameActionKind.RESET_GAME:
             return { ...initialGameState };
         case GameActionKind.UPDATE_PLAYER_STATE:
@@ -194,10 +196,9 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
             };
             updatePresenterState(mutablePresenterState);
 
-            const newState = {
+            const newState: GameRoomState = {
                 ...state,
                 presenterState: mutablePresenterState,
-                shouldAskPlayers: false,
                 askingState: null,
                 gamePlayers: state.gamePlayers.map((player) => (
                     {
@@ -209,6 +210,7 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
                     }
                 )),
                 cardsInPlay: [...mutableCardsInGame],
+                isShowingResults: true,
             };
 
             const balanceToAdd = newState.gamePlayers.reduce((acc, player) => {

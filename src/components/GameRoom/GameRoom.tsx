@@ -23,14 +23,17 @@ const GameRoom: React.FC = () => {
     const [fundsToAdd, setFundsToAdd] = useState<number>(0);
 
     const stopGame = useCallback((funds: number) => {
-        dispatch({ type: PresenterActionKind.STOP_GAME });
         const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
         setBetsToUpdate(previouslyPlacedBets.map((bettingPlayer) =>
             ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
         setFundsToAdd(funds);
     }, [gameRoomState.playersSeats]);
 
-    const [setCurrentPlayers, currentPlayers, currentlyAsking] = useGameLogic(stopGame);
+    const resetGame = useCallback(() => {
+        dispatch({ type: PresenterActionKind.STOP_GAME });
+    }, []);
+
+    const [setCurrentPlayers, currentPlayers, currentlyAsking] = useGameLogic(stopGame, resetGame);
 
     const removeUserFromGame = useCallback((player: Player) => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
@@ -116,7 +119,7 @@ const GameRoom: React.FC = () => {
                 {gameRoomState.playersSeats.map((seat, index) => {
                     const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
                     const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
-                    const cards = isUserPlayerIndex !== -1 && gameRoomState.isGameStarted ? currentPlayers[isUserPlayerIndex].cards : [];
+                    const cards = isUserPlayerIndex !== -1 ? currentPlayers[isUserPlayerIndex].cards : [];
                     return (
                         <UserSeat
                     // eslint-disable-next-line react/no-array-index-key
