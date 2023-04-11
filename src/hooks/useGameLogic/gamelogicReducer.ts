@@ -77,8 +77,8 @@ function checkCardRules(
 }
 
 function pickNewCardFromDeck(deckRef: string[]): string {
-    const newCardIndex = getRandomInt(0, deckRef.length);
-    const chosenCard = deckRef.splice(newCardIndex, 1)[0];
+    const newCardIndex = getRandomInt(1, deckRef.length);
+    const chosenCard = deckRef.splice(newCardIndex - 1, 1)[0];
     return chosenCard;
 }
 

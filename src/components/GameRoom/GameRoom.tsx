@@ -116,7 +116,7 @@ const GameRoom: React.FC = () => {
                 {gameRoomState.playersSeats.map((seat, index) => {
                     const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
                     const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
-                    const cards = isUserPlayerIndex !== -1 ? currentPlayers[isUserPlayerIndex].cards : [];
+                    const cards = isUserPlayerIndex !== -1 && gameRoomState.isGameStarted ? currentPlayers[isUserPlayerIndex].cards : [];
                     return (
                         <UserSeat
                     // eslint-disable-next-line react/no-array-index-key
