@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useAppSelector } from "../../../hooks/reduxHooks";
 import { Player } from "../../../types/Player";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
@@ -18,37 +19,37 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
     const [canRepeat, setCanRepeat] = useState<boolean>(
         playerInformations.bet.currentBet === 0 &&
         playerInformations.bet.previousBet !== 0);
+    const { reservedBalance, balance: currentUserBalance } = useAppSelector(state => state.user);
+    const { currentBet, previousBet } = playerInformations.bet;
 
     const buttonHandler = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
         const betAmount = parseInt(event.currentTarget.id.split("-")[1], 10);
         if (betAmount > 0 && betAmount <= 1000 && !Number.isNaN(betAmount)) {
-            updateBet({ ...playerInformations, bet: { previousBet: playerInformations.bet.currentBet, currentBet: betAmount } });
+            updateBet({ ...playerInformations, bet: { previousBet: currentBet, currentBet: betAmount } });
         }
-    }, [playerInformations, updateBet]);
+    }, [currentBet, playerInformations, updateBet]);
 
     const handleSpecialBtn = useCallback(() => {
         if (canRepeat) {
             updateBet({
                 ...playerInformations,
-                bet: { previousBet: playerInformations.bet.currentBet, currentBet: playerInformations.bet.previousBet },
+                bet: { previousBet: currentBet, currentBet: previousBet },
             });
         } else {
             updateBet({
                 ...playerInformations,
-                bet: { previousBet: playerInformations.bet.currentBet, currentBet: 2 * playerInformations.bet.currentBet },
+                bet: { previousBet: currentBet, currentBet: 2 * currentBet },
             });
         }
-    }, [canRepeat, playerInformations, updateBet]);
+    }, [canRepeat, currentBet, playerInformations, previousBet, updateBet]);
 
     const handleUndoButton = useCallback(() => {
         undoHandler(playerInformations);
     }, [playerInformations, undoHandler]);
 
     useEffect(() => {
-        setCanRepeat((
-            playerInformations.bet.currentBet === 0 &&
-                playerInformations.bet.previousBet !== 0));
-    }, [playerInformations]);
+        setCanRepeat((currentBet === 0 && previousBet !== 0));
+    }, [currentBet, playerInformations, previousBet]);
 
     return (
         <div className={styles.overlayWrapper}>
@@ -81,7 +82,11 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                     <button
                         className={`${styles.specialBtn} ${canRepeat && styles.repeatBtnWrapper}`}
                         onClick={handleSpecialBtn}
-                        disabled={!playerInformations.bet.previousBet && !playerInformations.bet.currentBet}
+                        disabled={
+                            !previousBet && !currentBet
+                            || (reservedBalance + previousBet > currentUserBalance)
+                            || (reservedBalance + currentBet > currentUserBalance)
+                        }
                     >
                         {canRepeat ? (
                             <img

@@ -30,7 +30,7 @@ const GameRoom: React.FC = () => {
         setFundsToAdd(funds);
     }, [gameRoomState.playersSeats]);
 
-    const [setCurrentPlayers, gamePlayers, currentlyAsking, presenterScore] = useGameLogic(stopGame);
+    const [setCurrentPlayers, currentPlayers, currentlyAsking] = useGameLogic(stopGame);
 
     const removeUserFromGame = useCallback((player: Player) => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
@@ -77,8 +77,25 @@ const GameRoom: React.FC = () => {
         }
     }, [currentUserDispatch, gameRoomState.isGameStarted, gameRoomState.playersSeats, setCurrentPlayers]);
 
+    const decisionInterceptor = useCallback((theirIndex: number, decision: "hit" | "stand" | "doubleDown") => {
+        if (decision === "doubleDown") {
+            const doublingDownPlayer = currentPlayers[theirIndex];
+            dispatch({
+                type: PlayerActionKind.UPDATE_BET,
+                payload: {
+                    ...doublingDownPlayer,
+                    bet: {
+                        ...doublingDownPlayer.bet,
+                        currentBet: doublingDownPlayer.bet.currentBet * 2,
+                    },
+                },
+            });
+        }
+        currentlyAsking?.makeDecision(theirIndex, decision);
+    }, [currentPlayers, currentlyAsking]);
+
     useEffect(() => {
-        if (fundsToAdd > 0) {
+        if (fundsToAdd !== 0) {
             currentUserDispatch(addBalance(fundsToAdd));
             setFundsToAdd(0);
         }
@@ -140,14 +157,8 @@ const GameRoom: React.FC = () => {
 
             {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
                 <DecisionOverlay
-                    decisionCb={currentlyAsking.makeDecision}
+                    decisionCb={decisionInterceptor}
                     theirIndex={currentlyAsking.currentlyAsking.theirIndex}
-                    presenterScore={presenterScore}
-                    playerScore={
-                        gamePlayers.find(
-                            (player) => player.id === currentlyAsking.currentlyAsking.id &&
-                            player.seatNumber === currentlyAsking.currentlyAsking.seatNumber)?.cardsScore
-                        }
                     currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
                 />
             )}

@@ -1,6 +1,7 @@
 import { useCallback, useReducer } from "react";
+import { addBalance } from "../../App/userSlice";
 import { Player } from "../../types/Player";
-import { useAppSelector } from "../reduxHooks";
+import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import {
     CurrentlyAskingState,
     GameActionKind,
@@ -22,6 +23,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
     const [gameLogicState, dispatchLogicUpdate] = useReducer(gameLogicReducer, initialGameState);
     const { gamePlayers, askingState, shouldAskPlayers } = gameLogicState;
     const currentUserId = useAppSelector(state => state.user.id);
+    const dispatchUserAction = useAppDispatch();
 
     const setPlayersForGame = useCallback((players: Player[]) => {
         if (!shouldAskPlayers) {
@@ -39,6 +41,9 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
     }, [shouldAskPlayers]);
 
     const makeDecision = useCallback((playerToAskIndex: number, decision: "hit" | "stand" | "doubleDown") => {
+        if (decision === "doubleDown") {
+            dispatchUserAction(addBalance(-gamePlayers[playerToAskIndex].bet.currentBet));
+        }
         dispatchLogicUpdate({
             type: GameActionKind.UPDATE_PLAYER_STATE,
             payload: {
@@ -46,7 +51,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
                 decision,
             },
         });
-    }, []);
+    }, [dispatchUserAction, gamePlayers]);
 
     if (shouldAskPlayers && gamePlayers.length > 0) {
         const playerToAskIndex = gamePlayers.findIndex(

@@ -74,7 +74,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
             }
         </button>
     ) : (
-        <div className={`${styles.activePlayer} ${styles.seat}`}>
+        <div className={`${styles.activePlayer}`}>
             <div className={styles.pickedChip} onClick={handleBetChg}>
                 {PickedChip}
             </div>

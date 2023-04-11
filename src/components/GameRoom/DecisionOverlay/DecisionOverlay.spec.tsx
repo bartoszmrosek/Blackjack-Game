@@ -10,9 +10,7 @@ describe("Decision overlay", () => {
         const callbackMock = vi.fn();
         const { getAllByRole } = renderWithProviders(<DecisionOverlay
             decisionCb={callbackMock}
-            presenterScore={0}
             theirIndex={1}
-            playerScore={0}
             currentBet={0}
         />);
         const allButtons = getAllByRole("button");
@@ -22,26 +20,10 @@ describe("Decision overlay", () => {
         expect(callbackMock).toHaveBeenCalledWith(1, "stand");
         expect(callbackMock).toHaveBeenCalledWith(1, "hit");
     });
-    it("displays scores properly", () => {
-        const presenterScore = 0;
-        const playerScore = 10;
-
-        const { getByText } = renderWithProviders(<DecisionOverlay
-            decisionCb={defaultMock}
-            presenterScore={presenterScore}
-            theirIndex={1}
-            playerScore={playerScore}
-            currentBet={0}
-        />);
-        expect(getByText(`My score: ${playerScore}`)).toBeInTheDocument();
-        expect(getByText(`Presenter score: ${presenterScore}`)).toBeInTheDocument();
-    });
     it("blocks double down button if funds cannot afford it", () => {
         const { getByRole } = renderWithProviders(<DecisionOverlay
             decisionCb={defaultMock}
-            presenterScore={0}
             theirIndex={1}
-            playerScore={0}
             currentBet={100}
         />, {
             preloadedState: {
@@ -51,6 +33,6 @@ describe("Decision overlay", () => {
                 },
             },
         });
-        expect(getByRole("button", { name: "Doubledown" })).toBeDisabled();
+        expect(getByRole("button", { name: "2x" })).toBeDisabled();
     });
 });

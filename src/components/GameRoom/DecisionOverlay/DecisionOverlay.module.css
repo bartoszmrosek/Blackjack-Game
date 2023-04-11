@@ -10,6 +10,63 @@
     justify-content: center;
     align-items: center;
 
-    background-color: rgba(0,0,0, 0.4);
-    backdrop-filter: blur(3px);
+    background-color: rgba(0,0,0, 0.2);
+    color: rgba(255 , 255, 255, 0.8);
+}
+
+.buttonsWrapper{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    
+    padding: 2rem;
+}
+
+.singleButton{
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.singleButton > p {
+    line-height: 90%;
+}
+
+
+.singleButton[aria-disabled="true"]{
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.decisionBtn{
+    width: 5vw;
+    aspect-ratio: 1/1;
+    
+    border-radius: 50%;
+    border: 3px solid;
+    
+    font-size: 300%;
+    color: rgba(255 , 255, 255, 0.8);
+}
+
+.decisionBtn:hover{
+    filter: brightness(0.8);
+}
+
+.doubleDownBtn{
+    font-size: 150%;
+    border-color: #ff6a01;
+    background-color: rgba(255, 106, 1, 0.7);
+}
+
+.hitBtn{
+    border-color: #0cb54a;
+    background-color: rgba(12, 181, 74, 0.7);
+}
+
+.standBtn{
+    border-color: #f71b1a;
+    background-color: rgba(247, 27, 26, 0.7);
 }

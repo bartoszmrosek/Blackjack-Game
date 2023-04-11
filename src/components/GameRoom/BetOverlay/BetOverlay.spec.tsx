@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 import React from "react";
 import { fireEvent } from "@testing-library/react";
-import { renderWithProviders } from "../../../utils/test-utils";
+import { initialUserState, renderWithProviders } from "../../../utils/test-utils";
 import { Player } from "../../../types/Player";
 import { BetOverlay } from "./BetOverlay";
 import styles from "./BetOverlay.module.css";
@@ -53,6 +53,38 @@ describe("BetOverlay", () => {
                 },
             );
             expect(updateMock).toHaveBeenCalledTimes(1);
+        });
+        it("blocks repeat button when funds cannot afford it", () => {
+            const playerWithPreviousBet: Player = { ...testingPlayer, bet: { ...testingPlayer.bet, previousBet: 500 } };
+            const { getByAltText } = renderWithProviders(<BetOverlay
+                playerInformations={playerWithPreviousBet}
+                updateBet={defaultMock}
+                undoHandler={defaultMock}
+            />, {
+                preloadedState: {
+                    user: {
+                        ...initialUserState,
+                        balance: 50,
+                    },
+                },
+            });
+            expect(getByAltText("Repeat icon").parentElement).toBeDisabled();
+        });
+        it("blocks 2x button when funds cannot afford it", () => {
+            const playerWithCurrentBet: Player = { ...testingPlayer, bet: { ...testingPlayer.bet, currentBet: 500 } };
+            const { getByText } = renderWithProviders(<BetOverlay
+                playerInformations={playerWithCurrentBet}
+                updateBet={defaultMock}
+                undoHandler={defaultMock}
+            />, {
+                preloadedState: {
+                    user: {
+                        ...initialUserState,
+                        balance: 50,
+                    },
+                },
+            });
+            expect(getByText("2x").parentElement).toBeDisabled();
         });
     });
     it("handles all betting options", () => {

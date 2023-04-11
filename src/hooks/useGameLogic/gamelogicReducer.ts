@@ -1,5 +1,6 @@
 import { Player } from "../../types/Player";
 import { getRandomInt } from "../../utils/getRandomInt";
+import deck from "./cardDeck.json";
 
 export interface RoundPlayer extends Player {
     cards: number[];
@@ -43,6 +44,7 @@ export interface GameRoomState {
     gamePlayers: RoundPlayer[];
     presenterState: { cards: number[]; score: number; };
     askingState: CurrentlyAskingState | null;
+    cardsInPlay: string[];
 }
 
 export const initialGameState: GameRoomState = {
@@ -50,6 +52,7 @@ export const initialGameState: GameRoomState = {
     gamePlayers: [],
     presenterState: { cards: [], score: 0 },
     askingState: null,
+    cardsInPlay: deck.deck,
 };
 
 function checkCardRules(
@@ -119,7 +122,11 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
                             ...state.gamePlayers.slice(0, playerIndex),
                             {
                                 ...decidingPlayer,
-                                bet: { ...decidingPlayer.bet, currentBet: decidingPlayer.bet.currentBet * 2 },
+                                bet: {
+                                    ...decidingPlayer.bet,
+                                    currentBet: decidingPlayer.bet.currentBet * 2,
+                                    previousBet: decidingPlayer.bet.currentBet,
+                                },
                                 cards: [...decidingPlayer.cards, newCard],
                                 cardsScore: decidingPlayer.cardsScore + newCard,
                                 currentStatus: decidingPlayer.cardsScore + newCard > 21 ? "lost" : "playing",
@@ -172,9 +179,12 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
             };
 
             const balanceToAdd = newState.gamePlayers.reduce((acc, player) => {
+                let updatedBalance = acc;
                 if (player.id === action.payload.currentUserId &&
-                    player.currentStatus === "won") { return acc + player.bet.currentBet * 2; }
-                return acc;
+                    player.currentStatus === "won") {
+                    updatedBalance += player.bet.currentBet * 2;
+                }
+                return updatedBalance;
             }, 0);
             action.payload.resultsCb(balanceToAdd);
             return newState;
