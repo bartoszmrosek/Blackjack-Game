@@ -115,25 +115,28 @@ const GameRoom: React.FC = () => {
                     );
                 })}
             </div>
-            <div>
-                <p>User balance: {currentUser.balance}</p>
-                <p>
-                    <span>TOTAL BET</span>
-                    <span>
-                        {gameRoomState.playersSeats.reduce((acc, player) => {
-                            if (player !== "empty") {
-                                return player.bet.currentBet + acc;
-                            }
-                            return acc;
-                        }, 0)}
-                    </span>
-                </p>
-            </div>
+            <section className={styles.balanceInformations}>
+                <section className={styles.userBalance}>
+                    <h1 className={styles.balanceHeading}>BALANCE</h1>
+                    <p className={styles.balanceContent}>€ {currentUser.balance}</p>
+                </section>
+                <section className={styles.userAllBets}>
+                    <h1 className={styles.balanceHeading}>TOTAL BET</h1>
+                    <p className={styles.balanceContent}>
+                        € {gameRoomState.playersSeats.reduce((acc, player) => {
+                        if (player !== "empty") {
+                            return player.bet.currentBet + acc;
+                        }
+                        return acc;
+                    }, 0)}
+                    </p>
+                </section>
+            </section>
 
             {betsToUpdate.length > 0 &&
             !gameRoomState.isGameStarted &&
             currentUser.balance > 0 &&
-                <BetOverlay playerInformations={betsToUpdate} updateBet={updateBet} undoHandler={removeUserFromGame} />}
+                <BetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
 
             {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
                 <DecisionOverlay

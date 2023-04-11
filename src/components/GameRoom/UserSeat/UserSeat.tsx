@@ -39,8 +39,8 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
     }, [actions, isGameStarted, user]);
 
     const pickBetChip = useCallback(() => {
-        if (!isEmpty) {
-            const betValue = user.bet.currentBet;
+        const betValue = user.bet.currentBet;
+        if (betValue !== 0) {
             if (betValue < 5) {
                 return <PrimaryChip overWriteNumber={betValue} />;
             }
@@ -59,7 +59,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
             return <SenaryChip overWriteNumber={betValue} />;
         }
         return null;
-    }, [isEmpty, user.bet.currentBet]);
+    }, [user.bet.currentBet]);
     const PickedChip = pickBetChip();
 
     return isEmpty ? (
