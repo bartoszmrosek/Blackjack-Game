@@ -15,7 +15,7 @@ type UseGameLogicReturn = Readonly<
     (players: Player[]) => void,
     RoundPlayer[],
     CurrentlyAskingState | null,
-    number,
+    number[],
 ]
 >;
 
@@ -31,7 +31,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void): UseGameLogicReturn =
                 {
                     ...player,
                     cards: [],
-                    cardsScore: 0,
+                    cardsScore: [0],
                     currentStatus: "playing",
                     hasMadeFinalDecision: false,
                 }

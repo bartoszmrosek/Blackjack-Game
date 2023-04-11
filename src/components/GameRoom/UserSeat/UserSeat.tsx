@@ -19,9 +19,10 @@ interface UserSeatProps {
         userChgBet: (player: Player) => void;
     };
     isGameStarted: boolean;
+    cards?: string[];
 }
 
-const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted }) => {
+const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, cards = [] }) => {
     const currentUser = useAppSelector((state) => state.user);
 
     const handleJoin = useCallback(() => {
@@ -62,6 +63,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
     }, [user.bet.currentBet]);
     const PickedChip = pickBetChip();
 
+    if (false) { console.log(cards); }
     return isEmpty ? (
         <button
             onClick={handleJoin}
