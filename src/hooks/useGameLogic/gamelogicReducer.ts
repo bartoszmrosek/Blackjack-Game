@@ -75,6 +75,9 @@ function checkCardRules(
     if (doPlayerHasBlackjack) {
         return "blackjack";
     }
+    if (presenterScore > 21) {
+        return "won";
+    }
     if (Math.min(...player.score) < presenterScore) {
         return "lost";
     }
@@ -192,7 +195,7 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
             const updatePresenterState = (presenter: TableState["presenterState"]) => {
                 if (Math.min(...presenter.score) < 17) {
                     const newCard = pickNewCardFromDeck(mutableCardsInGame);
-                    mutablePresenterState.cards.push(newCard);
+                    mutablePresenterState.cards = [...mutablePresenterState.cards, newCard];
                     mutablePresenterState.score = getAllPermutations(mutablePresenterState.score, getCardValues(newCard));
                     updatePresenterState(presenter);
                 }

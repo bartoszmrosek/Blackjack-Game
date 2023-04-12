@@ -5,9 +5,9 @@ import { renderWithProviders } from "../../utils/test-utils";
 import { GameRoom } from "./GameRoom";
 
 describe("GameRoom", () => {
-    it("displays 7 buttons to join on first view", () => {
+    it("displays 5 buttons to join on first view", () => {
         const { getAllByRole } = renderWithProviders(<GameRoom />);
-        expect(getAllByRole("button", { name: "Join now" })).toHaveLength(7);
+        expect(getAllByRole("button", { name: "Join now" })).toHaveLength(5);
     });
     describe("handles all bets operations before game starts", () => {
         it("handles joining and leaving in not chronological order", () => {
