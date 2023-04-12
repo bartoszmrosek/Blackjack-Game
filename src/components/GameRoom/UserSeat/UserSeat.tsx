@@ -9,6 +9,7 @@ import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";
 import { SecondaryChip } from "../../ChipSvgs/SecondaryChip";
 import { SenaryChip } from "../../ChipSvgs/SenaryChip";
 import { TertiaryChip } from "../../ChipSvgs/TertiaryChip";
+import { StatusVisualizer } from "./StatusVisualizer/StatusVisualizer";
 import styles from "./UserSeat.module.css";
 
 interface UserSeatProps {
@@ -96,7 +97,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
                     ),
                     )}
                     <div className={styles.cardsInformations}>
-                        <span>{playerStatus.status}</span>
+                        <StatusVisualizer status={playerStatus.status} />
                         <span className={`${styles.cardsScore} ${isCurrentlyDeciding ? styles.scoreDeciding : null}`}>
                             {playerStatus.scorePermutations.filter((score, index) => {
                                 if (index === 0 || score < 21) { return true; }

@@ -20,6 +20,7 @@ describe("UserSeat", () => {
     describe("displays proper text based on props", () => {
         it("Seat is empty and game didn`t start yet", () => {
             const { getByRole } = renderWithProviders(<UserSeat
+                isCurrentlyDeciding={false}
                 seatId={1}
                 isEmpty={true}
                 isGameStarted={true}
@@ -30,6 +31,7 @@ describe("UserSeat", () => {
         });
         it("Seat is empty and game already started", () => {
             const { getByRole } = renderWithProviders(<UserSeat
+                isCurrentlyDeciding={true}
                 seatId={1}
                 isEmpty={true}
                 isGameStarted={false}
@@ -40,6 +42,7 @@ describe("UserSeat", () => {
         });
         it("Seat is not empty and it`s not current user", () => {
             const { getByText } = renderWithProviders(<UserSeat
+                isCurrentlyDeciding={false}
                 isEmpty={false}
                 seatId={1}
                 isGameStarted={false}
@@ -50,6 +53,7 @@ describe("UserSeat", () => {
         });
         it("Seat is not empty and it`s current user", () => {
             const { getByRole } = renderWithProviders(<UserSeat
+                isCurrentlyDeciding={true}
                 isEmpty={false}
                 seatId={1}
                 isGameStarted={false}
@@ -77,6 +81,7 @@ describe("UserSeat", () => {
                 userJoin: joinMock,
             };
             const { getByRole } = renderWithProviders(<UserSeat
+                isCurrentlyDeciding={false}
                 isEmpty={true}
                 isGameStarted={false}
                 seatId={1}
@@ -93,6 +98,7 @@ describe("UserSeat", () => {
                 userLeave: leaveMock,
             };
             const { getByRole } = renderWithProviders(<UserSeat
+                isCurrentlyDeciding={false}
                 isEmpty={false}
                 seatId={1}
                 isGameStarted={false}
@@ -113,6 +119,7 @@ describe("UserSeat", () => {
         });
         it("is disabled when no funds can be found", () => {
             const { getByRole } = renderWithProviders(<UserSeat
+                isCurrentlyDeciding={false}
                 isEmpty={true}
                 seatId={1}
                 isGameStarted={false}
