@@ -3,6 +3,9 @@ import { vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { UserSeat } from "./UserSeat";
 import { initialUserState, renderWithProviders } from "../../../utils/test-utils";
+import deck from "../../../cardDeck.json";
+import { getAllPermutations } from "../../../utils/getAllPermutations";
+import { getCardValues } from "../../../utils/getCardValues";
 
 const defaultMock = vi.fn();
 describe("UserSeat", () => {
@@ -117,7 +120,7 @@ describe("UserSeat", () => {
             fireEvent.click(getByRole("button", { name: "×" }));
             expect(leaveMock).toHaveBeenCalledWith({ ...testingUser, seatNumber: 1 });
         });
-        it("is disabled when no funds can be found", () => {
+        test("everything is disabled when no funds can be found", () => {
             const { getByRole } = renderWithProviders(<UserSeat
                 isCurrentlyDeciding={false}
                 isEmpty={true}
@@ -134,6 +137,26 @@ describe("UserSeat", () => {
                 },
             });
             expect(getByRole("button", { name: "No funds left" })).toBeDisabled();
+        });
+        it("displays proper cards and score on proper props", () => {
+            const twoPickedCards = [deck.deck[6], deck.deck[9]];
+            const testingPlayerStatus = {
+                cards: twoPickedCards,
+                status: "playing" as const,
+                scorePermutations: getAllPermutations(getCardValues(twoPickedCards[0]), getCardValues(twoPickedCards[1])),
+            };
+            const { getByAltText, getByText } = renderWithProviders(<UserSeat
+                isEmpty={false}
+                isGameStarted={true}
+                isCurrentlyDeciding={false}
+                seatId={1}
+                user={testingUser}
+                actions={testingActions}
+                playerStatus={testingPlayerStatus}
+            />);
+            expect(getByAltText(`Card ${twoPickedCards[0]}`)).toBeInTheDocument();
+            expect(getByAltText(`Card ${twoPickedCards[1]}`)).toBeInTheDocument();
+            expect(getByText(`${testingPlayerStatus.scorePermutations.join("/")}`)).toBeInTheDocument();
         });
     });
 });
