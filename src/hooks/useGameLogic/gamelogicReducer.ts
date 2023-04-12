@@ -2,7 +2,7 @@ import { Player } from "../../types/Player";
 import { getCardValues } from "../../utils/getCardValues";
 import { getAllPermutations } from "../../utils/getAllPermutations";
 import { getRandomInt } from "../../utils/getRandomInt";
-import deck from "./cardDeck.json";
+import deck from "../../cardDeck.json";
 
 export interface RoundPlayer extends Player {
     cards: string[];

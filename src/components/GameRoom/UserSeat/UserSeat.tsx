@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 import { RoundPlayer } from "../../../hooks/useGameLogic/gamelogicReducer";
 import { Player } from "../../../types/Player";
+import { CardsSpriteLoader } from "../../CardsSpriteLoader/CardsSpriteLoader";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
 import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";
@@ -24,7 +25,7 @@ interface UserSeatProps {
     status?: RoundPlayer["currentStatus"];
 }
 
-const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, cards = [], status = "playing" }) => {
+const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, cards = [], status }) => {
     const currentUser = useAppSelector((state) => state.user);
 
     const handleJoin = useCallback(() => {
@@ -78,8 +79,18 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         </button>
     ) : (
         <div className={`${styles.activePlayer}`}>
-            <div>
-                {cards}
+            <div className={styles.cardsWrapper}>
+                {cards.map((card, index) => (
+                    <CardsSpriteLoader
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={index}
+                        cardId={card}
+                        styles={{ transform: `translate(${index * 30}%, -${index * 30}%)` }}
+                        classNames={styles.singleCard}
+                    />
+                ),
+                )}
+
                 {status}
             </div>
             <div className={styles.pickedChip} onClick={handleBetChg}>

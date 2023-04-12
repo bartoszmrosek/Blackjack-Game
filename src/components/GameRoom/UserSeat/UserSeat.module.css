@@ -42,6 +42,19 @@
     font-size: 100%;
 }
 
+.cardsWrapper{
+    position: absolute;
+    top: -150%;
+
+    width: 100px;
+    height: 150px;
+}
+
+.singleCard{
+    position: absolute;
+    inset: 0;
+}
+
 .leaveBtn{
     width: 1.5rem;
     height: 1.5rem;

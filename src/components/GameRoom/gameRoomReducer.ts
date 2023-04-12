@@ -26,7 +26,7 @@ export interface GameRoomState {
 }
 
 export const initialRoomState: GameRoomState = {
-    playersSeats: ["empty", "empty", "empty", "empty", "empty", "empty", "empty"],
+    playersSeats: ["empty", "empty", "empty", "empty", "empty"],
     isGameStarted: false,
 };
 
