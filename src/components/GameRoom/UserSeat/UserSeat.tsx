@@ -13,6 +13,8 @@ import styles from "./UserSeat.module.css";
 
 interface UserSeatProps {
     isEmpty: boolean;
+    isGameStarted: boolean;
+    isCurrentlyDeciding: boolean;
     seatId: number;
     user: Player;
     actions: {
@@ -20,12 +22,14 @@ interface UserSeatProps {
         userLeave: (player: Player) => void;
         userChgBet: (player: Player) => void;
     };
-    isGameStarted: boolean;
-    cards?: string[];
-    status?: RoundPlayer["currentStatus"];
+    playerStatus?: {
+        cards: string[];
+        status: RoundPlayer["currentStatus"];
+        scorePermutations: number[];
+    };
 }
 
-const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, cards = [], status }) => {
+const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, playerStatus, isCurrentlyDeciding }) => {
     const currentUser = useAppSelector((state) => state.user);
 
     const handleJoin = useCallback(() => {
@@ -79,21 +83,29 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         </button>
     ) : (
         <div className={`${styles.activePlayer}`}>
-            <div className={styles.cardsWrapper}>
-                {cards.map((card, index) => (
-                    <CardsSpriteLoader
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={index}
-                        cardId={card}
-                        styles={{ transform: `translate(${index * 30}%, -${index * 30}%)` }}
-                        classNames={styles.singleCard}
-                    />
-                ),
-                )}
-
-                {status}
-            </div>
-            <div className={styles.pickedChip} onClick={handleBetChg}>
+            {playerStatus && (
+                <div className={styles.cardsWrapper}>
+                    {playerStatus.cards.map((card, index) => (
+                        <CardsSpriteLoader
+                    // eslint-disable-next-line react/no-array-index-key
+                            key={index}
+                            cardId={card}
+                            styles={{ transform: `translate(${index * 30}%, -${index * 30}%)` }}
+                            classNames={styles.singleCard}
+                        />
+                    ),
+                    )}
+                    <div className={styles.cardsInformations}>
+                        <span className={`${styles.cardsScore} ${isCurrentlyDeciding ? styles.scoreDeciding : null}`}>
+                            {playerStatus.scorePermutations.filter((score, index) => {
+                                if (index === 0 || score < 21) { return true; }
+                                return false;
+                            }).join("/")}
+                        </span>
+                    </div>
+                </div>
+            )}
+            <div className={`${styles.pickedChip} ${isCurrentlyDeciding ? styles.chipCurrentlyDeciding : null}`} onClick={handleBetChg}>
                 {PickedChip}
             </div>
             <div className={styles.playerWrapper}>

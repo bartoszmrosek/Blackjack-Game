@@ -116,14 +116,18 @@ const GameRoom: React.FC = () => {
                 {gameRoomState.playersSeats.map((seat, index) => {
                     const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
                     const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
-                    const cards = isUserPlayerIndex !== -1 ? currentPlayers[isUserPlayerIndex].cards : [];
-                    const playerStatus = isUserPlayerIndex !== -1 ? currentPlayers[isUserPlayerIndex].currentStatus : undefined;
+                    const playerStatus = isUserPlayerIndex !== -1 ? {
+                        cards: currentPlayers[isUserPlayerIndex].cards,
+                        status: currentPlayers[isUserPlayerIndex].currentStatus,
+                        scorePermutations: currentPlayers[isUserPlayerIndex].cardsScore,
+                    } : undefined;
                     return (
                         <UserSeat
                     // eslint-disable-next-line react/no-array-index-key
                             key={index}
                             isGameStarted={gameRoomState.isGameStarted}
                             isEmpty={seat === "empty"}
+                            isCurrentlyDeciding={currentlyAsking?.currentlyAsking.seatNumber === index}
                             seatId={index}
                             user={user}
                             actions={{
@@ -131,8 +135,7 @@ const GameRoom: React.FC = () => {
                                 userLeave: removeUserFromGame,
                                 userChgBet: addBetToUpdate,
                             }}
-                            cards={cards}
-                            status={playerStatus}
+                            playerStatus={playerStatus}
                         />
                     );
                 })}
