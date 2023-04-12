@@ -84,14 +84,14 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
     }
 
     useEffect(() => {
-        // let timer: NodeJS.Timeout;
-        // if (isShowingResults) {
-        //     timer = setTimeout(() => {
-        //         dispatchLogicUpdate({ type: GameActionKind.RESET_GAME });
-        //         resetGameCb();
-        //     }, 5000);
-        // }
-        // return () => clearTimeout(timer);
+        let timer: NodeJS.Timeout;
+        if (isShowingResults) {
+            timer = setTimeout(() => {
+                dispatchLogicUpdate({ type: GameActionKind.RESET_GAME });
+                resetGameCb();
+            }, 5000);
+        }
+        return () => clearTimeout(timer);
     }, [isShowingResults, resetGameCb]);
 
     return [setPlayersForGame, gamePlayers, askingState, gameLogicState.presenterState] as const;
