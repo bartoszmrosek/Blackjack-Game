@@ -3,12 +3,13 @@ import { getCardValues } from "../../utils/getCardValues";
 import { getAllPermutations } from "../../utils/getAllPermutations";
 import { getRandomInt } from "../../utils/getRandomInt";
 import deck from "../../cardDeck.json";
+import { PresenterState } from "../../types/PresenterState";
 
 export interface RoundPlayer extends Player {
     cards: string[];
     cardsScore: number[];
     hasMadeFinalDecision: boolean;
-    currentStatus: "won" | "lost" | "playing" | "blackjack";
+    currentStatus: "won" | "lost" | "playing" | "blackjack" | "bust";
 }
 
 export interface CurrentlyAskingState {
@@ -41,16 +42,16 @@ export type GameActions = {
     type: GameActionKind.RESET_GAME | GameActionKind.SWITCH_GAME_STATE;
 };
 
-export interface GameRoomState {
+export interface TableState {
     isGameStarted: boolean;
     isShowingResults: boolean;
     gamePlayers: RoundPlayer[];
-    presenterState: { cards: string[]; score: number[]; };
+    presenterState: PresenterState;
     askingState: CurrentlyAskingState | null;
     cardsInPlay: string[];
 }
 
-export const initialGameState: GameRoomState = {
+export const initialGameState: TableState = {
     isGameStarted: false,
     isShowingResults: false,
     gamePlayers: [],
@@ -62,14 +63,16 @@ export const initialGameState: GameRoomState = {
 function checkCardRules(
     player: { status: RoundPlayer["currentStatus"]; score: number[]; }, presenterScore: number,
 ): RoundPlayer["currentStatus"] {
-    if (player.status === "lost" || player.score.every((possibleScore) => possibleScore > 21)) {
+    if (player.status === "bust") { return "bust"; }
+    if (player.status === "lost"
+        || player.score.every((possibleScore) => possibleScore > 21)) {
         return "lost";
     }
-    const doPlayerHasBlackcjack = player.score.some((possibleScore) => possibleScore === 21);
-    if (presenterScore === 21 && !doPlayerHasBlackcjack) {
+    const doPlayerHasBlackjack = player.score.some((possibleScore) => possibleScore === 21);
+    if (presenterScore === 21 && !doPlayerHasBlackjack) {
         return "lost";
     }
-    if (doPlayerHasBlackcjack) {
+    if (doPlayerHasBlackjack) {
         return "blackjack";
     }
     if (Math.min(...player.score) < presenterScore) {
@@ -84,7 +87,7 @@ function pickNewCardFromDeck(deckRef: string[]): string {
     return chosenCard;
 }
 
-export function gameLogicReducer(state: GameRoomState, action: GameActions): GameRoomState {
+export function gameLogicReducer(state: TableState, action: GameActions): TableState {
     switch (action.type) {
         case GameActionKind.SET_GAME_PLAYERS:
         {
@@ -123,7 +126,7 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
                     const mutableCardsInPlay = [...state.cardsInPlay];
                     const newCard = pickNewCardFromDeck(mutableCardsInPlay);
                     const allScorePermutations = getAllPermutations(decidingPlayer.cardsScore, getCardValues(newCard));
-                    const didLost = allScorePermutations.every((possibleScore) => possibleScore > 21);
+                    const didBust = allScorePermutations.every((possibleScore) => possibleScore > 21);
                     return {
                         ...state,
                         gamePlayers: [
@@ -132,8 +135,8 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
                                 ...decidingPlayer,
                                 cards: [...decidingPlayer.cards, newCard],
                                 cardsScore: allScorePermutations,
-                                currentStatus: didLost ? "lost" : "playing",
-                                hasMadeFinalDecision: didLost,
+                                currentStatus: didBust ? "bust" : "playing",
+                                hasMadeFinalDecision: didBust,
                             },
                             ...state.gamePlayers.slice(playerIndex + 1),
                         ],
@@ -145,7 +148,7 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
                     const mutableCardsInPlay = [...state.cardsInPlay];
                     const newCard = pickNewCardFromDeck(mutableCardsInPlay);
                     const allScorePermutations = getAllPermutations(decidingPlayer.cardsScore, getCardValues(newCard));
-                    const didLost = allScorePermutations.every((possibleScore) => possibleScore > 21);
+                    const didBust = allScorePermutations.every((possibleScore) => possibleScore > 21);
                     return {
                         ...state,
                         gamePlayers: [
@@ -159,7 +162,7 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
                                 },
                                 cards: [...decidingPlayer.cards, newCard],
                                 cardsScore: allScorePermutations,
-                                currentStatus: didLost ? "lost" : "playing",
+                                currentStatus: didBust ? "bust" : "playing",
                                 hasMadeFinalDecision: true,
                             },
                             ...state.gamePlayers.slice(playerIndex + 1),
@@ -186,7 +189,7 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
         {
             const mutablePresenterState = { ...state.presenterState };
             const mutableCardsInGame = [...state.cardsInPlay];
-            const updatePresenterState = (presenter: GameRoomState["presenterState"]) => {
+            const updatePresenterState = (presenter: TableState["presenterState"]) => {
                 if (Math.min(...presenter.score) < 17) {
                     const newCard = pickNewCardFromDeck(mutableCardsInGame);
                     mutablePresenterState.cards.push(newCard);
@@ -196,7 +199,7 @@ export function gameLogicReducer(state: GameRoomState, action: GameActions): Gam
             };
             updatePresenterState(mutablePresenterState);
 
-            const newState: GameRoomState = {
+            const newState: TableState = {
                 ...state,
                 presenterState: mutablePresenterState,
                 askingState: null,

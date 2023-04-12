@@ -5,5 +5,6 @@ export function getAllPermutations(firstArr: number[], secondArr: number[]): num
             res.push(firstArrVal + secondArrVal);
         }
     }
-    return res;
+    const withRemoveDuplicates = [...new Set(res)];
+    return withRemoveDuplicates;
 }

@@ -14,6 +14,7 @@ import { BetOverlay } from "./BetOverlay/BetOverlay";
 import { Player } from "../../types/Player";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "./DecisionOverlay/DecisionOverlay";
+import { PresenterSection } from "./PresenterSection/PresenterSection";
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
@@ -48,7 +49,7 @@ const GameRoom: React.FC = () => {
         }
     }, [betsToUpdate, currentUser.balance, currentUser.id, removeUserFromGame]);
 
-    const [setCurrentPlayers, currentPlayers, currentlyAsking] = useGameLogic(stopGame, resetGame);
+    const [setCurrentPlayers, currentPlayers, currentlyAsking, presenterState] = useGameLogic(stopGame, resetGame);
 
     const addBetToUpdate = useCallback((player: Player) => {
         setBetsToUpdate(bets => [...bets, player]);
@@ -111,7 +112,7 @@ const GameRoom: React.FC = () => {
 
     return (
         <div className={styles.background}>
-            <button onClick={startGame} disabled={gameRoomState.isGameStarted}>Start game</button>
+            <PresenterSection presenter={presenterState} startGameCb={startGame} isGameStarted={gameRoomState.isGameStarted} />
             <div className={styles.userSeats}>
                 {gameRoomState.playersSeats.map((seat, index) => {
                     const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };

@@ -6,6 +6,7 @@ import {
     CurrentlyAskingState,
     GameActionKind,
     gameLogicReducer,
+    TableState,
     initialGameState,
     RoundPlayer,
 } from "./gamelogicReducer";
@@ -15,7 +16,7 @@ type UseGameLogicReturn = Readonly<
     (players: Player[]) => void,
     RoundPlayer[],
     CurrentlyAskingState | null,
-    number[],
+    TableState["presenterState"],
 ]
 >;
 
@@ -93,7 +94,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
         return () => clearTimeout(timer);
     }, [isShowingResults, resetGameCb]);
 
-    return [setPlayersForGame, gamePlayers, askingState, gameLogicState.presenterState.score] as const;
+    return [setPlayersForGame, gamePlayers, askingState, gameLogicState.presenterState] as const;
 };
 
 export { useGameLogic };

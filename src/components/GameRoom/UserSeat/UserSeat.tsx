@@ -96,6 +96,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
                     ),
                     )}
                     <div className={styles.cardsInformations}>
+                        <span>{playerStatus.status}</span>
                         <span className={`${styles.cardsScore} ${isCurrentlyDeciding ? styles.scoreDeciding : null}`}>
                             {playerStatus.scorePermutations.filter((score, index) => {
                                 if (index === 0 || score < 21) { return true; }
