@@ -11,7 +11,7 @@ interface PresenterSectionProps {
 
 const PresenterSection: React.FC<PresenterSectionProps> = ({ presenter, isGameStarted, startGameCb }) => {
     return (
-        <section className={styles.presenterContainer}>
+        <section className={styles.presenterContainer} data-testid="presenter-section">
             {!isGameStarted ? (
                 <button onClick={startGameCb} className={styles.startGameBtn}>Start game</button>
             ) : (
