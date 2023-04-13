@@ -1,10 +1,11 @@
 import { vi } from "vitest";
 import React from "react";
 import { fireEvent } from "@testing-library/react";
-import { initialUserState, renderWithProviders } from "../../../utils/test-utils";
+import { renderWithProviders } from "../../../utils/test-utils";
 import { Player } from "../../../types/Player";
 import { BetOverlay } from "./BetOverlay";
 import styles from "./BetOverlay.module.css";
+import { initialUserState } from "../../../App/userSlice";
 
 const defaultMock = vi.fn();
 const testingPlayer: Player = {

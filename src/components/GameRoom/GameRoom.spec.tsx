@@ -23,8 +23,12 @@ vi.mock("../../utils/getRandomInt", () => {
                     return 2;
                 case 48:
                     return 12;
-                default:
+                case 47:
                     return 1;
+                case 46:
+                    return 1;
+                default:
+                    return 6;
             }
         }),
     };
@@ -145,6 +149,13 @@ describe("GameRoom", () => {
                 expect(testingGlobalStore.getState()).toStrictEqual(
                     { user: { ...initialUserState, balance: initialUserState.balance - expectedNewTotalBets } },
                 );
+            });
+            it("if hit gets over 21 display proper status and go to next player", () => {
+                const hitBtn = screen.getByRole("button", { name: "+" });
+                fireEvent.click(hitBtn);
+                fireEvent.click(hitBtn);
+                expect(screen.getByAltText("User bust icon")).toBeInTheDocument();
+                expect(screen.getByTestId("is-deciding 4 true"));
             });
         });
     });
