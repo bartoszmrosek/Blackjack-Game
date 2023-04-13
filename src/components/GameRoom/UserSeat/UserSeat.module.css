@@ -1,0 +1,107 @@
+.activePlayer{
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+
+    position: relative;
+}
+
+.joinBtn{
+    padding: 1.5rem 1rem;
+    
+    background-color: rgba(0,0,0,0.4);
+    color: wheat;
+
+    border: 0;
+    box-shadow: inset 2px 2px 2px 2px rgba(0,0,0,0.3), inset -2px -2px 2px 2px rgba(0,0,0,0.3);
+
+    border-radius: 75%;
+}
+
+.pickedChip{
+    border-radius: 50%;
+    border: 1px solid yellow;
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    aspect-ratio: 1/1;
+}
+
+.playerWrapper{
+    display: inline-flex;
+    gap: 5px;
+}
+
+.playerName{
+    color: rgba(255,255,255,0.6);
+
+    font-size: 100%;
+}
+
+.cardsWrapper{
+    position: absolute;
+    top: -150%;
+
+    width: 100px;
+    height: 150px;
+}
+
+.singleCard{
+    position: absolute;
+    inset: 0;
+}
+
+.cardsInformations{
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.cardsScore{
+    font-size: large;
+
+    border-radius: 0.5rem;
+    border: 2px solid #b69755;
+
+    background-color: rgba(35, 36, 27, 0.8);
+    color: #b69755;
+
+    padding: 0.2rem 0.3rem;
+}
+
+.scoreDeciding{
+    background-color: rgb(226, 226, 0);
+    border: 0;
+    color: #342a01;
+}
+
+.chipCurrentlyDeciding{
+    border: 4px solid rgba(226, 226, 0);
+}
+
+.leaveBtn{
+    width: 1.5rem;
+    height: 1.5rem;
+    
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.4);
+
+    color: white;
+    background-color: rgba(0,0,0,0.3);
+
+    text-align: center;
+    font-size: 150%;
+    line-height: 100%;
+}
+
+.leaveBtn:hover{
+    filter: brightness(0.65);
+}

@@ -1,0 +1,40 @@
+.presenterContainer{
+    padding: 1rem;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    position: relative;
+}
+
+.presenterScore{
+    position: absolute;
+    top: 50%;
+
+    font-size: large;
+      
+    border-radius: 0.5rem;
+    border: 2px solid #b69755;
+      
+    background-color: rgba(35, 36, 27, 0.8);
+    color: #b69755;
+      
+    padding: 0.2rem 0.3rem;
+}
+
+.startGameBtn{
+    padding: 1rem;
+
+    border-radius: 1.5rem;
+    border: 0;
+
+    font-size: 130%;
+
+    color: wheat;
+    background-color: rgba(0,0,0,0.4);
+}

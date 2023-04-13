@@ -1,0 +1,52 @@
+
+.statusWrapper{
+    --bgColor: rgb(54, 66, 59);
+    --bgColorWithOpacity: rgba(54, 66, 59, 0.85);
+    --positiveMainColor: #eecb87;
+    --negativeMainColor: #bfc7cb;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.statusImg{
+    background-color: var(--bgColorWithOpacity);
+
+    padding: 0.5rem;
+
+    border-radius: 50%;
+    border: 2px solid;
+
+    width: 4.5rem;
+    aspect-ratio: 1/1;
+}
+
+.positiveStatus{
+    border-color: var(--positiveMainColor);
+    color: var(--positiveMainColor);
+}
+
+.negativeStatus{
+    border-color: var(--negativeMainColor);
+    color: var(--negativeMainColor);
+}
+
+.statusText{
+    background-color: var(--bgColor);
+
+    position: absolute;
+    top: 82.5%;
+    
+    font-size: 85%;
+    font-weight: 700;
+
+    border-radius: 0.5rem;
+
+    padding: 0.2rem;
+
+    text-align: center;
+}

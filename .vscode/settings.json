@@ -5,5 +5,7 @@
   "eslint.validate": ["javascript"],
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "editor.formatOnSave": false,
-  "editor.formatOnPaste": false
+  "editor.formatOnPaste": false,
+  "editor.maxTokenizationLineLength": 100000,
+  "vitest.commandLine": "yarn test",
 }

@@ -1,0 +1,124 @@
+.overlayWrapper{
+    position: absolute;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1%;
+
+    background-color: rgba(0,0,0,0.2);
+}
+
+.betButton{
+    border: 0;
+    background-color: transparent;
+    filter: drop-shadow(0 0 0.5rem black);
+
+    transition: 1s ease-in-out filter;
+}
+
+.betButton:hover{
+    filter: drop-shadow(0 0 0.5rem wheat);
+}
+
+.additionalTextWrapper{
+    height: 70px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.additionalText{
+    color: rgba(255,255,255, 0.7);
+
+    text-align: center;
+    font-size: 130%;
+}
+
+.undoButton{
+    border: 2px solid rgba(0,0,0,0.2);
+    border-radius: 50%;
+
+    width: 60px;
+    height: 60px;
+
+    background-color: rgba(0,0,0,0.4);
+}
+
+.specialBtn{
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+    background-color: white;
+    background-clip: content-box;
+
+    padding: 11px;
+
+    font-size: 110%;
+    color: rgba(255,50,50, 1);
+    border: 1px solid rgb(206, 68, 76);
+    box-shadow: inset 0 0 0 12px red;
+
+    
+    position: relative;
+}
+
+.specialBtn:disabled{
+    filter: brightness(0.65);
+    cursor: not-allowed;
+}
+
+.specialBtn:not(:disabled){
+    animation: borderBlinking 5s linear infinite;
+}
+
+.repeatBtnWrapper{
+    box-shadow: inset 0 0 0 30px rgb(206, 68, 76);
+    background-color: transparent;
+
+    animation: insideBlinking 5s linear infinite !important;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.repeatBtn{
+    filter: invert(88%) sepia(1%) saturate(2128%) hue-rotate(355deg) brightness(110%) contrast(109%);
+    background-color: transparent;
+}
+
+@keyframes borderBlinking {
+    0%, 100%{
+        box-shadow: inset 0 0 0 12px rgb(206, 68, 76);
+    }
+    50%{
+        box-shadow: inset 0 0 0 12px rgb(206, 68, 76, 0.2); 
+    }
+}
+
+@keyframes insideBlinking {
+    0%, 100%{
+        box-shadow: inset 0 0 0 30px rgb(206, 68, 76);
+    }
+    50%{
+        box-shadow: inset 0 0 0 30px rgb(206, 68, 76, 0.2);
+    }
+}
+
+.betOperations:nth-child(2) , .betOperations:nth-child(7){
+    transform: translate(0, -30%);
+}
+.betOperations:nth-child(3), .betOperations:nth-child(6){
+    transform: translate(0, -60%);
+}
+.betOperations:nth-child(4), .betOperations:nth-child(5){
+    transform: translate(0, -80%);
+}
