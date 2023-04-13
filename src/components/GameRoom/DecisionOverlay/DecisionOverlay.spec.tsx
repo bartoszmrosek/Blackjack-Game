@@ -1,7 +1,8 @@
 import { fireEvent } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { initialUserState, renderWithProviders } from "../../../utils/test-utils";
+import { initialUserState } from "../../../App/userSlice";
+import { renderWithProviders } from "../../../utils/test-utils";
 import { DecisionOverlay } from "./DecisionOverlay";
 
 const defaultMock = vi.fn();
