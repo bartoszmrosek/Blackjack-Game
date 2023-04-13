@@ -1,7 +1,8 @@
 {
   "name": "blackjack-game",
+  "author": "Bartosz Mrosek",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "Black jack game for Evolutions Engineering camp",
   "scripts": {
