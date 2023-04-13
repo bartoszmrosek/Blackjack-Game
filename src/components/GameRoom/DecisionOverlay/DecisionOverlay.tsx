@@ -54,7 +54,7 @@ const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBe
                         id="decision-stand"
                         onClick={makeDecision}
                         className={`${styles.decisionBtn} ${styles.standBtn}`}
-                    > &minus;
+                    >&minus;
                     </button>
                     <p>STAND</p>
                 </div>

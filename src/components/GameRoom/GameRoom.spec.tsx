@@ -2,10 +2,11 @@
 import { fireEvent } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { renderWithProviders } from "../../utils/test-utils";
+import { initialUserState, renderWithProviders } from "../../utils/test-utils";
 import { GameRoom } from "./GameRoom";
 import deck from "../../cardDeck.json";
 import { getCardValues } from "../../utils/getCardValues";
+import { setupStore } from "../../mainStore";
 
 vi.mock("../../utils/getRandomInt", () => {
     return {
@@ -18,15 +19,17 @@ vi.mock("../../utils/getRandomInt", () => {
                 case 50:
                     return 10;
                 case 49:
-                    return 5;
+                    return 2;
                 case 48:
                     return 12;
+                default:
+                    return 0;
             }
         }),
     };
 });
 
-const arrOfCards = [deck.deck[8], deck.deck[19], deck.deck[10], deck.deck[4], deck.deck[14]];
+const arrOfCards = [deck.deck[8], deck.deck[19], deck.deck[10], deck.deck[1], deck.deck[14]];
 describe("GameRoom", () => {
     afterEach(() => {
         vi.restoreAllMocks();
@@ -109,6 +112,68 @@ describe("GameRoom", () => {
                 expect(getByText(`${getCardValues(arrOfCards[1])[0] + getCardValues(arrOfCards[2])[0]}`)).toBeInTheDocument();
                 // check second player score
                 expect(getByText(`${getCardValues(arrOfCards[3])[0] + getCardValues(arrOfCards[4])[0]}`)).toBeInTheDocument();
+            });
+
+            it("removes bets value from player balance", () => {
+                const mockedStore = setupStore({ user: initialUserState });
+                const { getAllByRole, getByRole } = renderWithProviders(<GameRoom />, { store: mockedStore });
+                fireEvent.click(getAllByRole("button", { name: "Join now" })[0]);
+                fireEvent.click(document.getElementById("bet-25")!);
+                fireEvent.click(getByRole("button", { name: "Start game" }));
+                expect(mockedStore.getState()).toStrictEqual({ user: { ...initialUserState, balance: 975 } });
+            });
+        });
+        describe("implements game functionality properly", () => {
+            it("gets another card on hit button and waits for another decision", () => {
+                const { getAllByRole, getByRole, getByAltText, getByTestId } = renderWithProviders(<GameRoom />);
+                fireEvent.click(getAllByRole("button", { name: "Join now" })[0]);
+                fireEvent.click(document.getElementById("bet-25")!);
+                fireEvent.click(getByRole("button", { name: "Start game" }));
+                const hitBtn = getByRole("button", { name: "+" });
+                expect(getByTestId("is-deciding 0 true")).toBeInTheDocument();
+                fireEvent.click(hitBtn);
+                expect(getByAltText(`Card ${arrOfCards[3]}`)).toBeInTheDocument();
+                expect(getByTestId("is-deciding 0 true")).toBeInTheDocument();
+                expect(hitBtn).toBeInTheDocument();
+            });
+            it("on stand doesn`t do anything and goes to next player", () => {
+                const { getAllByRole, getByRole, getAllByAltText, getByTestId } = renderWithProviders(<GameRoom />);
+                const joiningBtns = getAllByRole("button", { name: "Join now" });
+                fireEvent.click(joiningBtns[0]);
+                fireEvent.click(document.getElementById("bet-25")!);
+                fireEvent.click(joiningBtns[1]);
+                fireEvent.click(document.getElementById("bet-5")!);
+                fireEvent.click(getByRole("button", { name: "Start game" }));
+                const standBtn = getByRole("button", { name: "−" });
+                expect(getByTestId("is-deciding 0 true")).toBeInTheDocument();
+                fireEvent.click(standBtn);
+                expect(getByTestId("is-deciding 0 false")).toBeInTheDocument();
+                expect(getByTestId("is-deciding 1 true")).toBeInTheDocument();
+                expect(getAllByAltText("Card", { exact: false })).toHaveLength(5);
+            });
+            it("on double down updates all balance related UI, draws new card and goes to next player", () => {
+                const mockedStore = setupStore({ user: initialUserState });
+                const {
+                    getAllByRole,
+                    getByRole,
+                    getAllByAltText,
+                    getByTestId,
+                    getByText,
+                } = renderWithProviders(<GameRoom />, { store: mockedStore });
+                const joiningBtns = getAllByRole("button", { name: "Join now" });
+                fireEvent.click(joiningBtns[0]);
+                fireEvent.click(document.getElementById("bet-25")!);
+                fireEvent.click(joiningBtns[1]);
+                fireEvent.click(document.getElementById("bet-5")!);
+                fireEvent.click(getByRole("button", { name: "Start game" }));
+                const doubleDownBtn = getByRole("button", { name: "2x" });
+                expect(getByTestId("is-deciding 0 true")).toBeInTheDocument();
+                fireEvent.click(doubleDownBtn);
+                expect(getByTestId("is-deciding 0 false")).toBeInTheDocument();
+                expect(getByTestId("is-deciding 1 true")).toBeInTheDocument();
+                expect(getAllByAltText("Card", { exact: false })).toHaveLength(6);
+                expect(getByText("€ 55")).toBeInTheDocument();
+                expect(mockedStore.getState()).toStrictEqual({ user: { ...initialUserState, balance: 945 } });
             });
         });
     });
