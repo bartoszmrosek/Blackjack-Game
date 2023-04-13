@@ -111,13 +111,9 @@ describe("GameRoom", () => {
                 expect(screen.getByText(`${getCardValues(arrOfCards[3])[0] + getCardValues(arrOfCards[4])[0]}`)).toBeInTheDocument();
             });
             it("removes bets value from player balance", () => {
-                cleanup();
-                const mockedStore = setupStore({ user: initialUserState });
-                const { getAllByRole, getByRole } = renderWithProviders(<GameRoom />, { store: mockedStore });
-                fireEvent.click(getAllByRole("button", { name: "Join now" })[0]);
-                fireEvent.click(document.getElementById("bet-25")!);
-                fireEvent.click(getByRole("button", { name: "Start game" }));
-                expect(mockedStore.getState()).toStrictEqual({ user: { ...initialUserState, balance: 975 } });
+                expect(testingGlobalStore.getState()).toStrictEqual(
+                    { user: { ...initialUserState, balance: initialUserState.balance - BET_VALUES[0] - BET_VALUES[1] } },
+                );
             });
         });
         describe("implements game functionality properly", () => {
