@@ -9,7 +9,7 @@ interface CurrentUserState {
     reservedBalance: number;
 }
 
-const initialState: CurrentUserState = {
+export const initialUserState: CurrentUserState = {
     id: "1",
     name: "Bartosz Mrosek",
     balance: 1000,
@@ -18,7 +18,7 @@ const initialState: CurrentUserState = {
 
 export const userSlice = createSlice({
     name: "user",
-    initialState,
+    initialState: () => initialUserState,
     reducers: {
         loginUser: (_state, action: PayloadAction<CurrentUserState>) => {
             return {
@@ -26,7 +26,7 @@ export const userSlice = createSlice({
             };
         },
         logoutUser: () => {
-            return { ...initialState };
+            return { ...initialUserState };
         },
         addBalance: (state, action: PayloadAction<number>) => {
             state.balance += action.payload;
@@ -41,10 +41,16 @@ export const userSlice = createSlice({
             state.balance -= state.reservedBalance;
             state.reservedBalance = 0;
         },
+        resetUserSlice: () => {
+            return { ...initialUserState };
+        },
     },
 });
 
-export const { loginUser, logoutUser, addBalance, gameFundReservation, addReservedBalance, removeReservedBalance } = userSlice.actions;
+export const {
+    loginUser, logoutUser, addBalance, gameFundReservation, addReservedBalance, removeReservedBalance,
+    resetUserSlice,
+} = userSlice.actions;
 
 export const selectUser = (state: RootState): CurrentUserState => state.user;
 

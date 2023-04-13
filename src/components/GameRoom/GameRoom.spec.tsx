@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { fireEvent } from "@testing-library/react";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { initialUserState, renderWithProviders } from "../../utils/test-utils";
+import { renderWithProviders } from "../../utils/test-utils";
 import { GameRoom } from "./GameRoom";
 import deck from "../../cardDeck.json";
 import { getCardValues } from "../../utils/getCardValues";
 import { setupStore } from "../../mainStore";
+import { initialUserState, resetUserSlice } from "../../App/userSlice";
 
 vi.mock("../../utils/getRandomInt", () => {
     return {
@@ -23,7 +24,7 @@ vi.mock("../../utils/getRandomInt", () => {
                 case 48:
                     return 12;
                 default:
-                    return 0;
+                    return 1;
             }
         }),
     };
@@ -31,90 +32,86 @@ vi.mock("../../utils/getRandomInt", () => {
 
 const arrOfCards = [deck.deck[8], deck.deck[19], deck.deck[10], deck.deck[1], deck.deck[14]];
 describe("GameRoom", () => {
-    afterEach(() => {
-        vi.restoreAllMocks();
+    const BET_VALUES = [100, 25];
+    const testingGlobalStore = setupStore({ user: initialUserState });
+    beforeEach(() => {
+        renderWithProviders(<GameRoom />, { store: testingGlobalStore });
+        const joiningBtns = screen.getAllByRole("button", { name: "Join now" });
+        fireEvent.click(joiningBtns[4]);
+        fireEvent.click(document.getElementById(`bet-${BET_VALUES[0]}`)!);
+        fireEvent.click(joiningBtns[1]);
+        fireEvent.click(document.getElementById(`bet-${BET_VALUES[1]}`)!);
+        return () => {
+            testingGlobalStore.dispatch(resetUserSlice());
+        };
     });
     it("displays 5 buttons to join on first view", () => {
+        cleanup();
         const { getAllByRole } = renderWithProviders(<GameRoom />);
         expect(getAllByRole("button", { name: "Join now" })).toHaveLength(5);
     });
 
-    describe("handles all bets operations before game starts", () => {
-        it("handles joining and leaving in not chronological order", () => {
-            const { getAllByRole, getByText } = renderWithProviders(<GameRoom />);
-            const joiningButtons = getAllByRole("button", { name: "Join now" });
-            fireEvent.click(joiningButtons[4]);
-            fireEvent.click(document.getElementById("bet-100")!);
-            fireEvent.click(joiningButtons[1]);
-            fireEvent.click(document.getElementById("bet-25")!);
-            expect(getByText((content, element) => {
-                return element?.tagName.toLowerCase() === "tspan" && content === "100";
-            })).toBeInTheDocument();
-            expect(getByText("25")).toBeInTheDocument();
-            const leavingButtons = getAllByRole("button", { name: "×" });
-            leavingButtons.forEach((btn) => fireEvent.click(btn));
-            expect(leavingButtons[0]).not.toBeInTheDocument();
-            expect(leavingButtons[1]).not.toBeInTheDocument();
+    describe("user joining and leaving potential game", () => {
+        it("should show bet for 1 seat", () => {
+            expect(screen.getByText(`${BET_VALUES[0]}`)).toBeInTheDocument();
         });
-        it("handles bet change on click", () => {
-            const { getByText, getAllByRole } = renderWithProviders(<GameRoom />);
-            const joiningButtons = getAllByRole("button", { name: "Join now" });
-            fireEvent.click(joiningButtons[2]);
+        test("should show bet for 4 seats", () => {
+            const moreJoiningBtns = screen.getAllByRole("button", { name: "Join now" });
+            fireEvent.click(moreJoiningBtns[0]);
+            fireEvent.click(document.getElementById("bet-10")!);
+            fireEvent.click(moreJoiningBtns[1]);
+            fireEvent.click(document.getElementById("bet-5")!);
+
+            [...BET_VALUES, 10, 5].forEach((bet) => {
+                expect(screen.getByText(`${bet}`)).toBeInTheDocument();
+            });
+        });
+        it("removes user on leave", () => {
+            const leavingBtns = screen.getAllByRole("button", { name: "×" });
+            fireEvent.click(leavingBtns[0]);
+            expect(leavingBtns[0]).not.toBeInTheDocument();
+            expect(leavingBtns[1]).toBeInTheDocument();
+        });
+    });
+
+    describe("handles all bets operations before game starts", () => {
+        test("handles bet change on click", () => {
+            fireEvent.click(screen.getByText(`${BET_VALUES[0]}`));
             fireEvent.click(document.getElementById("bet-100")!);
-            fireEvent.click(getByText((content, element) => {
-                return element?.tagName.toLowerCase() === "tspan" && content === "100";
-            }));
-            fireEvent.click(document.getElementById("bet-25")!);
-            expect(getByText((content, element) => {
-                return element?.tagName.toLowerCase() === "tspan" && content === "25";
-            })).toBeInTheDocument();
-            expect(getByText("€ 25")).toBeInTheDocument();
+            expect(screen.getByText("100")).toBeInTheDocument();
         });
         describe("handles total bets displaying", () => {
-            it("displays all placed bets in total bets section", () => {
-                const { getAllByRole, getByText } = renderWithProviders(<GameRoom />);
-                const joiningBtns = getAllByRole("button", { name: "Join now" });
-                fireEvent.click(joiningBtns[0]);
-                fireEvent.click(document.getElementById("bet-1")!);
-                fireEvent.click(joiningBtns[1]);
-                fireEvent.click(document.getElementById("bet-5")!);
-                expect(getByText("€ 6")).toBeInTheDocument();
+            it("should display total bets placed", () => {
+                expect(screen.getByText(`€ ${BET_VALUES[0] + BET_VALUES[1]}`)).toBeInTheDocument();
             });
             it("updates total bets section on player leave", () => {
-                const { getAllByRole, getByText, getByRole } = renderWithProviders(<GameRoom />);
-                const joiningBtns = getAllByRole("button", { name: "Join now" });
-                fireEvent.click(joiningBtns[0]);
-                fireEvent.click(document.getElementById("bet-1")!);
-                expect(getByText("€ 1")).toBeInTheDocument();
-                fireEvent.click(getByRole("button", { name: "×" }));
-                expect(getByText("€ 0")).toBeInTheDocument();
+                fireEvent.click(screen.getAllByRole("button", { name: "×" })[0]);
+                expect(screen.getByText(`€ ${BET_VALUES[0]}`)).toBeInTheDocument();
             });
         });
     });
+
     describe("handles game flow properly", () => {
+        beforeEach(() => {
+            fireEvent.click(screen.getByRole("button", { name: "Start game" }));
+        });
         describe("handles starting procedure properly", () => {
             it("draws 2 cards for each player and one for presenter", () => {
-                const { getByAltText, getByRole, getAllByRole, getByTestId, getByText } = renderWithProviders(<GameRoom />);
-                const joiningBtns = getAllByRole("button", { name: "Join now" });
-                fireEvent.click(joiningBtns[0]);
-                fireEvent.click(document.getElementById("bet-5")!);
-                fireEvent.click(joiningBtns[1]);
-                fireEvent.click(document.getElementById("bet-1")!);
-                fireEvent.click(getByRole("button", { name: "Start game" }));
                 arrOfCards.forEach((cardId) => {
-                    expect(getByAltText(`Card ${cardId}`)).toBeInTheDocument();
+                    expect(screen.getByAltText(`Card ${cardId}`)).toBeInTheDocument();
                 });
-                const presenterSection = getByTestId("presenter-section");
-                expect(presenterSection.childNodes[0].childNodes[0]).toHaveProperty("alt", `Card ${arrOfCards[0]}`);
-                // checks if presenter score is properly displayed
-                expect(getByText(`${getCardValues(arrOfCards[0])[0]}`)).toBeInTheDocument();
-                // check first player score
-                expect(getByText(`${getCardValues(arrOfCards[1])[0] + getCardValues(arrOfCards[2])[0]}`)).toBeInTheDocument();
-                // check second player score
-                expect(getByText(`${getCardValues(arrOfCards[3])[0] + getCardValues(arrOfCards[4])[0]}`)).toBeInTheDocument();
             });
-
+            it("should display presenter score properly", () => {
+                const presenterSection = screen.getByTestId("presenter-section");
+                expect(presenterSection.childNodes[0].childNodes[0]).toHaveProperty("alt", `Card ${arrOfCards[0]}`);
+                expect(screen.getByText(`${getCardValues(arrOfCards[0])[0]}`)).toBeInTheDocument();
+            });
+            it("should display players scores properly", () => {
+                expect(screen.getByText(`${getCardValues(arrOfCards[1])[0] + getCardValues(arrOfCards[2])[0]}`)).toBeInTheDocument();
+                expect(screen.getByText(`${getCardValues(arrOfCards[3])[0] + getCardValues(arrOfCards[4])[0]}`)).toBeInTheDocument();
+            });
             it("removes bets value from player balance", () => {
+                cleanup();
                 const mockedStore = setupStore({ user: initialUserState });
                 const { getAllByRole, getByRole } = renderWithProviders(<GameRoom />, { store: mockedStore });
                 fireEvent.click(getAllByRole("button", { name: "Join now" })[0]);
@@ -125,55 +122,33 @@ describe("GameRoom", () => {
         });
         describe("implements game functionality properly", () => {
             it("gets another card on hit button and waits for another decision", () => {
-                const { getAllByRole, getByRole, getByAltText, getByTestId } = renderWithProviders(<GameRoom />);
-                fireEvent.click(getAllByRole("button", { name: "Join now" })[0]);
-                fireEvent.click(document.getElementById("bet-25")!);
-                fireEvent.click(getByRole("button", { name: "Start game" }));
-                const hitBtn = getByRole("button", { name: "+" });
-                expect(getByTestId("is-deciding 0 true")).toBeInTheDocument();
+                const hitBtn = screen.getByRole("button", { name: "+" });
                 fireEvent.click(hitBtn);
-                expect(getByAltText(`Card ${arrOfCards[3]}`)).toBeInTheDocument();
-                expect(getByTestId("is-deciding 0 true")).toBeInTheDocument();
-                expect(hitBtn).toBeInTheDocument();
+                expect(screen.getByAltText(`Card ${deck.deck[0]}`)).toBeInTheDocument();
+                expect(screen.getByTestId("is-deciding 1 true")).toBeInTheDocument();
             });
             it("on stand doesn`t do anything and goes to next player", () => {
-                const { getAllByRole, getByRole, getAllByAltText, getByTestId } = renderWithProviders(<GameRoom />);
-                const joiningBtns = getAllByRole("button", { name: "Join now" });
-                fireEvent.click(joiningBtns[0]);
-                fireEvent.click(document.getElementById("bet-25")!);
-                fireEvent.click(joiningBtns[1]);
-                fireEvent.click(document.getElementById("bet-5")!);
-                fireEvent.click(getByRole("button", { name: "Start game" }));
-                const standBtn = getByRole("button", { name: "−" });
-                expect(getByTestId("is-deciding 0 true")).toBeInTheDocument();
+                const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
-                expect(getByTestId("is-deciding 0 false")).toBeInTheDocument();
-                expect(getByTestId("is-deciding 1 true")).toBeInTheDocument();
-                expect(getAllByAltText("Card", { exact: false })).toHaveLength(5);
+                expect(screen.getByTestId("is-deciding 1 false")).toBeInTheDocument();
+                expect(screen.getByTestId("is-deciding 4 true")).toBeInTheDocument();
+                expect(screen.getAllByAltText("Card", { exact: false })).toHaveLength(5);
             });
-            it("on double down updates all balance related UI, draws new card and goes to next player", () => {
-                const mockedStore = setupStore({ user: initialUserState });
-                const {
-                    getAllByRole,
-                    getByRole,
-                    getAllByAltText,
-                    getByTestId,
-                    getByText,
-                } = renderWithProviders(<GameRoom />, { store: mockedStore });
-                const joiningBtns = getAllByRole("button", { name: "Join now" });
-                fireEvent.click(joiningBtns[0]);
-                fireEvent.click(document.getElementById("bet-25")!);
-                fireEvent.click(joiningBtns[1]);
-                fireEvent.click(document.getElementById("bet-5")!);
-                fireEvent.click(getByRole("button", { name: "Start game" }));
-                const doubleDownBtn = getByRole("button", { name: "2x" });
-                expect(getByTestId("is-deciding 0 true")).toBeInTheDocument();
+            it("on double down draws new card and goes to next player", () => {
+                const doubleDownBtn = screen.getByRole("button", { name: "2x" });
                 fireEvent.click(doubleDownBtn);
-                expect(getByTestId("is-deciding 0 false")).toBeInTheDocument();
-                expect(getByTestId("is-deciding 1 true")).toBeInTheDocument();
-                expect(getAllByAltText("Card", { exact: false })).toHaveLength(6);
-                expect(getByText("€ 55")).toBeInTheDocument();
-                expect(mockedStore.getState()).toStrictEqual({ user: { ...initialUserState, balance: 945 } });
+                expect(screen.getAllByAltText("Card", { exact: false })).toHaveLength(6);
+                expect(screen.getByTestId("is-deciding 1 false")).toBeInTheDocument();
+                expect(screen.getByTestId("is-deciding 4 true")).toBeInTheDocument();
+            });
+            it("on double down updates user global balance", () => {
+                const doubleDownBtn = screen.getByRole("button", { name: "2x" });
+                fireEvent.click(doubleDownBtn);
+                const expectedNewTotalBets = BET_VALUES[1] * 2 + BET_VALUES[0];
+                expect(screen.getByText(`€ ${expectedNewTotalBets}`)).toBeInTheDocument();
+                expect(testingGlobalStore.getState()).toStrictEqual(
+                    { user: { ...initialUserState, balance: initialUserState.balance - expectedNewTotalBets } },
+                );
             });
         });
     });

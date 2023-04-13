@@ -10,13 +10,6 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
     store?: AppStore;
 }
 
-export const initialUserState = {
-    id: "1",
-    name: "Test",
-    balance: 1000,
-    reservedBalance: 0,
-};
-
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function renderWithProviders(
     ui: React.ReactElement,

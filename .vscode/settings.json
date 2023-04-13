@@ -7,5 +7,5 @@
   "editor.formatOnSave": false,
   "editor.formatOnPaste": false,
   "editor.maxTokenizationLineLength": 100000,
-  "vitest.commandLine": "yarn test --",
+  "vitest.commandLine": "yarn test",
 }
