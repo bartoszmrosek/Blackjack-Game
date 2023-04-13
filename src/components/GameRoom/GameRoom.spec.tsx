@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { cleanup, fireEvent, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, screen, within } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
 import { renderWithProviders } from "../../utils/test-utils";
@@ -28,17 +28,18 @@ vi.mock("../../utils/getRandomInt", () => {
                 case 46:
                     return 1;
                 default:
-                    return 6;
+                    return 2;
             }
         }),
     };
 });
 
-const arrOfCards = [deck.deck[8], deck.deck[19], deck.deck[10], deck.deck[1], deck.deck[14]];
+const CARDS_IN_PLAY = [deck.deck[8], deck.deck[19], deck.deck[10], deck.deck[1], deck.deck[14]];
 describe("GameRoom", () => {
     const BET_VALUES = [100, 25];
     const testingGlobalStore = setupStore({ user: initialUserState });
     beforeEach(() => {
+        vi.useFakeTimers();
         renderWithProviders(<GameRoom />, { store: testingGlobalStore });
         const joiningBtns = screen.getAllByRole("button", { name: "Join now" });
         fireEvent.click(joiningBtns[4]);
@@ -46,6 +47,7 @@ describe("GameRoom", () => {
         fireEvent.click(joiningBtns[1]);
         fireEvent.click(document.getElementById(`bet-${BET_VALUES[1]}`)!);
         return () => {
+            vi.useRealTimers();
             testingGlobalStore.dispatch(resetUserSlice());
         };
     });
@@ -101,18 +103,27 @@ describe("GameRoom", () => {
         });
         describe("handles starting procedure properly", () => {
             it("draws 2 cards for each player and one for presenter", () => {
-                arrOfCards.forEach((cardId) => {
+                CARDS_IN_PLAY.forEach((cardId) => {
                     expect(screen.getByAltText(`Card ${cardId}`)).toBeInTheDocument();
                 });
             });
             it("should display presenter score properly", () => {
-                const presenterSection = screen.getByTestId("presenter-section");
-                expect(presenterSection.childNodes[0].childNodes[0]).toHaveProperty("alt", `Card ${arrOfCards[0]}`);
-                expect(screen.getByText(`${getCardValues(arrOfCards[0])[0]}`)).toBeInTheDocument();
+                const presenterCard = within(screen.getByTestId("presenter-section")).getByAltText(`Card ${CARDS_IN_PLAY[0]}`);
+                const presenterCardValues = getCardValues(CARDS_IN_PLAY[0]);
+                expect(presenterCard).toBeInTheDocument();
+                expect(screen.getByText(`${presenterCardValues[0]}`)).toBeInTheDocument();
             });
             it("should display players scores properly", () => {
-                expect(screen.getByText(`${getCardValues(arrOfCards[1])[0] + getCardValues(arrOfCards[2])[0]}`)).toBeInTheDocument();
-                expect(screen.getByText(`${getCardValues(arrOfCards[3])[0] + getCardValues(arrOfCards[4])[0]}`)).toBeInTheDocument();
+                const firstPlayerCards = [CARDS_IN_PLAY[1], CARDS_IN_PLAY[2]];
+                const secondPlayerCards = [CARDS_IN_PLAY[3], CARDS_IN_PLAY[4]];
+                const firstPlayerScore = firstPlayerCards.reduce((acc, card) => {
+                    return acc + getCardValues(card)[0];
+                }, 0);
+                const secondPlayerScore = secondPlayerCards.reduce((acc, card) => {
+                    return acc + getCardValues(card)[0];
+                }, 0);
+                expect(screen.getByText(`${firstPlayerScore}`)).toBeInTheDocument();
+                expect(screen.getByText(`${secondPlayerScore}`)).toBeInTheDocument();
             });
             it("removes bets value from player balance", () => {
                 expect(testingGlobalStore.getState()).toStrictEqual(
@@ -150,12 +161,46 @@ describe("GameRoom", () => {
                     { user: { ...initialUserState, balance: initialUserState.balance - expectedNewTotalBets } },
                 );
             });
-            it("if hit gets over 21 display proper status and go to next player", () => {
+        });
+        describe("implements game rules properly", () => {
+            it("if hit gets over 21 display bust status and go to next player", () => {
                 const hitBtn = screen.getByRole("button", { name: "+" });
                 fireEvent.click(hitBtn);
                 fireEvent.click(hitBtn);
                 expect(screen.getByAltText("User bust icon")).toBeInTheDocument();
                 expect(screen.getByTestId("is-deciding 4 true"));
+            });
+            it("if player score > presenter score display win status", () => {
+                const hitBtn = screen.getByRole("button", { name: "+" });
+                fireEvent.click(hitBtn);
+                const standBtn = screen.getByRole("button", { name: "−" });
+                fireEvent.click(standBtn);
+                fireEvent.click(standBtn);
+                expect(screen.getByAltText("User won icon")).toBeInTheDocument();
+            });
+            it("if player score < presenter score display lost status", () => {
+                const hitBtn = screen.getByRole("button", { name: "+" });
+                fireEvent.click(hitBtn);
+                const standBtn = screen.getByRole("button", { name: "−" });
+                fireEvent.click(standBtn);
+                fireEvent.click(standBtn);
+                expect(screen.getByAltText("User lost icon")).toBeInTheDocument();
+            });
+        });
+        describe("handles game ending events", () => {
+            beforeEach(() => {
+                const standBtn = screen.getByRole("button", { name: "−" });
+                fireEvent.click(standBtn);
+                fireEvent.click(standBtn);
+                act(() => {
+                    vi.advanceTimersToNextTimer();
+                });
+            });
+            it("should restart game after some time", () => {
+                expect(screen.getByRole("button", { name: "Start game" })).toBeInTheDocument();
+            });
+            it("takes all players to update bets on reset", () => {
+                expect(screen.getByText("REPEAT")).toBeInTheDocument();
             });
         });
     });

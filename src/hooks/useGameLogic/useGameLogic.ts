@@ -93,7 +93,6 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
         }
         return () => clearTimeout(timer);
     }, [isShowingResults, resetGameCb]);
-
     return [setPlayersForGame, gamePlayers, askingState, gameLogicState.presenterState] as const;
 };
 

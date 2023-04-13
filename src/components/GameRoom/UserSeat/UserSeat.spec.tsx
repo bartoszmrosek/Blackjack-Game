@@ -2,10 +2,11 @@ import React from "react";
 import { vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
 import { UserSeat } from "./UserSeat";
-import { initialUserState, renderWithProviders } from "../../../utils/test-utils";
+import { renderWithProviders } from "../../../utils/test-utils";
 import deck from "../../../cardDeck.json";
 import { getAllPermutations } from "../../../utils/getAllPermutations";
 import { getCardValues } from "../../../utils/getCardValues";
+import { initialUserState } from "../../../App/userSlice";
 
 const defaultMock = vi.fn();
 describe("UserSeat", () => {
