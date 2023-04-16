@@ -1,16 +1,9 @@
-import { Player } from "../../types/Player";
 import { getCardValues } from "../../utils/getCardValues";
 import { getAllPermutations } from "../../utils/getAllPermutations";
 import { getRandomInt } from "../../utils/getRandomInt";
 import deck from "../../cardDeck.json";
 import { PresenterState } from "../../types/PresenterState";
-
-export interface RoundPlayer extends Player {
-    cards: string[];
-    cardsScore: number[];
-    hasMadeFinalDecision: boolean;
-    currentStatus: "won" | "lost" | "playing" | "blackjack" | "bust" | "push";
-}
+import { RoundPlayer } from "../../types/RoundPlayer";
 
 export interface CurrentlyAskingState {
     currentlyAsking: Pick<RoundPlayer, "id" | "seatNumber" | "cardsScore" | "bet"> & { theirIndex: number; };

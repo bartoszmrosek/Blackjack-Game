@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { RoundPlayer } from "../../../hooks/useGameLogic/gameLogicReducer";
 import { Player } from "../../../types/Player";
+import { RoundPlayer } from "../../../types/RoundPlayer";
 import { CardsSpriteLoader } from "../../CardsSpriteLoader/CardsSpriteLoader";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
