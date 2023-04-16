@@ -85,7 +85,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
     ) : (
         <div className={`${styles.activePlayer}`}>
             {playerStatus && (
-                <div className={styles.cardsWrapper}>
+                <div className={styles.cardsWrapper} data-testid={`cards-for-${seatId}`}>
                     {playerStatus.cards.map((card, index) => (
                         <CardsSpriteLoader
                     // eslint-disable-next-line react/no-array-index-key

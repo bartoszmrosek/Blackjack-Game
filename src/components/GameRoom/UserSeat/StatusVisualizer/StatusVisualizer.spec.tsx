@@ -23,4 +23,9 @@ describe("StatusVisualizer", () => {
         expect(getByAltText("User bust icon")).toBeInTheDocument();
         expect(getByText("BUST")).toBeInTheDocument();
     });
+    it("displays push logo on push status", () => {
+        const { getByAltText, getByText } = render(<StatusVisualizer status="push" />);
+        expect(getByAltText("User push icon")).toBeInTheDocument();
+        expect(getByText("PUSH")).toBeInTheDocument();
+    });
 });

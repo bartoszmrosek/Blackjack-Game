@@ -206,7 +206,7 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
                     const newScore = getAllPermutations(mutablePresenterState.score, getCardValues(newCard));
                     mutablePresenterState.cards = [...mutablePresenterState.cards, newCard];
                     mutablePresenterState.score = newScore;
-                    if (iteration === 0 && Math.min(...newScore) === 21) {
+                    if (iteration === 0 && Math.max(...newScore) === 21) {
                         mutablePresenterState.didGetBlackjack = true;
                     }
                     updatePresenterState(presenter, iteration + 1);
@@ -233,7 +233,7 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
 
             const balanceToAdd = newState.gamePlayers.reduce((acc, player) => {
                 let updatedBalance = acc;
-                if (player.currentStatus === "won") {
+                if (player.currentStatus === "won" || player.currentStatus === "blackjack") {
                     updatedBalance += player.bet.currentBet * 2;
                 }
                 if (player.currentStatus === "push") {

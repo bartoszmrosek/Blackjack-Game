@@ -52,6 +52,17 @@ const StatusVisualizer: React.FC<StatusVisualizerProps> = ({ status }) => {
                     <span className={`${styles.statusText} ${styles.negativeStatus}`}>LOSE</span>
                 </div>
             );
+        case "push":
+            return (
+                <div className={styles.statusWrapper}>
+                    <img
+                        src="./Graphics/StatusIcons/pushIcon.svg"
+                        className={`${styles.statusImg} ${styles.positiveStatus}`}
+                        alt={`User ${status} icon`}
+                    />
+                    <span className={`${styles.statusText} ${styles.positiveStatus}`}>PUSH</span>
+                </div>
+            );
     }
 
     return null;
