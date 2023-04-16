@@ -59,7 +59,7 @@ function checkCardRules(
     if (player.status === "bust" || player.status === "lost") {
         return player.status;
     }
-    const acceptableScores = player.score.filter((score) => score < 21);
+    const acceptableScores = player.score.filter((score) => score < 22);
     if (acceptableScores.length === 0) {
         return "lost";
     }
