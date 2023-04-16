@@ -48,6 +48,8 @@
 
     width: 100px;
     height: 150px;
+
+    isolation: isolate;
 }
 
 .singleCard{
