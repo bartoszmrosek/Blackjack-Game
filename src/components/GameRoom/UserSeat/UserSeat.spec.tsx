@@ -21,6 +21,11 @@ describe("UserSeat", () => {
         userLeave: defaultMock,
         userChgBet: defaultMock,
     };
+    const testingPlayerStatus = {
+        cards: [],
+        status: "playing" as const,
+        scorePermutations: [0],
+    };
     describe("displays proper text based on props", () => {
         it("Seat is empty and game didn`t start yet", () => {
             const { getByRole } = renderWithProviders(<UserSeat
@@ -30,6 +35,7 @@ describe("UserSeat", () => {
                 isGameStarted={true}
                 user={testingUser}
                 actions={testingActions}
+                playerStatus={testingPlayerStatus}
             />);
             expect(getByRole("button", { name: "Join in next round" })).toBeInTheDocument();
         });
@@ -41,6 +47,7 @@ describe("UserSeat", () => {
                 isGameStarted={false}
                 user={testingUser}
                 actions={testingActions}
+                playerStatus={testingPlayerStatus}
             />);
             expect(getByRole("button", { name: "Join now" })).toBeInTheDocument();
         });
@@ -52,6 +59,7 @@ describe("UserSeat", () => {
                 isGameStarted={false}
                 user={testingUser}
                 actions={testingActions}
+                playerStatus={testingPlayerStatus}
             />);
             expect(getByText(`${testingUser.name}`)).toBeInTheDocument();
         });
@@ -63,6 +71,7 @@ describe("UserSeat", () => {
                 isGameStarted={false}
                 user={testingUser}
                 actions={testingActions}
+                playerStatus={testingPlayerStatus}
             />,
             {
                 preloadedState: {
@@ -91,6 +100,7 @@ describe("UserSeat", () => {
                 seatId={1}
                 user={testingUser}
                 actions={mockedActions}
+                playerStatus={testingPlayerStatus}
             />);
             fireEvent.click(getByRole("button", { name: "Join now" }));
             expect(joinMock).toHaveBeenCalledWith(1);
@@ -108,6 +118,7 @@ describe("UserSeat", () => {
                 isGameStarted={false}
                 user={testingUser}
                 actions={mockedActions}
+                playerStatus={testingPlayerStatus}
             />, {
                 preloadedState: {
                     user: {
@@ -129,6 +140,7 @@ describe("UserSeat", () => {
                 isGameStarted={false}
                 user={testingUser}
                 actions={testingActions}
+                playerStatus={testingPlayerStatus}
             />, {
                 preloadedState: {
                     user: {
@@ -141,7 +153,7 @@ describe("UserSeat", () => {
         });
         it("displays proper cards and score on proper props", () => {
             const twoPickedCards = [deck.deck[6], deck.deck[9]];
-            const testingPlayerStatus = {
+            const playerStatusWithCards = {
                 cards: twoPickedCards,
                 status: "playing" as const,
                 scorePermutations: getAllPermutations(getCardValues(twoPickedCards[0]), getCardValues(twoPickedCards[1])),
@@ -153,11 +165,11 @@ describe("UserSeat", () => {
                 seatId={1}
                 user={testingUser}
                 actions={testingActions}
-                playerStatus={testingPlayerStatus}
+                playerStatus={playerStatusWithCards}
             />);
             expect(getByAltText(`Card ${twoPickedCards[0]}`)).toBeInTheDocument();
             expect(getByAltText(`Card ${twoPickedCards[1]}`)).toBeInTheDocument();
-            expect(getByText(`${testingPlayerStatus.scorePermutations.join("/")}`)).toBeInTheDocument();
+            expect(getByText(`${playerStatusWithCards.scorePermutations.join("/")}`)).toBeInTheDocument();
         });
     });
 });
