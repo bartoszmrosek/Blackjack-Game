@@ -59,8 +59,8 @@ function checkCardRules(
     if (player.status === "bust" || player.status === "lost") {
         return player.status;
     }
-    const lowestUserScore = Math.min(...player.score);
-    if (lowestUserScore > 21) {
+    const acceptableScores = player.score.filter((score) => score < 21);
+    if (acceptableScores.length === 0) {
         return "lost";
     }
     if (presenterScore === "blackjack") {
@@ -73,10 +73,11 @@ function checkCardRules(
     if (presenterScore > 21) {
         return "won";
     }
-    if (lowestUserScore === presenterScore) {
+    const heighestUserScore = Math.max(...acceptableScores);
+    if (heighestUserScore === presenterScore) {
         return "push";
     }
-    if (lowestUserScore < presenterScore) {
+    if (heighestUserScore < presenterScore) {
         return "lost";
     }
     return "won";
