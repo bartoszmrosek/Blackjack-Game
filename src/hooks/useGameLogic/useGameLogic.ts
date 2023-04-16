@@ -9,7 +9,7 @@ import {
     gameLogicReducer,
     TableState,
     initialGameState,
-} from "./gameLogicReducer.js";
+} from "./gameLogicReducer";
 
 type UseGameLogicReturn = Readonly<
 [
