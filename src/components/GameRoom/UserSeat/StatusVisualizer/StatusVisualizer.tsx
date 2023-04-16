@@ -1,5 +1,5 @@
 import React from "react";
-import { RoundPlayer } from "../../../../hooks/useGameLogic/gamelogicReducer";
+import { RoundPlayer } from "../../../../types/RoundPlayer";
 import styles from "./StatusVisualizer.module.css";
 
 interface StatusVisualizerProps {
@@ -50,6 +50,17 @@ const StatusVisualizer: React.FC<StatusVisualizerProps> = ({ status }) => {
                         alt={`User ${status} icon`}
                     />
                     <span className={`${styles.statusText} ${styles.negativeStatus}`}>LOSE</span>
+                </div>
+            );
+        case "push":
+            return (
+                <div className={styles.statusWrapper}>
+                    <img
+                        src="./Graphics/StatusIcons/pushIcon.svg"
+                        className={`${styles.statusImg} ${styles.positiveStatus}`}
+                        alt={`User ${status} icon`}
+                    />
+                    <span className={`${styles.statusText} ${styles.positiveStatus}`}>PUSH</span>
                 </div>
             );
     }

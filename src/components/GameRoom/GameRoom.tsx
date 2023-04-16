@@ -115,13 +115,14 @@ const GameRoom: React.FC = () => {
             <PresenterSection presenter={presenterState} startGameCb={startGame} isGameStarted={gameRoomState.isGameStarted} />
             <div className={styles.userSeats}>
                 {gameRoomState.playersSeats.map((seat, index) => {
-                    const user = seat !== "empty" ? seat : { name: "", id: "", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
+                    const user = seat !== "empty" ? seat :
+                        { name: "empty", id: "empty", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
                     const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
                     const playerStatus = isUserPlayerIndex !== -1 ? {
                         cards: currentPlayers[isUserPlayerIndex].cards,
                         status: currentPlayers[isUserPlayerIndex].currentStatus,
                         scorePermutations: currentPlayers[isUserPlayerIndex].cardsScore,
-                    } : undefined;
+                    } : null;
                     return (
                         <UserSeat
                     // eslint-disable-next-line react/no-array-index-key

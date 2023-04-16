@@ -11,6 +11,7 @@ const testingCard = deck.deck[9];
 const mockedPresenter: PresenterState = {
     cards: [testingCard],
     score: getCardValues(testingCard),
+    didGetBlackjack: false,
 };
 describe("PresenterSection", () => {
     it("fires callback when game is not started and button is clicked", () => {

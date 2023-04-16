@@ -2,7 +2,7 @@ export function getCardValues(card: string): number[] {
     const value = card.split("-")[1];
     switch (value) {
         case "A":
-            return [1, 10];
+            return [1, 11];
         case "K":
             return [10];
         case "J":
