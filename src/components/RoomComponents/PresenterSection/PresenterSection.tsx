@@ -22,7 +22,7 @@ const PresenterSection: React.FC<PresenterSectionProps> = ({ presenter, isGameSt
                     )}
                     <div className={styles.presenterScore}>
                         {presenter.score.filter((score, index) => {
-                            if (index === 0 || score < 21) { return true; }
+                            if (index === 0 || score < 22) { return true; }
                             return false;
                         }).join("/")}
                     </div>

@@ -9,6 +9,7 @@ import { getCardValues } from "../../utils/getCardValues";
 import { setupStore } from "../../mainStore";
 import { initialUserState, resetUserSlice } from "../../App/userSlice";
 import * as randomInt from "../../utils/getRandomInt";
+import { getAllPermutations } from "../../utils/getAllPermutations";
 
 vi.mock("../../utils/getRandomInt", () => {
     return {
@@ -113,15 +114,13 @@ describe("GameRoom", () => {
                 expect(screen.getByText(`${presenterCardValues.join("/")}`)).toBeInTheDocument();
             });
             it("should display players scores properly", () => {
-                const firstPlayerCards = [CARDS_IN_PLAY[1], CARDS_IN_PLAY[2]];
+                const firstPlayerCardsValues = [getCardValues(CARDS_IN_PLAY[1]), getCardValues(CARDS_IN_PLAY[2])];
                 const secondPlayerCards = [CARDS_IN_PLAY[3], CARDS_IN_PLAY[4]];
-                const firstPlayerScore = firstPlayerCards.reduce((acc, card) => {
-                    return acc + getCardValues(card)[0];
-                }, 0);
+                const firstPlayerScore = getAllPermutations(firstPlayerCardsValues[0], firstPlayerCardsValues[1]);
                 const secondPlayerScore = secondPlayerCards.reduce((acc, card) => {
                     return acc + getCardValues(card)[0];
                 }, 0);
-                expect(screen.getByText(`${firstPlayerScore}`)).toBeInTheDocument();
+                expect(screen.getByText(`${firstPlayerScore.join("/")}`)).toBeInTheDocument();
                 expect(screen.getByText(`${secondPlayerScore}`)).toBeInTheDocument();
             });
             it("removes bets value from player balance", () => {

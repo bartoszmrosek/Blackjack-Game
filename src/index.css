@@ -1,5 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -22,10 +23,14 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+
+  font-family: 'Lora', serif;
 }
 
 button{
   cursor: pointer;
+
+  font-family: inherit;
 }
 
 .svgChipText{
@@ -34,7 +39,7 @@ button{
   font-variant-ligatures:normal;
   font-variant-numeric:normal;
   mix-blend-mode:normal;
-  shape-inside:url(#rect68330-4);
+  shape-inside: url(#rect68330-4);
   white-space:pre;
   text-align: center;
 }

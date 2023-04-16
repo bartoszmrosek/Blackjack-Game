@@ -1,0 +1,15 @@
+.goBackBtn{
+    position: absolute;
+    inset: 1rem;
+
+    height: max(6%, 4rem);
+    aspect-ratio: 1/1;
+
+    background-color: transparent;
+    border: 0;
+}
+
+.goBackBtn > img{
+    width: 100%;
+    height: 100%;
+}

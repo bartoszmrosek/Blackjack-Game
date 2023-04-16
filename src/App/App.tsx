@@ -1,11 +1,29 @@
 import React from "react";
-import { GameRoom } from "../components/GameRoom/GameRoom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RoomLoader } from "../components/RoomComponents/RoomLoader/RoomLoader";
+import { Credits } from "../pages/Credits/Credits";
+import { Home } from "../pages/Home/Home";
 import "./App.module.css";
+
+const GameRoom = React.lazy(() => import("../pages/GameRoom/GameRoom").then(module => ({ default: module.GameRoom })));
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <Home />,
+    },
+    {
+        path: "/room",
+        element: <React.Suspense fallback={<RoomLoader />}><GameRoom /></React.Suspense>,
+    },
+    {
+        path: "/credits",
+        element: <Credits />,
+    },
+], { basename: "/Blackjack-Game" });
 
 export const App: React.FC = () => {
     return (
-        <main>
-            <GameRoom />
-        </main>
+        <RouterProvider router={router} />
     );
 };

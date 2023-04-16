@@ -103,7 +103,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
                             data-testid={`is-deciding ${user.seatNumber} ${isCurrentlyDeciding}`}
                         >
                             {playerStatus.scorePermutations.filter((score, index) => {
-                                if (index === 0 || score < 21) { return true; }
+                                if (index === 0 || score <= 21) { return true; }
                                 return false;
                             }).join("/")}
                         </span>
