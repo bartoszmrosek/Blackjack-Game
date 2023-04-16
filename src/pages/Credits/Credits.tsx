@@ -1,4 +1,5 @@
 import React from "react";
+import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
 import styles from "./Credits.module.css";
 
 const Credits: React.FC = () => {
@@ -37,6 +38,7 @@ const Credits: React.FC = () => {
                     </a>
                 </p>
             </section>
+            <GoBackButton />
         </main>
     );
 };

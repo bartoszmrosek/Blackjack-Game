@@ -15,6 +15,7 @@ import { Player } from "../../types/Player";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
+import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
@@ -172,6 +173,7 @@ const GameRoom: React.FC = () => {
                     currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
                 />
             )}
+            <GoBackButton />
         </main>
     );
 };
