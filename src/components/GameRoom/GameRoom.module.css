@@ -3,6 +3,19 @@
     width: 100vw;
     height: 100vh;
     
+    background-image: repeating-radial-gradient(
+        circle at -10% 50%,
+        rgba(33, 71, 35, 0.7),
+        rgba(22, 66, 25, 0.7) 15px
+      ),
+      linear-gradient(
+        90deg,
+        #388E3C 0%,
+        #9cc79e 50%,
+        #388E3C 100%
+      );
+    background-attachment: fixed;
+
     position: relative;
 }
 
