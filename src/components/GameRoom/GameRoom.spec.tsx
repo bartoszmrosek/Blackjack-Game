@@ -25,10 +25,8 @@ vi.mock("../../utils/getRandomInt", () => {
                     return 12;
                 case 47:
                     return 1;
-                case 46:
-                    return 1;
                 default:
-                    return 2;
+                    return 1;
             }
         }),
     };
@@ -186,6 +184,14 @@ describe("GameRoom", () => {
                 fireEvent.click(standBtn);
                 expect(screen.getByAltText("User lost icon")).toBeInTheDocument();
             });
+            it.todo("if player score === presenter score display push status", () => {
+
+            });
+            it.todo("if player score === 21 and has only 2 cards display blackjack", () => {
+
+            });
+            it.todo("if presenter has blackjack and player does not display lost");
+            it.todo("if player and presenter have blackjack display push");
         });
         describe("handles game ending events", () => {
             beforeEach(() => {

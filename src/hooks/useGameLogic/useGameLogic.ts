@@ -9,7 +9,7 @@ import {
     TableState,
     initialGameState,
     RoundPlayer,
-} from "./gamelogicReducer";
+} from "./gameLogicReducer";
 
 type UseGameLogicReturn = Readonly<
 [

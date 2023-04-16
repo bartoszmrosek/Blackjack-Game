@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { RoundPlayer } from "../../../hooks/useGameLogic/gamelogicReducer";
+import { RoundPlayer } from "../../../hooks/useGameLogic/gameLogicReducer";
 import { Player } from "../../../types/Player";
 import { CardsSpriteLoader } from "../../CardsSpriteLoader/CardsSpriteLoader";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
@@ -23,11 +23,11 @@ interface UserSeatProps {
         userLeave: (player: Player) => void;
         userChgBet: (player: Player) => void;
     };
-    playerStatus?: {
+    playerStatus: {
         cards: string[];
         status: RoundPlayer["currentStatus"];
         scorePermutations: number[];
-    };
+    } | null;
 }
 
 const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, playerStatus, isCurrentlyDeciding }) => {

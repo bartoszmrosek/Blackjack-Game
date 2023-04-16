@@ -1,5 +1,5 @@
 import React from "react";
-import { RoundPlayer } from "../../../../hooks/useGameLogic/gamelogicReducer";
+import { RoundPlayer } from "../../../../hooks/useGameLogic/gameLogicReducer";
 import styles from "./StatusVisualizer.module.css";
 
 interface StatusVisualizerProps {

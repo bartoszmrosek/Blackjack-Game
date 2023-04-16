@@ -9,7 +9,7 @@ export interface RoundPlayer extends Player {
     cards: string[];
     cardsScore: number[];
     hasMadeFinalDecision: boolean;
-    currentStatus: "won" | "lost" | "playing" | "blackjack" | "bust";
+    currentStatus: "won" | "lost" | "playing" | "blackjack" | "bust" | "push";
 }
 
 export interface CurrentlyAskingState {
@@ -55,30 +55,35 @@ export const initialGameState: TableState = {
     isGameStarted: false,
     isShowingResults: false,
     gamePlayers: [],
-    presenterState: { cards: [], score: [0] },
+    presenterState: { cards: [], score: [0], didGetBlackjack: false },
     askingState: null,
     cardsInPlay: deck.deck,
 };
 
 function checkCardRules(
-    player: { status: RoundPlayer["currentStatus"]; score: number[]; }, presenterScore: number,
+    player: { status: RoundPlayer["currentStatus"]; score: number[]; }, presenterScore: number | "blackjack",
 ): RoundPlayer["currentStatus"] {
-    if (player.status === "bust") { return "bust"; }
-    if (player.status === "lost"
-        || player.score.every((possibleScore) => possibleScore > 21)) {
+    if (player.status === "bust" || player.status === "lost") {
+        return player.status;
+    }
+    const lowestUserScore = Math.min(...player.score);
+    if (lowestUserScore > 21) {
         return "lost";
     }
-    const doPlayerHasBlackjack = player.score.some((possibleScore) => possibleScore === 21);
-    if (presenterScore === 21 && !doPlayerHasBlackjack) {
+    if (presenterScore === "blackjack") {
+        if (player.status === "blackjack") { return "push"; }
         return "lost";
     }
-    if (doPlayerHasBlackjack) {
-        return "blackjack";
+    if (player.status === "blackjack") {
+        return player.status;
     }
     if (presenterScore > 21) {
         return "won";
     }
-    if (Math.min(...player.score) < presenterScore) {
+    if (lowestUserScore === presenterScore) {
+        return "push";
+    }
+    if (lowestUserScore < presenterScore) {
         return "lost";
     }
     return "won";
@@ -102,13 +107,16 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
                     ...action.payload.map((newPlayer) => {
                         const firstCard = pickNewCardFromDeck(mutableCardsInPlay);
                         const secondCard = pickNewCardFromDeck(mutableCardsInPlay);
+                        const startingPlayerScore = getAllPermutations(getCardValues(firstCard), getCardValues(secondCard));
                         return {
                             ...newPlayer,
                             cards: [firstCard, secondCard],
-                            cardsScore: getAllPermutations(getCardValues(firstCard), getCardValues(secondCard)),
-                        };
+                            cardsScore: startingPlayerScore,
+                            currentStatus:
+                            Math.max(...startingPlayerScore) === 21 ? "blackjack" : "playing",
+                        } satisfies RoundPlayer;
                     })],
-                presenterState: { cards: [newPresenterCard], score: getCardValues(newPresenterCard) },
+                presenterState: { cards: [newPresenterCard], score: getCardValues(newPresenterCard), didGetBlackjack: false },
                 isGameStarted: true,
                 cardsInPlay: [...mutableCardsInPlay],
             };
@@ -192,15 +200,19 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
         {
             const mutablePresenterState = { ...state.presenterState };
             const mutableCardsInGame = [...state.cardsInPlay];
-            const updatePresenterState = (presenter: TableState["presenterState"]) => {
-                if (Math.min(...presenter.score) < 17) {
+            const updatePresenterState = (presenter: TableState["presenterState"], iteration: number) => {
+                if (!presenter.didGetBlackjack && Math.min(...presenter.score) < 17) {
                     const newCard = pickNewCardFromDeck(mutableCardsInGame);
+                    const newScore = getAllPermutations(mutablePresenterState.score, getCardValues(newCard));
                     mutablePresenterState.cards = [...mutablePresenterState.cards, newCard];
-                    mutablePresenterState.score = getAllPermutations(mutablePresenterState.score, getCardValues(newCard));
-                    updatePresenterState(presenter);
+                    mutablePresenterState.score = newScore;
+                    if (iteration === 0 && Math.min(...newScore) === 21) {
+                        mutablePresenterState.didGetBlackjack = true;
+                    }
+                    updatePresenterState(presenter, iteration + 1);
                 }
             };
-            updatePresenterState(mutablePresenterState);
+            updatePresenterState(mutablePresenterState, 0);
 
             const newState: TableState = {
                 ...state,
@@ -211,7 +223,7 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
                         ...player,
                         currentStatus: checkCardRules(
                             { status: player.currentStatus, score: player.cardsScore },
-                            Math.min(...mutablePresenterState.score),
+                            mutablePresenterState.didGetBlackjack ? "blackjack" : Math.min(...mutablePresenterState.score),
                         ),
                     }
                 )),
@@ -221,9 +233,11 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
 
             const balanceToAdd = newState.gamePlayers.reduce((acc, player) => {
                 let updatedBalance = acc;
-                if (player.id === action.payload.currentUserId &&
-                    player.currentStatus === "won") {
+                if (player.currentStatus === "won") {
                     updatedBalance += player.bet.currentBet * 2;
+                }
+                if (player.currentStatus === "push") {
+                    updatedBalance += player.bet.currentBet;
                 }
                 return updatedBalance;
             }, 0);
