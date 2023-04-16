@@ -7,14 +7,14 @@ import {
     selectUser,
 } from "../../App/userSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { UserSeat } from "./UserSeat/UserSeat";
+import { UserSeat } from "../../components/RoomComponents/UserSeat/UserSeat";
 import styles from "./GameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
-import { BetOverlay } from "./BetOverlay/BetOverlay";
+import { BetOverlay } from "../../components/RoomComponents/BetOverlay/BetOverlay";
 import { Player } from "../../types/Player";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
-import { DecisionOverlay } from "./DecisionOverlay/DecisionOverlay";
-import { PresenterSection } from "./PresenterSection/PresenterSection";
+import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
+import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
@@ -111,7 +111,7 @@ const GameRoom: React.FC = () => {
     }, [currentUserDispatch, fundsToAdd]);
 
     return (
-        <div className={styles.background}>
+        <main className={styles.background}>
             <PresenterSection presenter={presenterState} startGameCb={startGame} isGameStarted={gameRoomState.isGameStarted} />
             <div className={styles.userSeats}>
                 {gameRoomState.playersSeats.map((seat, index) => {
@@ -172,7 +172,7 @@ const GameRoom: React.FC = () => {
                     currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
                 />
             )}
-        </div>
+        </main>
     );
 };
 

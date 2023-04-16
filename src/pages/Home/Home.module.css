@@ -1,0 +1,57 @@
+.homeBackground{
+    background-image: repeating-radial-gradient(
+      circle at -10% 50%,
+      rgba(26, 44, 56, 0.7),
+      rgba(23, 54, 60, 0.7) 15px
+    ),
+    linear-gradient(
+      90deg,
+      rgb(6 42 46) 0%,
+      rgb(72 185 197) 50%,
+      rgb(6 42 46) 100%
+    );
+  background-attachment: fixed;
+
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.title{
+    font-size: 400%;
+    font-style: italic;
+
+    letter-spacing: 7px;
+}
+
+.titleJack{
+    color: #eecb87;
+}
+
+.links{
+    padding: 1.5rem 1rem;
+    margin: 0.35rem;
+
+    width: max(25%, 12rem);
+
+    border: 2px solid #eecb87;
+    border-radius: 2rem;
+
+    text-align: center;
+    text-decoration: none;
+
+    font-size: 120%;
+
+    color: wheat;
+
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(2px);
+}
+
+.links:hover{
+    filter: brightness(0.65);
+}
