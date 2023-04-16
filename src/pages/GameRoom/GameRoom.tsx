@@ -16,6 +16,7 @@ import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
 import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
+import { BalanceInformations } from "../../components/RoomComponents/BalanceInformations/BalanceInformations";
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
@@ -143,23 +144,15 @@ const GameRoom: React.FC = () => {
                     );
                 })}
             </div>
-            <section className={styles.balanceInformations}>
-                <section className={styles.userBalance}>
-                    <h1 className={styles.balanceHeading}>BALANCE</h1>
-                    <p className={styles.balanceContent}>€ {currentUser.balance}</p>
-                </section>
-                <section className={styles.userAllBets}>
-                    <h1 className={styles.balanceHeading}>TOTAL BET</h1>
-                    <p className={styles.balanceContent}>
-                        € {gameRoomState.playersSeats.reduce((acc, player) => {
-                        if (player !== "empty") {
-                            return player.bet.currentBet + acc;
-                        }
-                        return acc;
-                    }, 0)}
-                    </p>
-                </section>
-            </section>
+            <BalanceInformations
+                totalInBets={gameRoomState.playersSeats.reduce((acc, player) => {
+                    if (player !== "empty") {
+                        return player.bet.currentBet + acc;
+                    }
+                    return acc;
+                }, 0)}
+                currentBalance={currentUser.balance}
+            />
 
             {betsToUpdate.length > 0 &&
             !gameRoomState.isGameStarted &&
