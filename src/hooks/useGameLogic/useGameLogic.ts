@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer } from "react";
 import { addBalance } from "../../App/userSlice";
 import { Player } from "../../types/Player";
+import { RoundPlayer } from "../../types/RoundPlayer";
 import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import {
     CurrentlyAskingState,
@@ -8,7 +9,6 @@ import {
     gameLogicReducer,
     TableState,
     initialGameState,
-    RoundPlayer,
 } from "./gameLogicReducer";
 
 type UseGameLogicReturn = Readonly<
