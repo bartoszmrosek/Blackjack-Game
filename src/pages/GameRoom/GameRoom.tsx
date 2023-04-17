@@ -24,6 +24,7 @@ const GameRoom: React.FC = () => {
     const currentUser = useAppSelector(selectUser);
     const currentUserDispatch = useAppDispatch();
     const [fundsToAdd, setFundsToAdd] = useState<number>(0);
+    const [isTooSmallRes, setIsTooSmallRes] = useState(window.innerHeight < 800 || window.innerWidth < 1200);
 
     const stopGame = useCallback((funds: number) => {
         const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
@@ -112,59 +113,78 @@ const GameRoom: React.FC = () => {
         }
     }, [currentUserDispatch, fundsToAdd]);
 
+    useEffect(() => {
+        // Needs to work somehow on mobile, possible solution is that application only works on landscape orientation ?
+        const handleResize = () => {
+            setIsTooSmallRes(window.innerHeight < 800 || window.innerWidth < 1200);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     return (
+
         <main className={styles.background}>
-            <PresenterSection presenter={presenterState} startGameCb={startGame} isGameStarted={gameRoomState.isGameStarted} />
-            <div className={styles.userSeats}>
-                {gameRoomState.playersSeats.map((seat, index) => {
-                    const user = seat !== "empty" ? seat :
-                        { name: "empty", id: "empty", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
-                    const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
-                    const playerStatus = isUserPlayerIndex !== -1 ? {
-                        cards: currentPlayers[isUserPlayerIndex].cards,
-                        status: currentPlayers[isUserPlayerIndex].currentStatus,
-                        scorePermutations: currentPlayers[isUserPlayerIndex].cardsScore,
-                    } : null;
-                    return (
-                        <UserSeat
-                    // eslint-disable-next-line react/no-array-index-key
-                            key={index}
-                            isGameStarted={gameRoomState.isGameStarted}
-                            isEmpty={seat === "empty"}
-                            isCurrentlyDeciding={currentlyAsking?.currentlyAsking.seatNumber === index}
-                            seatId={index}
-                            user={user}
-                            actions={{
-                                userJoin: joinUserToGame,
-                                userLeave: removeUserFromGame,
-                                userChgBet: addBetToUpdate,
-                            }}
-                            playerStatus={playerStatus}
+            {!isTooSmallRes ? (
+                <>
+                    <PresenterSection presenter={presenterState} startGameCb={startGame} isGameStarted={gameRoomState.isGameStarted} />
+                    <div className={styles.userSeats}>
+                        {gameRoomState.playersSeats.map((seat, index) => {
+                            const user = seat !== "empty" ? seat :
+                                { name: "empty", id: "empty", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
+                            const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
+                            const playerStatus = isUserPlayerIndex !== -1 ? {
+                                cards: currentPlayers[isUserPlayerIndex].cards,
+                                status: currentPlayers[isUserPlayerIndex].currentStatus,
+                                scorePermutations: currentPlayers[isUserPlayerIndex].cardsScore,
+                            } : null;
+                            return (
+                                <UserSeat
+                        // eslint-disable-next-line react/no-array-index-key
+                                    key={index}
+                                    isGameStarted={gameRoomState.isGameStarted}
+                                    isEmpty={seat === "empty"}
+                                    isCurrentlyDeciding={currentlyAsking?.currentlyAsking.seatNumber === index}
+                                    seatId={index}
+                                    user={user}
+                                    actions={{
+                                        userJoin: joinUserToGame,
+                                        userLeave: removeUserFromGame,
+                                        userChgBet: addBetToUpdate,
+                                    }}
+                                    playerStatus={playerStatus}
+                                />
+                            );
+                        })}
+                    </div>
+                    <BalanceInformations
+                        totalInBets={gameRoomState.playersSeats.reduce((acc, player) => {
+                            if (player !== "empty") {
+                                return player.bet.currentBet + acc;
+                            }
+                            return acc;
+                        }, 0)}
+                        currentBalance={currentUser.balance}
+                    />
+
+                    {betsToUpdate.length > 0 &&
+                !gameRoomState.isGameStarted &&
+                currentUser.balance > 0 &&
+                    <BetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
+
+                    {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
+                        <DecisionOverlay
+                            decisionCb={decisionInterceptor}
+                            theirIndex={currentlyAsking.currentlyAsking.theirIndex}
+                            currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
                         />
-                    );
-                })}
-            </div>
-            <BalanceInformations
-                totalInBets={gameRoomState.playersSeats.reduce((acc, player) => {
-                    if (player !== "empty") {
-                        return player.bet.currentBet + acc;
-                    }
-                    return acc;
-                }, 0)}
-                currentBalance={currentUser.balance}
-            />
-
-            {betsToUpdate.length > 0 &&
-            !gameRoomState.isGameStarted &&
-            currentUser.balance > 0 &&
-                <BetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
-
-            {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
-                <DecisionOverlay
-                    decisionCb={decisionInterceptor}
-                    theirIndex={currentlyAsking.currentlyAsking.theirIndex}
-                    currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
-                />
+                    )}
+                </>
+            ) : (
+                <div className={styles.notSupportedDevice}>
+                    <h1>Too small device</h1>
+                    <p>Switch to desktop computer to play the game!</p>
+                </div>
             )}
             <GoBackButton />
         </main>

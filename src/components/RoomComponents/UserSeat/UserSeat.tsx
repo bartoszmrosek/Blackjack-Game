@@ -94,7 +94,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
                             }
                         `;
                         const cardStyles: CSSProperties = {
-                            animation: `card-appearing-in-${index} 1s ease-in forwards`,
+                            animation: `card-appearing-in-${index} 0.75s ease-in forwards`,
                             zIndex: -10 + index,
                         };
                         return (
