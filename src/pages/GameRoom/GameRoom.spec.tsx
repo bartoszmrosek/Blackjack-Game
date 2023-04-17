@@ -41,6 +41,11 @@ describe("GameRoom", () => {
     beforeEach(() => {
         vi.useFakeTimers();
         renderWithProviders(<GameRoom />, { store: testingGlobalStore });
+        act(() => {
+            window.innerWidth = 1366;
+            window.innerHeight = 1024;
+            global.dispatchEvent(new Event("resize"));
+        });
         const joiningBtns = screen.getAllByRole("button", { name: "Join now" });
         fireEvent.click(joiningBtns[4]);
         fireEvent.click(document.getElementById(`bet-${BET_VALUES[0]}`)!);
@@ -51,10 +56,29 @@ describe("GameRoom", () => {
             testingGlobalStore.dispatch(resetUserSlice());
         };
     });
-    it("displays 5 buttons to join on first view", () => {
-        cleanup();
-        const { getAllByRole } = renderWithProviders(<GameRoom />);
-        expect(getAllByRole("button", { name: "Join now" })).toHaveLength(5);
+
+    describe("displays properly on diffrent devices", () => {
+        it("displays 5 buttons to join on first view on desktop", () => {
+            cleanup();
+            act(() => {
+                window.innerWidth = 1366;
+                window.innerHeight = 1024;
+                global.dispatchEvent(new Event("resize"));
+            });
+            global.dispatchEvent(new Event("resize"));
+            const { getAllByRole } = renderWithProviders(<GameRoom />);
+            expect(getAllByRole("button", { name: "Join now" })).toHaveLength(5);
+        });
+        it("displays message that mobile devices are not supported", () => {
+            cleanup();
+            act(() => {
+                window.innerWidth = 100;
+                window.innerHeight = 100;
+                global.dispatchEvent(new Event("resize"));
+            });
+            const { getByText } = renderWithProviders(<GameRoom />);
+            expect(getByText("Too small device")).toBeInTheDocument();
+        });
     });
 
     describe("user joining and leaving potential game", () => {
