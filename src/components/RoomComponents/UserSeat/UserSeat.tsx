@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { CSSProperties, useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 import { Player } from "../../../types/Player";
 import { RoundPlayer } from "../../../types/RoundPlayer";
@@ -86,16 +86,30 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         <div className={`${styles.activePlayer}`}>
             {playerStatus && (
                 <div className={styles.cardsWrapper} data-testid={`cards-for-${seatId}`}>
-                    {playerStatus.cards.map((card, index) => (
-                        <CardsSpriteLoader
-                    // eslint-disable-next-line react/no-array-index-key
-                            key={index}
-                            cardId={card}
-                            styles={{ transform: `translate(${index * 30}%, -${index * 30}%)` }}
-                            classNames={styles.singleCard}
-                        />
-                    ),
-                    )}
+                    {playerStatus.cards.map((card, index) => {
+                        const dynamicKeyframes = `
+                            @keyframes card-appearing-in-${index} {
+                                0% {opacity: 0; transform: translate(${index * 60}%, -${index * 60}%)}
+                                100% {opacity: 1; transform: translate(${index * 30}%, -${index * 30}%)}
+                            }
+                        `;
+                        const cardStyles: CSSProperties = {
+                            animation: `card-appearing-in-${index} 0.75s ease-in forwards`,
+                            zIndex: -10 + index,
+                        };
+                        return (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <React.Fragment key={index}>
+                                <style>{dynamicKeyframes}</style>
+                                <CardsSpriteLoader
+                                    cardId={card}
+                                    styles={cardStyles}
+                                    classNames={`${styles.singleCard}`}
+                                />
+                            </React.Fragment>
+                        );
+                    })
+                    }
                     <div className={styles.cardsInformations}>
                         <StatusVisualizer status={playerStatus.status} />
                         <span

@@ -11,6 +11,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    animation: status-appearing 1s ease-in forwards;
+}
+
+@keyframes status-appearing {
+    0% {
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
 }
 
 .statusImg{

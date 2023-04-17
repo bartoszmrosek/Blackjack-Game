@@ -1,0 +1,36 @@
+.balanceInformations{
+    display: flex;
+    flex-direction: row;
+
+    position: absolute;
+    bottom: 0;
+    margin: 1rem;
+
+    width: min(24rem, 90%);
+
+    gap: 10%;
+}
+
+.userBalance, .userAllBets{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+
+    width: 100%;
+
+    
+    border-radius: 10rem;
+    border: 1px solid rgba(214, 221, 4, 0.6);
+
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.balanceHeading{
+    color: white;
+    font-size: 110%;
+    font-weight: 400;
+}
+
+.balanceContent{
+    color: #d6dd04;
+}

@@ -32,37 +32,15 @@
     justify-content: space-evenly;
 }
 
-.balanceInformations{
-    display: flex;
-    flex-direction: row;
+.notSupportedDevice{
+  width: 100%;
+  height: 100%;
 
-    position: absolute;
-    bottom: 0;
-    margin: 1rem;
-
-    gap: 5rem;
-}
-
-.userBalance, .userAllBets{
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-
-    width: 10rem;
-
-    
-    border-radius: 10rem;
-    border: 1px solid rgba(214, 221, 4, 0.6);
-
-    background-color: rgba(0, 0, 0, 0.35);
-}
-
-.balanceHeading{
-    color: white;
-    font-size: 110%;
-    font-weight: 400;
-}
-
-.balanceContent{
-    color: #d6dd04;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  font-size: 130%;
+  color: wheat;
 }
