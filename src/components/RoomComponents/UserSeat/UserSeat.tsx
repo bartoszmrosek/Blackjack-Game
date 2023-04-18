@@ -75,7 +75,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         <button
             onClick={handleJoin}
             className={`${styles.joinBtn}`}
-            disabled={currentUser.balance <= 0}
+            disabled={currentUser.balance <= 0 || isGameStarted}
         >
             {
                 currentUser.balance <= 0 ? "No funds left" :
