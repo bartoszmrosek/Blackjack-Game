@@ -14,11 +14,21 @@ const mockedPresenter: PresenterState = {
     didGetBlackjack: false,
 };
 describe("PresenterSection", () => {
+    it("does not display start game btn if no players are seated", () => {
+        const { queryByRole } = render(<PresenterSection
+            isGameStarted={true}
+            startGameCb={defaultMock}
+            isAnyPlayerInSeat={false}
+            presenter={mockedPresenter}
+        />);
+        expect(queryByRole("button", { name: "Start game" })).not.toBeInTheDocument();
+    });
     it("fires callback when game is not started and button is clicked", () => {
         const callbackMock = vi.fn();
         const { getByRole } = render(<PresenterSection
             isGameStarted={false}
             startGameCb={callbackMock}
+            isAnyPlayerInSeat={true}
             presenter={mockedPresenter}
         />);
         fireEvent.click(getByRole("button", { name: "Start game" }));
@@ -28,6 +38,7 @@ describe("PresenterSection", () => {
         const { getByText, getByAltText } = render(<PresenterSection
             isGameStarted={true}
             startGameCb={defaultMock}
+            isAnyPlayerInSeat={true}
             presenter={mockedPresenter}
         />);
         expect(getByAltText(`Card ${testingCard}`)).toBeInTheDocument();

@@ -123,11 +123,15 @@ const GameRoom: React.FC = () => {
     }, []);
 
     return (
-
         <main className={styles.background}>
             {!isTooSmallRes ? (
                 <>
-                    <PresenterSection presenter={presenterState} startGameCb={startGame} isGameStarted={gameRoomState.isGameStarted} />
+                    <PresenterSection
+                        presenter={presenterState}
+                        startGameCb={startGame}
+                        isGameStarted={gameRoomState.isGameStarted}
+                        isAnyPlayerInSeat={gameRoomState.playersSeats.some((seat) => seat !== "empty")}
+                    />
                     <div className={styles.userSeats}>
                         {gameRoomState.playersSeats.map((seat, index) => {
                             const user = seat !== "empty" ? seat :
