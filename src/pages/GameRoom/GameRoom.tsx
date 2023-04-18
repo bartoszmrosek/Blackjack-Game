@@ -20,6 +20,7 @@ import { BalanceInformations } from "../../components/RoomComponents/BalanceInfo
 
 const GameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
+    const { playersSeats, isGameStarted } = gameRoomState;
     const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
     const currentUser = useAppSelector(selectUser);
     const currentUserDispatch = useAppDispatch();
@@ -27,11 +28,11 @@ const GameRoom: React.FC = () => {
     const [isTooSmallRes, setIsTooSmallRes] = useState(window.innerHeight < 800 || window.innerWidth < 1200);
 
     const stopGame = useCallback((funds: number) => {
-        const previouslyPlacedBets = gameRoomState.playersSeats.filter((seat) => (seat !== "empty")) as Player[];
+        const previouslyPlacedBets = playersSeats.filter((seat) => (seat !== "empty")) as Player[];
         setBetsToUpdate(previouslyPlacedBets.map((bettingPlayer) =>
             ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
         setFundsToAdd(funds);
-    }, [gameRoomState.playersSeats]);
+    }, [playersSeats]);
 
     const removeUserFromGame = useCallback((player: Player) => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
@@ -58,17 +59,6 @@ const GameRoom: React.FC = () => {
         setBetsToUpdate(bets => [...bets, player]);
     }, []);
 
-    const joinUserToGame = useCallback((seatId: number) => {
-        const newPlayer: Player = {
-            id: currentUser.id,
-            name: currentUser.name,
-            bet: { currentBet: 0, previousBet: 0 },
-            seatNumber: seatId,
-        };
-        dispatch({ type: PlayerActionKind.JOIN, payload: newPlayer });
-        addBetToUpdate(newPlayer);
-    }, [addBetToUpdate, currentUser]);
-
     const updateBet = useCallback((player: Player) => {
         const currentBetChange = player.bet.currentBet - player.bet.previousBet;
         if (currentUser.reservedBalance + currentBetChange <= currentUser.balance) {
@@ -78,16 +68,38 @@ const GameRoom: React.FC = () => {
         }
     }, [currentUser.balance, currentUser.reservedBalance, currentUserDispatch]);
 
+    const joinUserToGame = useCallback((seatId: number) => {
+        const indexOfOtherSeatBet = playersSeats.findIndex((player) => {
+            return player !== "empty" && player.id === currentUser.id;
+        });
+        const betFromOtherSeat = playersSeats[indexOfOtherSeatBet] as Player;
+        const newPlayer: Player = {
+            id: currentUser.id,
+            name: currentUser.name,
+            bet: {
+                currentBet: indexOfOtherSeatBet !== -1 ? betFromOtherSeat.bet.currentBet : 0,
+                previousBet: 0,
+            },
+            seatNumber: seatId,
+        };
+        dispatch({ type: PlayerActionKind.JOIN, payload: newPlayer });
+        if (indexOfOtherSeatBet === -1) {
+            addBetToUpdate(newPlayer);
+        } else {
+            currentUserDispatch(addReservedBalance(betFromOtherSeat.bet.currentBet));
+        }
+    }, [addBetToUpdate, currentUser.id, currentUser.name, currentUserDispatch, playersSeats]);
+
     const startGame = useCallback(() => {
-        if (!gameRoomState.isGameStarted) {
+        if (!isGameStarted) {
             currentUserDispatch(gameFundReservation());
-            const allCurrentPlayers = gameRoomState.playersSeats.filter(player => player !== "empty") as Player[];
+            const allCurrentPlayers = playersSeats.filter(player => player !== "empty") as Player[];
             if (allCurrentPlayers.length > 0) {
                 setCurrentPlayers(allCurrentPlayers);
                 dispatch({ type: PresenterActionKind.START_GAME });
             }
         }
-    }, [currentUserDispatch, gameRoomState.isGameStarted, gameRoomState.playersSeats, setCurrentPlayers]);
+    }, [currentUserDispatch, isGameStarted, playersSeats, setCurrentPlayers]);
 
     const decisionInterceptor = useCallback((theirIndex: number, decision: "hit" | "stand" | "doubleDown") => {
         if (decision === "doubleDown") {
@@ -129,11 +141,11 @@ const GameRoom: React.FC = () => {
                     <PresenterSection
                         presenter={presenterState}
                         startGameCb={startGame}
-                        isGameStarted={gameRoomState.isGameStarted}
-                        isAnyPlayerInSeat={gameRoomState.playersSeats.some((seat) => seat !== "empty")}
+                        isGameStarted={isGameStarted}
+                        isAnyPlayerInSeat={playersSeats.some((seat) => seat !== "empty")}
                     />
                     <div className={styles.userSeats}>
-                        {gameRoomState.playersSeats.map((seat, index) => {
+                        {playersSeats.map((seat, index) => {
                             const user = seat !== "empty" ? seat :
                                 { name: "empty", id: "empty", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
                             const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
@@ -146,7 +158,7 @@ const GameRoom: React.FC = () => {
                                 <UserSeat
                         // eslint-disable-next-line react/no-array-index-key
                                     key={index}
-                                    isGameStarted={gameRoomState.isGameStarted}
+                                    isGameStarted={isGameStarted}
                                     isEmpty={seat === "empty"}
                                     isCurrentlyDeciding={currentlyAsking?.currentlyAsking.seatNumber === index}
                                     seatId={index}
@@ -162,7 +174,7 @@ const GameRoom: React.FC = () => {
                         })}
                     </div>
                     <BalanceInformations
-                        totalInBets={gameRoomState.playersSeats.reduce((acc, player) => {
+                        totalInBets={playersSeats.reduce((acc, player) => {
                             if (player !== "empty") {
                                 return player.bet.currentBet + acc;
                             }
@@ -172,7 +184,7 @@ const GameRoom: React.FC = () => {
                     />
 
                     {betsToUpdate.length > 0 &&
-                !gameRoomState.isGameStarted &&
+                !isGameStarted &&
                 currentUser.balance > 0 &&
                     <BetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
 

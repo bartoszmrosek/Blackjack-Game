@@ -50,6 +50,8 @@ describe("GameRoom", () => {
         fireEvent.click(joiningBtns[4]);
         fireEvent.click(document.getElementById(`bet-${BET_VALUES[0]}`)!);
         fireEvent.click(joiningBtns[1]);
+        const bettingChips = screen.getAllByTestId("chip-in-betting");
+        fireEvent.click(bettingChips[0]);
         fireEvent.click(document.getElementById(`bet-${BET_VALUES[1]}`)!);
         return () => {
             vi.useRealTimers();
@@ -88,13 +90,9 @@ describe("GameRoom", () => {
         test("should show bet for 4 seats", () => {
             const moreJoiningBtns = screen.getAllByRole("button", { name: "Join now" });
             fireEvent.click(moreJoiningBtns[0]);
-            fireEvent.click(document.getElementById("bet-10")!);
             fireEvent.click(moreJoiningBtns[1]);
-            fireEvent.click(document.getElementById("bet-5")!);
-
-            [...BET_VALUES, 10, 5].forEach((bet) => {
-                expect(screen.getByText(`${bet}`)).toBeInTheDocument();
-            });
+            expect(screen.getByText(`${BET_VALUES[0]}`)).toBeInTheDocument();
+            expect(screen.getAllByText(`${BET_VALUES[1]}`)).toHaveLength(3);
         });
         it("removes user on leave", () => {
             const leavingBtns = screen.getAllByRole("button", { name: "×" });
