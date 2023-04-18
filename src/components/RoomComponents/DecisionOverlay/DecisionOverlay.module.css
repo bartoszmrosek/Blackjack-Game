@@ -13,6 +13,26 @@
 
     background-color: rgba(0,0,0, 0.1);
     color: rgba(255 , 255, 255, 0.8);
+
+}
+
+
+.enter{
+    opacity: 0;
+}
+
+.entering{
+    transition: opacity 500ms;
+    opacity: 1;
+}
+
+.exit{
+    opacity: 1;
+}
+
+.exiting{
+    transition: opacity 500ms;
+    opacity: 0;
 }
 
 .buttonsWrapper{

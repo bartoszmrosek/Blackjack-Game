@@ -75,7 +75,7 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
         <button
             onClick={handleJoin}
             className={`${styles.joinBtn}`}
-            disabled={currentUser.balance <= 0}
+            disabled={currentUser.balance <= 0 || isGameStarted}
         >
             {
                 currentUser.balance <= 0 ? "No funds left" :
@@ -124,7 +124,11 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
                     </div>
                 </div>
             )}
-            <div className={`${styles.pickedChip} ${isCurrentlyDeciding ? styles.chipCurrentlyDeciding : null}`} onClick={handleBetChg}>
+            <div
+                className={`${styles.pickedChip} ${isCurrentlyDeciding ? styles.chipCurrentlyDeciding : null}`}
+                onClick={handleBetChg}
+                data-testid="chip-in-betting"
+            >
                 {PickedChip}
             </div>
             <div className={styles.playerWrapper}>

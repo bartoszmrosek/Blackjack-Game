@@ -6,14 +6,21 @@ import styles from "./PresenterSection.module.css";
 interface PresenterSectionProps {
     presenter: PresenterState;
     isGameStarted: boolean;
+    isAnyPlayerInSeat: boolean;
     startGameCb: () => void;
 }
 
-const PresenterSection: React.FC<PresenterSectionProps> = ({ presenter, isGameStarted, startGameCb }) => {
+const PresenterSection: React.FC<PresenterSectionProps> = (
+    { presenter, isGameStarted, isAnyPlayerInSeat, startGameCb },
+) => {
     return (
         <section className={styles.presenterContainer} data-testid="presenter-section">
             {!isGameStarted ? (
-                <button onClick={startGameCb} className={styles.startGameBtn}>Start game</button>
+                <>
+                    {isAnyPlayerInSeat &&
+                        <button onClick={startGameCb} className={styles.startGameBtn}>Start game</button>
+                   }
+                </>
             ) : (
                 <>
                     {presenter.cards.map((card, index) =>

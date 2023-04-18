@@ -17,6 +17,7 @@
     background-attachment: fixed;
 
     position: relative;
+    overflow: hidden;
 }
 
 .userSeats{
