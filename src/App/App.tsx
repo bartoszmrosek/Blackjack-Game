@@ -5,7 +5,7 @@ import { Credits } from "../pages/Credits/Credits";
 import { Home } from "../pages/Home/Home";
 import "./App.module.css";
 
-const GameRoom = React.lazy(() => import("../pages/GameRoom/GameRoom").then(module => ({ default: module.GameRoom })));
+const GameRoom = React.lazy(() => import("../pages/OfflineGameRoom/OfflineGameRoom").then(module => ({ default: module.GameRoom })));
 
 const router = createBrowserRouter([
     {
@@ -13,7 +13,7 @@ const router = createBrowserRouter([
         element: <Home />,
     },
     {
-        path: "/room",
+        path: "/offline/room",
         element: <React.Suspense fallback={<RoomLoader />}><GameRoom /></React.Suspense>,
     },
     {

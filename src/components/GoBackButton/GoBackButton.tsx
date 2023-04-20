@@ -16,7 +16,7 @@ const GoBackButton: React.FC = () => {
 
     return (
         <button className={styles.goBackBtn} onClick={handleBtn}>
-            <img src="./Graphics/undo.svg" alt="Go back button" />
+            <img src="/Graphics/undo.svg" alt="Go back button" />
         </button>
     );
 };

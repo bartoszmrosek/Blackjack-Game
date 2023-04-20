@@ -5,7 +5,7 @@ import { renderWithProviders } from "../../../utils/test-utils";
 import { Player } from "../../../types/Player";
 import { BetOverlay } from "./BetOverlay";
 import styles from "./BetOverlay.module.css";
-import { initialUserState } from "../../../App/userSlice";
+import { initialOfflineState } from "../../../App/offlineUserSlice";
 
 const defaultMock = vi.fn();
 const testingPlayer: Player = {
@@ -64,7 +64,7 @@ describe("BetOverlay", () => {
             />, {
                 preloadedState: {
                     user: {
-                        ...initialUserState,
+                        ...initialOfflineState,
                         balance: 50,
                     },
                 },
@@ -80,7 +80,7 @@ describe("BetOverlay", () => {
             />, {
                 preloadedState: {
                     user: {
-                        ...initialUserState,
+                        ...initialOfflineState,
                         balance: 50,
                     },
                 },

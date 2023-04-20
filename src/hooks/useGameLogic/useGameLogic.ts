@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer } from "react";
-import { addBalance } from "../../App/userSlice";
+import { addOfflineBalance } from "../../App/offlineUserSlice";
 import { Player } from "../../types/Player";
 import { RoundPlayer } from "../../types/RoundPlayer";
 import { useAppDispatch, useAppSelector } from "../reduxHooks";
@@ -43,7 +43,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
 
     const makeDecision = useCallback((playerToAskIndex: number, decision: "hit" | "stand" | "doubleDown") => {
         if (decision === "doubleDown") {
-            dispatchUserAction(addBalance(-gamePlayers[playerToAskIndex].bet.currentBet));
+            dispatchUserAction(addOfflineBalance(-gamePlayers[playerToAskIndex].bet.currentBet));
         }
         dispatchLogicUpdate({
             type: GameActionKind.UPDATE_PLAYER_STATE,

@@ -1,6 +1,6 @@
 import { combineReducers, configureStore, PreloadedState } from "@reduxjs/toolkit";
 // eslint-disable-next-line import/no-cycle
-import userReducer from "./App/userSlice";
+import userReducer from "./App/offlineUserSlice";
 
 const rootReducer = combineReducers({
     user: userReducer,

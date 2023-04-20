@@ -3,11 +3,11 @@ import { act, cleanup, fireEvent, screen, within } from "@testing-library/react"
 import React from "react";
 import { vi } from "vitest";
 import { renderWithProviders } from "../../utils/test-utils";
-import { GameRoom } from "./GameRoom";
+import { GameRoom } from "./OfflineGameRoom";
 import deck from "../../cardDeck.json";
 import { getCardValues } from "../../utils/getCardValues";
 import { setupStore } from "../../mainStore";
-import { initialUserState, resetUserSlice } from "../../App/userSlice";
+import { initialOfflineState, resetOfflineUserSlice } from "../../App/offlineUserSlice";
 import * as randomInt from "../../utils/getRandomInt";
 import { getAllPermutations } from "../../utils/getAllPermutations";
 
@@ -37,7 +37,7 @@ vi.mock("../../utils/getRandomInt", () => {
 const CARDS_IN_PLAY = [deck.deck[9], deck.deck[22], deck.deck[11], deck.deck[1], deck.deck[14]];
 describe("GameRoom", () => {
     const BET_VALUES = [100, 25];
-    const testingGlobalStore = setupStore({ user: initialUserState });
+    const testingGlobalStore = setupStore({ user: initialOfflineState });
     beforeEach(() => {
         vi.useFakeTimers();
         renderWithProviders(<GameRoom />, { store: testingGlobalStore });
@@ -55,7 +55,7 @@ describe("GameRoom", () => {
         fireEvent.click(document.getElementById(`bet-${BET_VALUES[1]}`)!);
         return () => {
             vi.useRealTimers();
-            testingGlobalStore.dispatch(resetUserSlice());
+            testingGlobalStore.dispatch(resetOfflineUserSlice());
         };
     });
 
@@ -147,7 +147,7 @@ describe("GameRoom", () => {
             });
             it("removes bets value from player balance", () => {
                 expect(testingGlobalStore.getState()).toStrictEqual(
-                    { user: { ...initialUserState, balance: initialUserState.balance - BET_VALUES[0] - BET_VALUES[1] } },
+                    { user: { ...initialOfflineState, balance: initialOfflineState.balance - BET_VALUES[0] - BET_VALUES[1] } },
                 );
             });
         });
@@ -254,7 +254,7 @@ describe("GameRoom", () => {
             });
             it("should update user balance if met winning conditions", () => {
                 expect(testingGlobalStore.getState()).toStrictEqual(
-                    { user: { ...initialUserState, balance: 1000 + BET_VALUES[1] - BET_VALUES[0] } },
+                    { user: { ...initialOfflineState, balance: 1000 + BET_VALUES[1] - BET_VALUES[0] } },
                 );
             });
             it("should restart game after some time", () => {
