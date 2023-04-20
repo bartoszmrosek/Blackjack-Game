@@ -2,7 +2,7 @@ import { vi } from "vitest";
 import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "../../../utils/test-utils";
-import { Player } from "../../../types/Player";
+import { Player } from "../../../types/Player.interface";
 import { BetOverlay } from "./BetOverlay";
 import styles from "./BetOverlay.module.css";
 import { initialOfflineState } from "../../../App/offlineUserSlice";

@@ -1,7 +1,7 @@
 import { fireEvent, render } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { PresenterState } from "../../../types/PresenterState";
+import { PresenterState } from "../../../types/PresenterState.interface";
 import { PresenterSection } from "./PresenterSection";
 import deck from "../../../cardDeck.json";
 import { getCardValues } from "../../../utils/getCardValues";

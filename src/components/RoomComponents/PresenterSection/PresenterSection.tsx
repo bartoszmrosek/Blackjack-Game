@@ -1,5 +1,5 @@
 import React from "react";
-import { PresenterState } from "../../../types/PresenterState";
+import { PresenterState } from "../../../types/PresenterState.interface";
 import { CardsSpriteLoader } from "../../CardsSpriteLoader/CardsSpriteLoader";
 import styles from "./PresenterSection.module.css";
 

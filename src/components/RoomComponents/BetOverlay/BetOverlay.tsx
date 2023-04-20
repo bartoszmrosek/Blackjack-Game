@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { Player } from "../../../types/Player";
+import { Player } from "../../../types/Player.interface";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
 import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";

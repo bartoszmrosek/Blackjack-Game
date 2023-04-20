@@ -1,5 +1,5 @@
 import React from "react";
-import { RoundPlayer } from "../../../../types/RoundPlayer";
+import { RoundPlayer } from "../../../../types/RoundPlayer.interface";
 import styles from "./StatusVisualizer.module.css";
 
 interface StatusVisualizerProps {

@@ -1,4 +1,4 @@
-import { Player } from "./Player";
+import { Player } from "./Player.interface";
 
 export interface RoundPlayer extends Player {
     cards: string[];

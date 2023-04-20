@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer } from "react";
 import { addOfflineBalance } from "../../App/offlineUserSlice";
-import { Player } from "../../types/Player";
-import { RoundPlayer } from "../../types/RoundPlayer";
+import { Player } from "../../types/Player.interface";
+import { RoundPlayer } from "../../types/RoundPlayer.interface";
 import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import {
     CurrentlyAskingState,

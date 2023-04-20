@@ -11,7 +11,7 @@ import { UserSeat } from "../../components/RoomComponents/UserSeat/UserSeat";
 import styles from "./OfflineGameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
 import { BetOverlay } from "../../components/RoomComponents/BetOverlay/BetOverlay";
-import { Player } from "../../types/Player";
+import { Player } from "../../types/Player.interface";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
