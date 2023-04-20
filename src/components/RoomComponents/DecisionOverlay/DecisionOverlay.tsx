@@ -10,7 +10,7 @@ interface DecisionOverlayProps {
 }
 
 const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBet, theirIndex }) => {
-    const userBalance = useAppSelector(state => state.user.balance);
+    const userBalance = useAppSelector(state => state.offlineUser.balance);
     const canDoubleDown = userBalance - currentBet >= 0;
     const makeDecision = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         switch (e.currentTarget.id) {

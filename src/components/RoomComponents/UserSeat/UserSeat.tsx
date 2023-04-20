@@ -31,7 +31,7 @@ interface UserSeatProps {
 }
 
 const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, playerStatus, isCurrentlyDeciding }) => {
-    const currentUser = useAppSelector((state) => state.user);
+    const currentUser = useAppSelector((state) => state.offlineUser);
 
     const handleJoin = useCallback(() => {
         actions.userJoin(seatId);

@@ -23,7 +23,7 @@ type UseGameLogicReturn = Readonly<
 const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => void): UseGameLogicReturn => {
     const [gameLogicState, dispatchLogicUpdate] = useReducer(gameLogicReducer, initialGameState);
     const { gamePlayers, askingState, isGameStarted, isShowingResults } = gameLogicState;
-    const currentUserId = useAppSelector(state => state.user.id);
+    const currentUserId = useAppSelector(state => state.offlineUser.id);
     const dispatchUserAction = useAppDispatch();
 
     const setPlayersForGame = useCallback((players: Player[]) => {

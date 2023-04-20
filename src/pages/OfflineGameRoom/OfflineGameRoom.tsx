@@ -4,7 +4,6 @@ import {
     addOfflineReservedBalance,
     offlineGameFundReservation,
     removeReservedBalance,
-    selectUser,
 } from "../../App/offlineUserSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { UserSeat } from "../../components/RoomComponents/UserSeat/UserSeat";
@@ -18,11 +17,11 @@ import { PresenterSection } from "../../components/RoomComponents/PresenterSecti
 import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
 import { BalanceInformations } from "../../components/RoomComponents/BalanceInformations/BalanceInformations";
 
-const GameRoom: React.FC = () => {
+const OfflineGameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
     const { playersSeats, isGameStarted } = gameRoomState;
     const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
-    const currentUser = useAppSelector(selectUser);
+    const currentUser = useAppSelector((state) => state.offlineUser);
     const currentUserDispatch = useAppDispatch();
     const [fundsToAdd, setFundsToAdd] = useState<number>(0);
     const [isTooSmallRes, setIsTooSmallRes] = useState(window.innerHeight < 800 || window.innerWidth < 1200);
@@ -207,4 +206,4 @@ const GameRoom: React.FC = () => {
     );
 };
 
-export { GameRoom };
+export { OfflineGameRoom };

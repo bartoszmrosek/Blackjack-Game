@@ -75,7 +75,7 @@ describe("UserSeat", () => {
             />,
             {
                 preloadedState: {
-                    user: {
+                    offlineUser: {
                         id: testingUser.id,
                         username: testingUser.name,
                         balance: 1000,
@@ -121,7 +121,7 @@ describe("UserSeat", () => {
                 playerStatus={testingPlayerStatus}
             />, {
                 preloadedState: {
-                    user: {
+                    offlineUser: {
                         id: testingUser.id,
                         username: testingUser.name,
                         balance: 1000,
@@ -143,7 +143,7 @@ describe("UserSeat", () => {
                 playerStatus={testingPlayerStatus}
             />, {
                 preloadedState: {
-                    user: {
+                    offlineUser: {
                         ...initialOfflineState,
                         balance: 0,
                     },

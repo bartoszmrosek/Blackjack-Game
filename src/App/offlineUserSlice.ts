@@ -1,15 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-// eslint-disable-next-line import/no-cycle
-import { RootState } from "../mainStore";
 
-interface CurrentUserState {
+interface OfflineUserState {
     id: string;
     username: string;
     balance: number;
     reservedBalance: number;
 }
 
-export const initialOfflineState: CurrentUserState = {
+export const initialOfflineState: OfflineUserState = {
     id: "1",
     username: "Unnamed user",
     balance: 1000,
@@ -20,11 +18,6 @@ export const offlineUserSlice = createSlice({
     name: "offlineUser",
     initialState: () => initialOfflineState,
     reducers: {
-        loginOfflineUser: (_state, action: PayloadAction<CurrentUserState>) => {
-            return {
-                ...action.payload,
-            };
-        },
         addOfflineBalance: (state, action: PayloadAction<number>) => {
             state.balance += action.payload;
         },
@@ -45,11 +38,9 @@ export const offlineUserSlice = createSlice({
 });
 
 export const {
-    loginOfflineUser, addOfflineBalance, offlineGameFundReservation, addOfflineReservedBalance, removeReservedBalance,
+    addOfflineBalance, offlineGameFundReservation, addOfflineReservedBalance, removeReservedBalance,
     resetOfflineUserSlice,
 } = offlineUserSlice.actions;
-
-export const selectUser = (state: RootState): CurrentUserState => state.user;
 
 // eslint-disable-next-line import/no-default-export
 export default offlineUserSlice.reducer;

@@ -63,7 +63,7 @@ describe("BetOverlay", () => {
                 undoHandler={defaultMock}
             />, {
                 preloadedState: {
-                    user: {
+                    offlineUser: {
                         ...initialOfflineState,
                         balance: 50,
                     },
@@ -79,7 +79,7 @@ describe("BetOverlay", () => {
                 undoHandler={defaultMock}
             />, {
                 preloadedState: {
-                    user: {
+                    offlineUser: {
                         ...initialOfflineState,
                         balance: 50,
                     },

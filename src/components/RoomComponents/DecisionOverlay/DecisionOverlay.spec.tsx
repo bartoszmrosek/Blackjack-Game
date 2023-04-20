@@ -28,7 +28,7 @@ describe("Decision overlay", () => {
             currentBet={100}
         />, {
             preloadedState: {
-                user: {
+                offlineUser: {
                     ...initialOfflineState,
                     balance: 50,
                 },

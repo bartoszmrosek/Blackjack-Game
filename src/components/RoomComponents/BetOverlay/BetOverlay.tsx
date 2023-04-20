@@ -19,7 +19,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
     const [canRepeat, setCanRepeat] = useState<boolean>(
         playerInformations.bet.currentBet === 0 &&
         playerInformations.bet.previousBet !== 0);
-    const { reservedBalance, balance: currentUserBalance } = useAppSelector(state => state.user);
+    const { reservedBalance, balance: currentUserBalance } = useAppSelector(state => state.offlineUser);
     const { currentBet, previousBet } = playerInformations.bet;
 
     const buttonHandler = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
