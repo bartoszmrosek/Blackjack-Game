@@ -2,34 +2,49 @@ import { useState } from "react";
 
 type UseFetchTypeReturn<T> = Readonly<[boolean, number, T | null, (requestBody: unknown) => void]>;
 
-const useFetch = <T>(url: string,
+const useFetch = <T>(path: string,
     method: "GET" | "POST",
-    shouldFireImmedietly: boolean, defaultBody: unknown): UseFetchTypeReturn<T> => {
+    shouldFireImmedietly: boolean,
+    signal: AbortSignal,
+    expectReturn: boolean,
+    defaultBody?: unknown,
+): UseFetchTypeReturn<T> => {
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState(0);
     const [data, setData] = useState<T | null>(null);
 
     const makeRequest = (requestBody: unknown) => {
         setIsLoading(true);
-        fetch(url, {
-            method,
-            credentials: "include",
-            body: JSON.stringify(requestBody),
-        }).then((response) => {
-            if (response.ok) {
-                response.json().then((resource: T) => {
-                    setData(resource);
-                }, () => {
-                    setStatus(1);
-                });
-            } else {
-                setStatus(response.status);
-            }
-        }).catch(() => {
-            setStatus(1);
-        }).finally(() => {
-            setIsLoading(false);
-        });
+        fetch(
+            import.meta.env.PROD
+                ? `https://blackjackapi-rpoa.onrender.com/api${path}` :
+            `http://localhost:5678/api${path}`,
+            {
+                method,
+                credentials: "include",
+                signal,
+                body: JSON.stringify(requestBody),
+                headers: {
+                    "Content-type": "application/json",
+                },
+            }).then((response) => {
+                if (response.ok) {
+                    setStatus(response.status);
+                    if (expectReturn) {
+                        response.json().then((resource: T) => {
+                            setData(resource);
+                        }, () => {
+                            setStatus(1);
+                        });
+                    }
+                } else {
+                    setStatus(response.status);
+                }
+            }).catch(() => {
+                setStatus(1);
+            }).finally(() => {
+                setIsLoading(false);
+            });
     };
     if (shouldFireImmedietly) {
         makeRequest(defaultBody);
