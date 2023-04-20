@@ -9,7 +9,7 @@ describe("Home", () => {
     });
     it("should change path to room on join lobby button click", () => {
         fireEvent.click(screen.getByText("Join random lobby"));
-        expect(window.location.pathname).toBe("/room");
+        expect(window.location.pathname).toBe("/offline/room");
     });
     it("should change path to credits on credits button click", () => {
         fireEvent.click(screen.getByText("Credits"));
