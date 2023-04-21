@@ -1,6 +1,7 @@
 import React from "react";
 import { RoundPlayer } from "../../../../types/RoundPlayer.interface";
 import styles from "./StatusVisualizer.module.css";
+import { transformImgUrl } from "../../../../utils/transformImgUrl";
 
 interface StatusVisualizerProps {
     status: RoundPlayer["currentStatus"];
@@ -12,7 +13,7 @@ const StatusVisualizer: React.FC<StatusVisualizerProps> = ({ status }) => {
             return (
                 <div className={styles.statusWrapper}>
                     <img
-                        src="/Graphics/StatusIcons/blackjackIcon.svg"
+                        src={`${transformImgUrl("/Graphics/StatusIcons/blackjackIcon.svg")}`}
                         className={`${styles.statusImg} ${styles.positiveStatus}`}
                         alt={`User ${status} icon`}
                     />
@@ -23,7 +24,7 @@ const StatusVisualizer: React.FC<StatusVisualizerProps> = ({ status }) => {
             return (
                 <div className={styles.statusWrapper}>
                     <img
-                        src="/Graphics/StatusIcons/winIcon.svg"
+                        src={`${transformImgUrl("/Graphics/StatusIcons/winIcon.svg")}`}
                         className={`${styles.statusImg} ${styles.positiveStatus}`}
                         alt={`User ${status} icon`}
                     />
@@ -34,7 +35,7 @@ const StatusVisualizer: React.FC<StatusVisualizerProps> = ({ status }) => {
             return (
                 <div className={styles.statusWrapper}>
                     <img
-                        src="/Graphics/StatusIcons/bustedIcon.svg"
+                        src={`${transformImgUrl("/Graphics/StatusIcons/bustedIcon.svg")}`}
                         className={`${styles.statusImg} ${styles.negativeStatus}`}
                         alt={`User ${status} icon`}
                     />
@@ -45,7 +46,7 @@ const StatusVisualizer: React.FC<StatusVisualizerProps> = ({ status }) => {
             return (
                 <div className={styles.statusWrapper}>
                     <img
-                        src="/Graphics/StatusIcons/lostIcon.svg"
+                        src={`${transformImgUrl("/Graphics/StatusIcons/lostIcon.svg")}`}
                         className={`${styles.statusImg} ${styles.negativeStatus}`}
                         alt={`User ${status} icon`}
                     />
@@ -56,7 +57,7 @@ const StatusVisualizer: React.FC<StatusVisualizerProps> = ({ status }) => {
             return (
                 <div className={styles.statusWrapper}>
                     <img
-                        src="/Graphics/StatusIcons/pushIcon.svg"
+                        src={`${transformImgUrl("/Graphics/StatusIcons/pushIcon.svg")}`}
                         className={`${styles.statusImg} ${styles.positiveStatus}`}
                         alt={`User ${status} icon`}
                     />
