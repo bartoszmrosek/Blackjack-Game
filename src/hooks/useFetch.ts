@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type UseFetchTypeReturn<T> = Readonly<[boolean, number, T | null, (requestBody: unknown) => void]>;
 
@@ -49,6 +49,17 @@ const useFetch = <T>(path: string,
     if (shouldFireImmedietly) {
         makeRequest(defaultBody);
     }
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (status !== 0) {
+            setTimeout(() => {
+                setData(null);
+                setStatus(0);
+            }, 10000);
+        }
+        return () => clearTimeout(timer);
+    }, [status, data]);
 
     return [
         isLoading,
