@@ -5,6 +5,7 @@ import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButto
 import styles from "./Rooms.module.css";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import { useFetch } from "../../hooks/useFetch";
+import { JoinBtnSubcomponent } from "./JoinBtnSubcomponent";
 
 const Rooms: React.FC = () => {
     const [isGettingRooms, roomsReqStatus, allGameRooms, getRooms]
@@ -44,6 +45,7 @@ const Rooms: React.FC = () => {
                                     <button className={styles.refreshBtn} onClick={refreshRooms}>
                                         <img
                                             src="/Graphics/refresh.svg"
+                                            alt="Refresh icon"
                                         />
                                     </button>
                                 </th>
@@ -74,9 +76,7 @@ const Rooms: React.FC = () => {
                                                     <td data-cell="Game id: " className={styles.tableTd}>{gameRoom.id}</td>
                                                     <td data-cell="No. of players: " className={styles.tableTd}>{gameRoom.playersNum}/5</td>
                                                     {isUserLogged && (
-                                                        <td className={styles.tableTd}>
-                                                            <button className={styles.joinGameBtn}>Join</button>
-                                                        </td>
+                                                        <JoinBtnSubcomponent roomId={gameRoom.id} />
                                                     )}
                                                 </tr>
                                             ))
@@ -98,6 +98,7 @@ const Rooms: React.FC = () => {
                                                         color="var(--positiveColor)"
                                                         loading={true}
                                                         speedMultiplier={0.5}
+                                                        role="progressbar"
                                                     />
                                                 </div>
                                             )
