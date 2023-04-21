@@ -15,7 +15,7 @@ import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
 import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
-import { BalanceInformations } from "../../components/RoomComponents/BalanceInformations/BalanceInformations";
+import { BalanceInformations } from "../../components/BalanceInformations/BalanceInformations";
 
 const OfflineGameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
@@ -179,6 +179,7 @@ const OfflineGameRoom: React.FC = () => {
                             }
                             return acc;
                         }, 0)}
+                        shouldDisplayBets={true}
                         currentBalance={currentUser.balance}
                     />
 
