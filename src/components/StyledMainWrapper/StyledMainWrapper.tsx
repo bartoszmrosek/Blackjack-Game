@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from "react";
 import styles from "./StyledMainWrapper.module.css";
 import { useAppSelector } from "../../hooks/reduxHooks";
-import { BalanceInformations } from "../BalanceInformations/BalanceInformations";
+import { BalanceInformations } from "../Overlays/BalanceInformations/BalanceInformations";
 
 interface StyledMainWrapperProps {
     classNames?: string;

@@ -1,5 +1,5 @@
 import React from "react";
-import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
+import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
 import { StyledMainWrapper } from "../../components/StyledMainWrapper/StyledMainWrapper";
 import styles from "./Credits.module.css";
 

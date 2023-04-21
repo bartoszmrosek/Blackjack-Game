@@ -1,6 +1,6 @@
 import { screen, within } from "@testing-library/react";
 import React from "react";
-import { renderWithProviders } from "../../utils/test-utils";
+import { renderWithProviders } from "../../../utils/test-utils";
 import { BalanceInformations } from "./BalanceInformations";
 
 describe("BalanceInformations", () => {

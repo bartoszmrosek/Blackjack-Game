@@ -14,8 +14,8 @@ import { Player } from "../../types/Player.interface";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
-import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
-import { BalanceInformations } from "../../components/BalanceInformations/BalanceInformations";
+import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
+import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
 
 const OfflineGameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
