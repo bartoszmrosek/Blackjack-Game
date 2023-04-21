@@ -2,6 +2,7 @@ import React from "react";
 import md5 from "md5";
 import { Link } from "react-router-dom";
 import styles from "./UserInformations.module.css";
+import { transformImgUrl } from "../../../utils/transformImgUrl";
 
 interface UserInformationsProps {
     username: string;
@@ -16,7 +17,7 @@ const UserInformations: React.FC<UserInformationsProps> = ({ username }) => {
                 <section className={styles.accordionItem}>
                     <h1 className={styles.accordionHeader}>
                         {username}<img
-                            src="/Graphics/scrolldown.png"
+                            src={`${transformImgUrl("/Graphics/scrolldown.png")}`}
                             className={styles.scrollIcon}
                         />
                     </h1>

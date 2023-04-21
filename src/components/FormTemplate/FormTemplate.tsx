@@ -4,6 +4,7 @@ import { useFetch } from "../../hooks/useFetch";
 import styles from "./FormTemplate.module.css";
 import { useAppDispatch } from "../../hooks/reduxHooks";
 import { loginOnlineUser } from "../../App/onlineUserSlice";
+import { transformImgUrl } from "../../utils/transformImgUrl";
 
 interface FormTemplateProps {
     header: string;
@@ -127,7 +128,7 @@ const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, sh
                     ) :
                         status === 200 ? (
                             <img
-                                src="/Graphics/success.svg"
+                                src={`${transformImgUrl("/Graphics/success.svg")}`}
                                 className={styles.successImg}
                                 alt="Success icon"
                             />

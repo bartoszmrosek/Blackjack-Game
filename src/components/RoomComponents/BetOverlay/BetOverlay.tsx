@@ -8,6 +8,7 @@ import { SecondaryChip } from "../../ChipSvgs/SecondaryChip";
 import { SenaryChip } from "../../ChipSvgs/SenaryChip";
 import { TertiaryChip } from "../../ChipSvgs/TertiaryChip";
 import styles from "./BetOverlay.module.css";
+import { transformImgUrl } from "../../../utils/transformImgUrl";
 
 interface BetOverlayProps {
     playerInformations: Player;
@@ -57,7 +58,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                 <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
                     <span className={styles.additionalText}>UNDO</span>
                     <button onClick={handleUndoButton} className={styles.undoButton}>
-                        <img height="40px" width="40px" src="/Graphics/undo.svg" alt="Undo button" />
+                        <img height="40px" width="40px" src={`${transformImgUrl("/Graphics/undo.svg")}`} alt="Undo button" />
                     </button>
                 </div>
                 <button onClick={buttonHandler} id="bet-1" className={`${styles.betButton} ${styles.betOperations}`}>
@@ -90,7 +91,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                     >
                         {canRepeat ? (
                             <img
-                                src="/Graphics/repeat.svg"
+                                src={`${transformImgUrl("/Graphics/repeat.svg")}`}
                                 width="40px"
                                 height="40px"
                                 className={styles.repeatBtn}

@@ -6,6 +6,7 @@ import styles from "./Rooms.module.css";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import { useFetch } from "../../hooks/useFetch";
 import { JoinBtnSubcomponent } from "./JoinBtnSubcomponent";
+import { transformImgUrl } from "../../utils/transformImgUrl";
 
 const Rooms: React.FC = () => {
     const [isGettingRooms, roomsReqStatus, allGameRooms, getRooms]
@@ -44,7 +45,7 @@ const Rooms: React.FC = () => {
                                 <th className={`${styles.tableTh} ${styles.refreshTh}`}>
                                     <button className={styles.refreshBtn} onClick={refreshRooms}>
                                         <img
-                                            src="/Graphics/refresh.svg"
+                                            src={transformImgUrl("/Graphics/refresh.svg")}
                                             alt="Refresh icon"
                                         />
                                     </button>
