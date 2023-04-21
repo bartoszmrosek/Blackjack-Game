@@ -8,4 +8,5 @@
   "editor.formatOnPaste": false,
   "editor.maxTokenizationLineLength": 100000,
   "vitest.commandLine": "yarn test",
+  "typescript.tsserver.log": "verbose"
 }
