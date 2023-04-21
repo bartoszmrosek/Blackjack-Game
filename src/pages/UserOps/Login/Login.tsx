@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./Login.module.css";
-import { StyledMainWrapper } from "../../components/StyledMainWrapper/StyledMainWrapper";
-import { FormTempalate } from "../../components/FormTemplate/FormTemplate";
-import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
+import { StyledMainWrapper } from "../../../components/StyledMainWrapper/StyledMainWrapper";
+import { FormTempalate } from "../../../components/FormTemplate/FormTemplate";
+import { GoBackButton } from "../../../components/Overlays/GoBackButton/GoBackButton";
 
 const Login: React.FC = () => {
     return (

@@ -13,9 +13,8 @@ interface FormTemplateProps {
 
 const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, shouldRepeatPassword }) => {
     const [arePasswordTheSame, setArePasswordTheSame] = useState(true);
-    const controller = new AbortController();
     const [isLoading, status, userData, sendForm] = useFetch(
-        `${pathForRequest}`, "POST", false, controller.signal, pathForRequest === "/login/");
+        `${pathForRequest}`, "POST", false, pathForRequest === "/login/");
     const formRef = useRef<HTMLFormElement>(null);
     const onlineUserDispatch = useAppDispatch();
 
@@ -35,7 +34,6 @@ const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, sh
     }, [sendForm, shouldRepeatPassword]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => () => controller.abort(), []);
     useEffect(() => {
         if (status === 200 && formRef.current) {
             formRef.current.reset();

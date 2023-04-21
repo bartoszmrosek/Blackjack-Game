@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 
-type UseFetchTypeReturn<T> = Readonly<[boolean, number, T | null, (requestBody: unknown) => void]>;
+type UseFetchTypeReturn<T> = Readonly<[boolean, number, T | null, (requestBody?: unknown) => void]>;
 
 const useFetch = <T>(path: string,
     method: "GET" | "POST",
     shouldFireImmedietly: boolean,
-    signal: AbortSignal,
     expectReturn: boolean,
+    signal?: AbortSignal,
     defaultBody?: unknown,
 ): UseFetchTypeReturn<T> => {
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState(0);
     const [data, setData] = useState<T | null>(null);
 
-    const makeRequest = (requestBody: unknown) => {
+    const makeRequest = (requestBody?: unknown) => {
         setIsLoading(true);
         fetch(
             import.meta.env.PROD
@@ -47,9 +47,12 @@ const useFetch = <T>(path: string,
                 setIsLoading(false);
             });
     };
-    if (shouldFireImmedietly) {
-        makeRequest(defaultBody);
-    }
+
+    useEffect(() => {
+        if (shouldFireImmedietly) {
+            makeRequest(defaultBody);
+        }
+    }, []);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
