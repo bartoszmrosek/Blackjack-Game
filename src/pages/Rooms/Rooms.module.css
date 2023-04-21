@@ -1,0 +1,93 @@
+.roomsWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.tableWrapper{
+    width: 90%;
+    height: 70%;
+}
+
+.tableContainer{
+    width: 100%;
+    height: 100%;
+
+    overflow: auto;
+    position: relative;
+}
+
+.mainTable{
+    width: 100%;
+    height: 100%;
+
+    backdrop-filter: blur(4px);
+
+    background-color: rgba(0,0,0, 0.3);
+    color: var(--negativeColor);
+
+    border-radius: 1rem;
+    border-collapse: collapse;
+}
+
+.tableCaption{
+    font-size: 175%;
+    font-weight: 700;
+    font-style: italic;
+
+    padding: 1rem;
+
+    color: var(--positiveColor);
+}
+
+.tableHeaders{
+    color: aliceblue;
+
+    text-align: left;
+
+    font-size: 125%;
+}
+
+.tableTh,
+.tableTd
+{
+    padding: 1rem;
+}
+
+.tableTh{
+    background-color: rgba(0,0,0, 0.3);
+}
+
+.mainTable > * > tr:nth-last-of-type(2n){
+    background-color: rgba(0,0,0, 0.12);
+}
+
+td[data-cell="Game id: "]{
+    width: 50%;
+}
+
+td[data-cell="No. of players: "]{
+    width: 50%;
+}
+
+@media (max-width: 650px){
+    .tableTh{
+        display: none;
+    }
+    .tableTd{
+        display: grid;
+        grid-template-columns: 10ch auto;
+        padding: 0.5rem 1rem;
+        text-align: center;
+        width: 100% !important;
+    }
+    .tableTd:first-of-type{
+        padding-top: 2rem;
+    }
+    .tableTd::before{
+        content: attr(data-cell);
+        font-weight: 700;
+        font-size: 110%;
+    }
+}
