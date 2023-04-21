@@ -1,4 +1,5 @@
 import React, { FormEvent, useCallback, useEffect, useState } from "react";
+import { BeatLoader } from "react-spinners";
 import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
 import { StyledMainWrapper } from "../../components/StyledMainWrapper/StyledMainWrapper";
 import { useFetch } from "../../hooks/useFetch";
@@ -56,15 +57,31 @@ const Register: React.FC = () => {
                     type="password"
                     autoComplete="new-password"
                 />
-                {!arePasswordTheSame && <span className={styles.passwordMismatch}>Passwords do not match</span>}
+                {(!arePasswordTheSame
+                 || (status !== 0 && status !== 200)) && (
+                     <p className={styles.errorMessage}>
+                         <span>{
+                            status === 500 ? "Username taken" : "Request failed"
+                        }</span>
+                         <span>{
+                            !arePasswordTheSame && "Passwords do not match"
+                        }</span>
+                     </p>
+                )}
                 <button
                     type="submit"
                     className={styles.sendBtn}
                     disabled={isLoading}
                 >
-                    {isLoading ? "loading" :
-                        status === 0 ? "Submit" :
-                            status === 200 ? "Success" : "Failed"
+                    {isLoading ? (
+                        <BeatLoader
+                            loading={true}
+                            role="progressbar"
+                            speedMultiplier={0.5}
+                            color="var(--positiveColor)"
+                        />
+                    ) :
+                        status === 200 ? "Submitted" : "Submit"
                     }
                 </button>
             </form>
