@@ -131,6 +131,11 @@ td[data-cell="No. of players: "]{
     font-size: 110%;
 }
 
+.extraInformations{
+    height: 100%;
+    text-align: center;
+}
+
 @media (max-width: 650px){
     .tableTh ,.createGameEnd{
         display: none;

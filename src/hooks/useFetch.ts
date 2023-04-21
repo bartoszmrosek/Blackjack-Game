@@ -6,6 +6,7 @@ const useFetch = <T>(path: string,
     method: "GET" | "POST",
     shouldFireImmedietly: boolean,
     expectReturn: boolean,
+    shouldDataPersist = false,
     signal?: AbortSignal,
     defaultBody?: unknown,
 ): UseFetchTypeReturn<T> => {
@@ -56,14 +57,16 @@ const useFetch = <T>(path: string,
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
-        if (status !== 0) {
-            setTimeout(() => {
-                setData(null);
-                setStatus(0);
-            }, 10000);
+        if (!shouldDataPersist) {
+            if (status !== 0) {
+                setTimeout(() => {
+                    setData(null);
+                    setStatus(0);
+                }, 10000);
+            }
         }
         return () => clearTimeout(timer);
-    }, [status, data]);
+    }, [status, data, shouldDataPersist]);
 
     return [
         isLoading,

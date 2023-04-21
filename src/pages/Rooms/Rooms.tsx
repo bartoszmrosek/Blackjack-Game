@@ -1,11 +1,35 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
+import { SyncLoader } from "react-spinners";
 import { StyledMainWrapper } from "../../components/StyledMainWrapper/StyledMainWrapper";
 import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
 import styles from "./Rooms.module.css";
 import { useAppSelector } from "../../hooks/reduxHooks";
+import { useFetch } from "../../hooks/useFetch";
 
 const Rooms: React.FC = () => {
+    const [isGettingRooms, roomsReqStatus, allGameRooms, getRooms]
+    = useFetch<{ id: string; playersNum: number; }[]>("/rooms/", "GET", true, true, true);
+    const [isCreatingRoom, creatingStatus, newRoomId, createRoom]
+    = useFetch<{ id: string; }>("/rooms/create/", "POST", false, true, false);
     const isUserLogged = useAppSelector(state => state.onlineUser.id) !== -1;
+
+    const refreshRooms = useCallback(() => {
+        getRooms();
+    }, [getRooms]);
+
+    const handleCreateBtn = useCallback(() => {
+        if (isUserLogged) {
+            createRoom();
+        }
+    }, [createRoom, isUserLogged]);
+
+    useEffect(() => {
+        if (newRoomId !== null) {
+            // for now console log
+            console.log(newRoomId);
+        }
+    }, [newRoomId]);
+
     return (
         <StyledMainWrapper classNames={styles.roomsWrapper}>
             <h1 className={styles.tableCaption}>All current game rooms</h1>
@@ -16,45 +40,86 @@ const Rooms: React.FC = () => {
                             <tr>
                                 <th className={styles.tableTh}>Game id</th>
                                 <th className={styles.tableTh}>No. of players</th>
-                                {isUserLogged && (
-                                    <th className={`${styles.tableTh} ${styles.refreshTh}`}>
-                                        <button className={styles.refreshBtn}>
-                                            <img
-                                                src="/Graphics/refresh.svg"
-                                            />
-                                        </button>
-                                    </th>
-                                )}
-
+                                <th className={`${styles.tableTh} ${styles.refreshTh}`}>
+                                    <button className={styles.refreshBtn} onClick={refreshRooms}>
+                                        <img
+                                            src="/Graphics/refresh.svg"
+                                        />
+                                    </button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr className={styles.mobileOptions}>
                                 <td className={styles.begginingTableTd}>
-                                    <button className={styles.inGameTableBtn}>Refresh</button>
+                                    <button className={styles.inGameTableBtn} onClick={refreshRooms}>Refresh</button>
                                 </td>
                                 {isUserLogged && (
                                     <td className={styles.begginingTableTd}>
-                                        <button className={styles.inGameTableBtn}>Create & Join</button>
+                                        <button className={styles.inGameTableBtn} disabled={isCreatingRoom} onClick={handleCreateBtn}>
+                                            {isCreatingRoom ? "Creating..." :
+                                                creatingStatus !== 0 ? "Failed to create. Please retry" :
+                                                    "Create & join room"
+                                            }
+                                        </button>
                                     </td>
                                 )}
                             </tr>
-                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map((el) => (
-                                <tr key={el}>
-                                    <td data-cell="Game id: " className={styles.tableTd}>ABCD</td>
-                                    <td data-cell="No. of players: " className={styles.tableTd}>2/5</td>
-                                    {isUserLogged && (
-                                        <td className={styles.tableTd}>
-                                            <button className={styles.joinGameBtn}>Join</button>
+                            {
+                                !isGettingRooms && roomsReqStatus === 200 && allGameRooms !== null ? (
+                                    <>
+                                        {allGameRooms.length > 0 ?
+                                            allGameRooms.map((gameRoom) => (
+                                                <tr key={gameRoom.id}>
+                                                    <td data-cell="Game id: " className={styles.tableTd}>{gameRoom.id}</td>
+                                                    <td data-cell="No. of players: " className={styles.tableTd}>{gameRoom.playersNum}/5</td>
+                                                    {isUserLogged && (
+                                                        <td className={styles.tableTd}>
+                                                            <button className={styles.joinGameBtn}>Join</button>
+                                                        </td>
+                                                    )}
+                                                </tr>
+                                            ))
+                                            : (
+                                                <tr>
+                                                    <td colSpan={3} className={styles.extraInformations}>
+                                                        Oops, there aren`t any game rooms available.
+                                                        Maybe {!isUserLogged && "login and"} create one?
+                                                    </td>
+                                                </tr>
+                                            )}
+                                    </>
+                                ) : (
+                                    <tr>
+                                        <td colSpan={3} className={styles.extraInformations}>
+                                            {isGettingRooms ? (
+                                                <div>
+                                                    <SyncLoader
+                                                        color="var(--positiveColor)"
+                                                        loading={true}
+                                                        speedMultiplier={0.5}
+                                                    />
+                                                </div>
+                                            )
+                                                : "Error while getting informations. Please refresh"}
                                         </td>
-                                    )}
-                                </tr>
-                            ))
-                    }
+                                    </tr>
+                                )
+                            }
                             {isUserLogged && (
                                 <tr className={styles.createGameEnd}>
                                     <td colSpan={3}>
-                                        <button className={styles.inGameTableBtn}>Create & join game</button>
+                                        <button
+                                            className={styles.inGameTableBtn}
+                                            disabled={isCreatingRoom}
+                                            onClick={handleCreateBtn}
+                                        >
+                                            {
+                                            isCreatingRoom ? "Creating..." :
+                                                creatingStatus !== 0 ? "Error while creating, please retry"
+                                                    : "Create & join room"
+                                            }
+                                        </button>
                                     </td>
                                 </tr>
                             )}
