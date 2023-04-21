@@ -70,7 +70,7 @@ const Register: React.FC = () => {
                 )}
                 <button
                     type="submit"
-                    className={styles.sendBtn}
+                    className={`${styles.sendBtn} ${status === 200 && styles.submitSuccess}`}
                     disabled={isLoading}
                 >
                     {isLoading ? (
@@ -81,7 +81,12 @@ const Register: React.FC = () => {
                             color="var(--positiveColor)"
                         />
                     ) :
-                        status === 200 ? "Submitted" : "Submit"
+                        status === 200 ? (
+                            <img
+                                src="/Graphics/success.svg"
+                                className={styles.successImg}
+                            />
+                        ) : "Submit"
                     }
                 </button>
             </form>
