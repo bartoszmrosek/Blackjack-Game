@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, FormEvent, useRef } from "reac
 import { BeatLoader } from "react-spinners";
 import { useFetch } from "../../hooks/useFetch";
 import styles from "./FormTemplate.module.css";
+import { useAppDispatch } from "../../hooks/reduxHooks";
+import { loginOnlineUser } from "../../App/onlineUserSlice";
 
 interface FormTemplateProps {
     header: string;
@@ -12,8 +14,10 @@ interface FormTemplateProps {
 const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, shouldRepeatPassword }) => {
     const [arePasswordTheSame, setArePasswordTheSame] = useState(true);
     const controller = new AbortController();
-    const [isLoading, status,,sendForm] = useFetch(`${pathForRequest}`, "POST", false, controller.signal, false);
+    const [isLoading, status, userData, sendForm] = useFetch(
+        `${pathForRequest}`, "POST", false, controller.signal, pathForRequest === "/login/");
     const formRef = useRef<HTMLFormElement>(null);
+    const onlineUserDispatch = useAppDispatch();
 
     const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -37,6 +41,31 @@ const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, sh
             formRef.current.reset();
         }
     }, [status]);
+    useEffect(() => {
+        if (userData && pathForRequest === "/login/") {
+            const { id, username, balance } = userData as Record<string, string | number>;
+            if (typeof id === "number" && typeof username === "string" && typeof balance === "number") {
+                onlineUserDispatch(loginOnlineUser({ id, username, balance, reservedBalance: 0 }));
+            }
+        }
+    }, [onlineUserDispatch, pathForRequest, userData]);
+
+    const pickErrorMessage = useCallback(() => {
+        switch (status) {
+            case 500:
+                if (pathForRequest === "/register/") {
+                    return "Username taken";
+                }
+                return "User not valid";
+            case 404:
+                return "User not found";
+            case 401:
+                return "Username or password wrong";
+            default:
+                return "Bad request. Try again";
+        }
+    }, [pathForRequest, status]);
+
     return (
         <>
             <h1 className={styles.header}>{header} <span className={styles.headerForm}>Form</span></h1>
@@ -80,9 +109,8 @@ const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, sh
                 )}
                 {(status !== 0 && status !== 200) && (
                     <p className={styles.errorMessage}>
-                        <span>{
-                            status === 500 && pathForRequest === "/register/" ? "Username taken" : "Request failed"
-                        }
+                        <span>
+                            {pickErrorMessage()}
                         </span>
                     </p>
                 )}

@@ -7,7 +7,7 @@ type OnlineUserState = {
     reservedBalance: number;
 };
 
-const initialOnlineUserState: OnlineUserState = {
+export const initialOnlineUserState: OnlineUserState = {
     id: -1,
     username: "",
     balance: 0,
@@ -23,6 +23,8 @@ export const onlineUserSlice = createSlice({
         },
     },
 });
+
+export const { loginOnlineUser } = onlineUserSlice.actions;
 
 // eslint-disable-next-line import/no-default-export
 export default onlineUserSlice.reducer;

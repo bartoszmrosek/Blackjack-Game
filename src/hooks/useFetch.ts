@@ -40,7 +40,8 @@ const useFetch = <T>(path: string,
                 } else {
                     setStatus(response.status);
                 }
-            }).catch(() => {
+            }).catch((err) => {
+                console.log(err);
                 setStatus(1);
             }).finally(() => {
                 setIsLoading(false);
