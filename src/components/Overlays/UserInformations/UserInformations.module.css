@@ -36,6 +36,8 @@
     color: var(--positiveColor);
 
     display: inline;
+    
+    white-space: nowrap;
 }
 
 .accordion:hover > .accordionItem:hover > .accordionItemContent{
