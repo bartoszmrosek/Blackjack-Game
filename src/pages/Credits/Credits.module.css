@@ -7,17 +7,18 @@
     text-align: center;
 
     padding: 1rem;
-
-    font-size: 125%;
 }
 
 .creditsHeader{
+    font-size: 225%;
     color: wheat;
 
     font-style: italic;
 }
 
 .credits{
+    font-size: 125%;
+
     padding: 1rem;
     margin: 0.3rem;
 }

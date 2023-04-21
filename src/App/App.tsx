@@ -7,6 +7,7 @@ import "./App.module.css";
 import { Login } from "../pages/UserOps/Login/Login";
 import { Register } from "../pages/UserOps/Register/Register";
 import { Logout } from "../pages/UserOps/Logout/Logout";
+import { Rooms } from "../pages/Rooms/Rooms";
 
 const OfflineGameRoom = React.lazy(() => import("../pages/OfflineGameRoom/OfflineGameRoom")
     .then(module => ({ default: module.OfflineGameRoom })));
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
     {
         path: "/logout",
         element: <Logout />,
+    },
+    {
+        path: "/rooms",
+        element: <Rooms />,
     },
     {
         path: "/rooms/offline",
