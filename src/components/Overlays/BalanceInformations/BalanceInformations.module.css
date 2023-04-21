@@ -10,6 +10,7 @@
     width: min(24rem, 90%);
 
     gap: 10%;
+
 }
 
 .userBalance, .userAllBets{
