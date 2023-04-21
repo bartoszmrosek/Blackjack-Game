@@ -56,7 +56,11 @@
 }
 
 .tableTh{
-    background-color: rgba(0,0,0, 0.3);
+    top: 0;
+    position: sticky;
+    z-index: 1;
+    background-color: rgba(0,0,0, 0.6);
+    backdrop-filter: blur(4px);
 }
 
 .mainTable > * > tr:nth-last-of-type(2n){
@@ -71,18 +75,88 @@ td[data-cell="No. of players: "]{
     width: 50%;
 }
 
+.refreshTh{
+    vertical-align: middle;
+    text-align: center;
+}
+
+.joinGameBtn{
+    padding: 1rem 1.5rem;
+
+    border: 0;
+    border-radius: 2rem;
+
+    background-color: var(--positiveColor);
+
+    font-size: 100%;
+}
+
+.refreshBtn{
+    background-color: transparent;
+    
+    border: 0;
+    
+    aspect-ratio: 1/1;
+    width: 3em;
+
+    transition: transform 0.75s;
+}
+
+.refreshBtn:hover{
+    transform: rotate(360deg);
+}
+
+.mobileOptions, .mobileOnlyTh{
+    display: none;
+}
+
+.createGameEnd{
+    text-align: center;
+}
+
+.createGameEnd > td{
+    padding: 2rem 0;
+}
+
+.inGameTableBtn{
+    width: 90%;
+
+    padding: 1rem 1.5rem;
+
+    border-radius: 1rem;
+    border: 0;
+
+    background-color: var(--positiveColor);
+
+    font-size: 110%;
+}
+
 @media (max-width: 650px){
-    .tableTh{
+    .tableTh ,.createGameEnd{
         display: none;
     }
-    .tableTd{
+    .tableTd, .begginingTableTd{
         display: grid;
         grid-template-columns: 10ch auto;
         padding: 0.5rem 1rem;
         text-align: center;
         width: 100% !important;
     }
-    .tableTd:first-of-type{
+    .begginingTableTd{
+        justify-items: center;
+    }
+    .inGameTableBtn{
+        grid-column: span 2;
+    }
+    .joinGameBtn{
+        width: 50%;
+        margin: auto;
+        padding: 0.5rem 0.75rem;
+    }
+    .mobileOptions{
+        display: block;
+    }
+    .begginingTableTd:first-of-type{
         padding-top: 2rem;
     }
     .tableTd::before{

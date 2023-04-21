@@ -37,6 +37,14 @@ button{
   font-family: inherit;
 }
 
+button:hover{
+  filter: brightness(0.7);
+}
+
+button:active{
+  transform: scale(0.95);
+}
+
 .svgChipText{
   font-variant-caps:normal;
   font-variant-east-asian:normal;
