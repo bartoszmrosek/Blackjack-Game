@@ -81,7 +81,7 @@ const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, sh
                 {(status !== 0 && status !== 200) && (
                     <p className={styles.errorMessage}>
                         <span>{
-                            status === 500 ? "Username taken" : "Request failed"
+                            status === 500 && pathForRequest === "/register/" ? "Username taken" : "Request failed"
                         }
                         </span>
                     </p>

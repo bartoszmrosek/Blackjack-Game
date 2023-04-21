@@ -8,9 +8,10 @@ import { act } from "react-dom/test-utils";
 import { FormTempalate } from "./FormTemplate";
 import { renderWithProviders } from "../../utils/test-utils";
 
+const TESTING_ROUTE = "http://localhost:5678/api/register/";
 const restServer = setupServer(
-    rest.post("http://localhost:5678/api/testing", (req, res, ctx) => {
-        return res(ctx.status(200));
+    rest.post(TESTING_ROUTE, (req, res, ctx) => {
+        return res(ctx.delay(50), ctx.status(200));
     }),
 );
 
@@ -22,7 +23,7 @@ describe("FormTemplate", () => {
     beforeEach(() => {
         renderWithProviders(<FormTempalate
             header="Testing"
-            pathForRequest="/testing"
+            pathForRequest="/register/"
             shouldRepeatPassword={false}
         />);
     });
@@ -65,14 +66,50 @@ describe("FormTemplate", () => {
             vi.useFakeTimers();
             fireEvent.input(screen.getByPlaceholderText("Username"), { target: { value: "Test" } });
             fireEvent.input(screen.getByPlaceholderText("Password"), { target: { value: "a" } });
+            return () => vi.useRealTimers();
+        });
+        it("displas loader after submit", async () => {
             await act(async () => {
                 fireEvent.click(screen.getByText("Submit"));
             });
-            return () => vi.useRealTimers();
+            expect(screen.getByRole("progressbar")).toBeInTheDocument();
         });
         describe("handles successful request", () => {
+            beforeEach(async () => {
+                await act(async () => {
+                    fireEvent.click(screen.getByText("Submit"));
+                });
+            });
             it("displays success img", async () => {
                 expect(await screen.findByAltText("Success icon")).toBeInTheDocument();
+            });
+            it("should revert to submit text after time", async () => {
+                const successIcon = await screen.findByAltText("Success icon");
+                act(() => {
+                    vi.advanceTimersByTime(15000);
+                });
+                expect(successIcon).not.toBeInTheDocument();
+                expect(screen.getByText("Submit")).toBeInTheDocument();
+            });
+        });
+        describe("handles unsuccessful request", () => {
+            it("on server code 500 and /register/ route display username taken", async () => {
+                restServer.use(
+                    rest.post(TESTING_ROUTE, (req, res, ctx) => {
+                        return res(ctx.status(500));
+                    }),
+                );
+                fireEvent.click(screen.getByText("Submit"));
+                expect(await screen.findByText("Username taken")).toBeInTheDocument();
+            });
+            it("on unknown error display failed message", async () => {
+                restServer.use(
+                    rest.post(TESTING_ROUTE, (req, res, ctx) => {
+                        return res(ctx.status(1));
+                    }),
+                );
+                fireEvent.click(screen.getByText("Submit"));
+                expect(await screen.findByText("Request failed")).toBeInTheDocument();
             });
         });
     });
