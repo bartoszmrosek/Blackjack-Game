@@ -9,6 +9,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --positiveColor: #eecb87;
+  --negativeColor: #bfc7cb;
 }
 
 *{
@@ -25,12 +28,21 @@ body {
   min-height: 100vh;
 
   font-family: 'Lora', serif;
+  overflow: hidden;
 }
 
 button{
   cursor: pointer;
 
   font-family: inherit;
+}
+
+button:hover{
+  filter: brightness(0.7);
+}
+
+button:active{
+  transform: scale(0.95);
 }
 
 .svgChipText{

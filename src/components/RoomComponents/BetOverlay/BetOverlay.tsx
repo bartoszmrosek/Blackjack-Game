@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { Player } from "../../../types/Player";
+import { Player } from "../../../types/Player.interface";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
 import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";
@@ -19,7 +19,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
     const [canRepeat, setCanRepeat] = useState<boolean>(
         playerInformations.bet.currentBet === 0 &&
         playerInformations.bet.previousBet !== 0);
-    const { reservedBalance, balance: currentUserBalance } = useAppSelector(state => state.user);
+    const { reservedBalance, balance: currentUserBalance } = useAppSelector(state => state.offlineUser);
     const { currentBet, previousBet } = playerInformations.bet;
 
     const buttonHandler = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -57,7 +57,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                 <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
                     <span className={styles.additionalText}>UNDO</span>
                     <button onClick={handleUndoButton} className={styles.undoButton}>
-                        <img height="40px" width="40px" src="./Graphics/undo.svg" alt="Undo button" />
+                        <img height="40px" width="40px" src="/Graphics/undo.svg" alt="Undo button" />
                     </button>
                 </div>
                 <button onClick={buttonHandler} id="bet-1" className={`${styles.betButton} ${styles.betOperations}`}>
@@ -90,7 +90,7 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
                     >
                         {canRepeat ? (
                             <img
-                                src="./Graphics/repeat.svg"
+                                src="/Graphics/repeat.svg"
                                 width="40px"
                                 height="40px"
                                 className={styles.repeatBtn}

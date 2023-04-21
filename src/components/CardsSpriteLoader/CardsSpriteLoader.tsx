@@ -45,7 +45,7 @@ const CardsSpriteLoader: React.FC<CardsSpriteLoaderProps> = ({ cardId, className
         return {
             width: "100%",
             height: "100%",
-            background: `url(./Graphics/cardsBitmap.png) ${xOffset} ${yOffset}`,
+            background: `url(/Graphics/cardsBitmap.png) ${xOffset} ${yOffset}`,
             backgroundSize: "1400%",
             outline: 0,
         };

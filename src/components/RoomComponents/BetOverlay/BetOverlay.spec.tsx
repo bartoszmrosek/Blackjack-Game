@@ -2,10 +2,10 @@ import { vi } from "vitest";
 import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "../../../utils/test-utils";
-import { Player } from "../../../types/Player";
+import { Player } from "../../../types/Player.interface";
 import { BetOverlay } from "./BetOverlay";
 import styles from "./BetOverlay.module.css";
-import { initialUserState } from "../../../App/userSlice";
+import { initialOfflineState } from "../../../App/offlineUserSlice";
 
 const defaultMock = vi.fn();
 const testingPlayer: Player = {
@@ -63,8 +63,8 @@ describe("BetOverlay", () => {
                 undoHandler={defaultMock}
             />, {
                 preloadedState: {
-                    user: {
-                        ...initialUserState,
+                    offlineUser: {
+                        ...initialOfflineState,
                         balance: 50,
                     },
                 },
@@ -79,8 +79,8 @@ describe("BetOverlay", () => {
                 undoHandler={defaultMock}
             />, {
                 preloadedState: {
-                    user: {
-                        ...initialUserState,
+                    offlineUser: {
+                        ...initialOfflineState,
                         balance: 50,
                     },
                 },

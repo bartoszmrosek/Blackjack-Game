@@ -6,7 +6,7 @@ import { renderWithProviders } from "../../../utils/test-utils";
 import deck from "../../../cardDeck.json";
 import { getAllPermutations } from "../../../utils/getAllPermutations";
 import { getCardValues } from "../../../utils/getCardValues";
-import { initialUserState } from "../../../App/userSlice";
+import { initialOfflineState } from "../../../App/offlineUserSlice";
 
 const defaultMock = vi.fn();
 describe("UserSeat", () => {
@@ -75,9 +75,9 @@ describe("UserSeat", () => {
             />,
             {
                 preloadedState: {
-                    user: {
+                    offlineUser: {
                         id: testingUser.id,
-                        name: testingUser.name,
+                        username: testingUser.name,
                         balance: 1000,
                         reservedBalance: 0,
                     },
@@ -121,9 +121,9 @@ describe("UserSeat", () => {
                 playerStatus={testingPlayerStatus}
             />, {
                 preloadedState: {
-                    user: {
+                    offlineUser: {
                         id: testingUser.id,
-                        name: testingUser.name,
+                        username: testingUser.name,
                         balance: 1000,
                         reservedBalance: 0,
                     },
@@ -143,8 +143,8 @@ describe("UserSeat", () => {
                 playerStatus={testingPlayerStatus}
             />, {
                 preloadedState: {
-                    user: {
-                        ...initialUserState,
+                    offlineUser: {
+                        ...initialOfflineState,
                         balance: 0,
                     },
                 },

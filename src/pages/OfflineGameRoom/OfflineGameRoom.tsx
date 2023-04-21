@@ -1,28 +1,27 @@
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import {
-    addBalance,
-    addReservedBalance,
-    gameFundReservation,
+    addOfflineBalance,
+    addOfflineReservedBalance,
+    offlineGameFundReservation,
     removeReservedBalance,
-    selectUser,
-} from "../../App/userSlice";
+} from "../../App/offlineUserSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { UserSeat } from "../../components/RoomComponents/UserSeat/UserSeat";
-import styles from "./GameRoom.module.css";
+import styles from "./OfflineGameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
 import { BetOverlay } from "../../components/RoomComponents/BetOverlay/BetOverlay";
-import { Player } from "../../types/Player";
+import { Player } from "../../types/Player.interface";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
-import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
-import { BalanceInformations } from "../../components/RoomComponents/BalanceInformations/BalanceInformations";
+import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
+import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
 
-const GameRoom: React.FC = () => {
+const OfflineGameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
     const { playersSeats, isGameStarted } = gameRoomState;
     const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
-    const currentUser = useAppSelector(selectUser);
+    const currentUser = useAppSelector((state) => state.offlineUser);
     const currentUserDispatch = useAppDispatch();
     const [fundsToAdd, setFundsToAdd] = useState<number>(0);
     const [isTooSmallRes, setIsTooSmallRes] = useState(window.innerHeight < 800 || window.innerWidth < 1200);
@@ -64,7 +63,7 @@ const GameRoom: React.FC = () => {
         if (currentUser.reservedBalance + currentBetChange <= currentUser.balance) {
             dispatch({ type: PlayerActionKind.UPDATE_BET, payload: player });
             setBetsToUpdate(bets => [...bets.slice(1)]);
-            currentUserDispatch(addReservedBalance(currentBetChange));
+            currentUserDispatch(addOfflineReservedBalance(currentBetChange));
         }
     }, [currentUser.balance, currentUser.reservedBalance, currentUserDispatch]);
 
@@ -75,7 +74,7 @@ const GameRoom: React.FC = () => {
         const betFromOtherSeat = playersSeats[indexOfOtherSeatBet] as Player;
         const newPlayer: Player = {
             id: currentUser.id,
-            name: currentUser.name,
+            name: currentUser.username,
             bet: {
                 currentBet: indexOfOtherSeatBet !== -1 ? betFromOtherSeat.bet.currentBet : 0,
                 previousBet: 0,
@@ -86,13 +85,13 @@ const GameRoom: React.FC = () => {
         if (indexOfOtherSeatBet === -1) {
             addBetToUpdate(newPlayer);
         } else {
-            currentUserDispatch(addReservedBalance(betFromOtherSeat.bet.currentBet));
+            currentUserDispatch(addOfflineReservedBalance(betFromOtherSeat.bet.currentBet));
         }
-    }, [addBetToUpdate, currentUser.id, currentUser.name, currentUserDispatch, playersSeats]);
+    }, [addBetToUpdate, currentUser.id, currentUser.username, currentUserDispatch, playersSeats]);
 
     const startGame = useCallback(() => {
         if (!isGameStarted) {
-            currentUserDispatch(gameFundReservation());
+            currentUserDispatch(offlineGameFundReservation());
             const allCurrentPlayers = playersSeats.filter(player => player !== "empty") as Player[];
             if (allCurrentPlayers.length > 0) {
                 setCurrentPlayers(allCurrentPlayers);
@@ -120,7 +119,7 @@ const GameRoom: React.FC = () => {
 
     useEffect(() => {
         if (fundsToAdd !== 0) {
-            currentUserDispatch(addBalance(fundsToAdd));
+            currentUserDispatch(addOfflineBalance(fundsToAdd));
             setFundsToAdd(0);
         }
     }, [currentUserDispatch, fundsToAdd]);
@@ -180,6 +179,7 @@ const GameRoom: React.FC = () => {
                             }
                             return acc;
                         }, 0)}
+                        shouldDisplayBets={true}
                         currentBalance={currentUser.balance}
                     />
 
@@ -207,4 +207,4 @@ const GameRoom: React.FC = () => {
     );
 };
 
-export { GameRoom };
+export { OfflineGameRoom };

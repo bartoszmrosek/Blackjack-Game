@@ -1,10 +1,11 @@
 import React from "react";
-import { GoBackButton } from "../../components/GoBackButton/GoBackButton";
+import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
+import { StyledMainWrapper } from "../../components/StyledMainWrapper/StyledMainWrapper";
 import styles from "./Credits.module.css";
 
 const Credits: React.FC = () => {
     return (
-        <main className={styles.creditsContainer}>
+        <StyledMainWrapper classNames={styles.creditsContainer}>
             <h1 className={styles.creditsHeader}>This couldn`t have been created if not for:</h1>
             <section className={styles.credits}>
                 <p>
@@ -39,7 +40,7 @@ const Credits: React.FC = () => {
                 </p>
             </section>
             <GoBackButton />
-        </main>
+        </StyledMainWrapper>
     );
 };
 

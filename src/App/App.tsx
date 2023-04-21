@@ -4,8 +4,13 @@ import { RoomLoader } from "../components/RoomComponents/RoomLoader/RoomLoader";
 import { Credits } from "../pages/Credits/Credits";
 import { Home } from "../pages/Home/Home";
 import "./App.module.css";
+import { Login } from "../pages/UserOps/Login/Login";
+import { Register } from "../pages/UserOps/Register/Register";
+import { Logout } from "../pages/UserOps/Logout/Logout";
+import { Rooms } from "../pages/Rooms/Rooms";
 
-const GameRoom = React.lazy(() => import("../pages/GameRoom/GameRoom").then(module => ({ default: module.GameRoom })));
+const OfflineGameRoom = React.lazy(() => import("../pages/OfflineGameRoom/OfflineGameRoom")
+    .then(module => ({ default: module.OfflineGameRoom })));
 
 const router = createBrowserRouter([
     {
@@ -13,8 +18,24 @@ const router = createBrowserRouter([
         element: <Home />,
     },
     {
-        path: "/room",
-        element: <React.Suspense fallback={<RoomLoader />}><GameRoom /></React.Suspense>,
+        path: "/login",
+        element: <Login />,
+    },
+    {
+        path: "/register",
+        element: <Register />,
+    },
+    {
+        path: "/logout",
+        element: <Logout />,
+    },
+    {
+        path: "/rooms",
+        element: <Rooms />,
+    },
+    {
+        path: "/rooms/offline",
+        element: <React.Suspense fallback={<RoomLoader />}><OfflineGameRoom /></React.Suspense>,
     },
     {
         path: "/credits",

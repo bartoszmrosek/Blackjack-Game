@@ -1,0 +1,79 @@
+.header{
+    font-size: 275%;
+    font-style: italic;
+    font-weight: 800;
+}
+
+.headerForm{
+    color: var(--positiveColor);
+}
+
+.formStyles{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    text-align: center;
+
+    gap: 1.5rem;
+
+    border: 1px solid var(--positiveColor);
+    border-radius: 2.25rem;
+
+    margin: 1rem;
+    padding: 3.5rem 2.5rem;
+
+    width: max(35%, 20rem);
+
+    font-size: 150%;
+    font-weight: 600;
+}
+
+.input{
+    font-size: 100%;
+    
+    aspect-ratio: 10/1;
+
+    padding: 0.25rem 0.75rem;
+
+    border-radius: 0.5rem;
+    border: 0;
+}
+
+.errorMessage{
+    color: rgba(230, 10, 10, 0.8);
+
+    font-size: 80%;
+
+    display:  flex;
+    flex-direction: column;
+}
+
+.sendBtn{
+    margin: 0 2rem;
+    padding: 1rem 2rem;
+
+    border: 0;
+    border-radius: 4rem;
+
+    font-size: 80%;
+}
+
+.sendBtn:disabled{
+    cursor: not-allowed;
+}
+
+.sendBtn:not(:disabled):hover{
+    filter: brightness(0.65);
+}
+
+.successImg{
+    width: 3em;
+    aspect-ratio: 1/1;
+}
+
+.submitSuccess{
+    background-color: rgba(255,255,255, 0.1);
+    padding: 0;
+    margin: 0;
+}

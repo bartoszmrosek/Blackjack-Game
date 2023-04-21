@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { Player } from "../../../types/Player";
-import { RoundPlayer } from "../../../types/RoundPlayer";
+import { Player } from "../../../types/Player.interface";
+import { RoundPlayer } from "../../../types/RoundPlayer.interface";
 import { CardsSpriteLoader } from "../../CardsSpriteLoader/CardsSpriteLoader";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
@@ -31,7 +31,7 @@ interface UserSeatProps {
 }
 
 const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, playerStatus, isCurrentlyDeciding }) => {
-    const currentUser = useAppSelector((state) => state.user);
+    const currentUser = useAppSelector((state) => state.offlineUser);
 
     const handleJoin = useCallback(() => {
         actions.userJoin(seatId);

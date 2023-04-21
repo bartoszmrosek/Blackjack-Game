@@ -4,7 +4,8 @@ import React, { PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 
-import { RootState, AppStore, setupStore } from "../mainStore";
+import { AppStore, setupStore } from "../mainStore";
+import { RootState } from "../rootReducer";
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
     preloadedState?: PreloadedState<RootState>;

@@ -2,8 +2,6 @@
 .statusWrapper{
     --bgColor: rgb(54, 66, 59);
     --bgColorWithOpacity: rgba(54, 66, 59, 0.85);
-    --positiveMainColor: #eecb87;
-    --negativeMainColor: #bfc7cb;
 
     position: relative;
 
@@ -37,13 +35,13 @@
 }
 
 .positiveStatus{
-    border-color: var(--positiveMainColor);
-    color: var(--positiveMainColor);
+    border-color: var(--positiveColor);
+    color: var(--positiveColor);
 }
 
 .negativeStatus{
-    border-color: var(--negativeMainColor);
-    color: var(--negativeMainColor);
+    border-color: var(--negativeColor);
+    color: var(--negativeColor);
 }
 
 .statusText{

@@ -2,8 +2,8 @@ import { getCardValues } from "../../utils/getCardValues";
 import { getAllPermutations } from "../../utils/getAllPermutations";
 import { getRandomInt } from "../../utils/getRandomInt";
 import deck from "../../cardDeck.json";
-import { PresenterState } from "../../types/PresenterState";
-import { RoundPlayer } from "../../types/RoundPlayer";
+import { PresenterState } from "../../types/PresenterState.interface";
+import { RoundPlayer } from "../../types/RoundPlayer.interface";
 
 export interface CurrentlyAskingState {
     currentlyAsking: Pick<RoundPlayer, "id" | "seatNumber" | "cardsScore" | "bet"> & { theirIndex: number; };

@@ -1,20 +1,4 @@
 .creditsContainer{
-    background-image: repeating-radial-gradient(
-        circle at -10% 50%,
-        rgba(26, 44, 56, 0.7),
-        rgba(23, 54, 60, 0.7) 15px
-      ),
-      linear-gradient(
-        90deg,
-        rgb(6 42 46) 0%,
-        rgb(72 185 197) 50%,
-        rgb(6 42 46) 100%
-      );
-    background-attachment: fixed;
-
-    width: 100vw;
-    height: 100vh;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,17 +7,18 @@
     text-align: center;
 
     padding: 1rem;
-
-    font-size: 125%;
 }
 
 .creditsHeader{
+    font-size: 225%;
     color: wheat;
 
     font-style: italic;
 }
 
 .credits{
+    font-size: 125%;
+
     padding: 1rem;
     margin: 0.3rem;
 }

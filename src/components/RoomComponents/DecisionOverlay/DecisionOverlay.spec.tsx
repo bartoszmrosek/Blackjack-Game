@@ -1,7 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { initialUserState } from "../../../App/userSlice";
+import { initialOfflineState } from "../../../App/offlineUserSlice";
 import { renderWithProviders } from "../../../utils/test-utils";
 import { DecisionOverlay } from "./DecisionOverlay";
 
@@ -28,8 +28,8 @@ describe("Decision overlay", () => {
             currentBet={100}
         />, {
             preloadedState: {
-                user: {
-                    ...initialUserState,
+                offlineUser: {
+                    ...initialOfflineState,
                     balance: 50,
                 },
             },
