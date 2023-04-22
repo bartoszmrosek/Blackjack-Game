@@ -77,11 +77,23 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
                     },
                 });
             }
-        } else {
-            dispatchLogicUpdate({ type: GameActionKind.ALL_ASKING_DONE, payload: { currentUserId, resultsCb: stopGameCb } });
+        } else if (gameLogicState.isGameStarted && gameLogicState.presenterTime === null) {
+            dispatchLogicUpdate({ type: GameActionKind.START_PRESENTER_TIME });
         }
     }
 
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (gameLogicState.isGameStarted && gameLogicState.presenterTime && !gameLogicState.presenterState.didGetBlackjack) {
+            timer = setTimeout(() => {
+                dispatchLogicUpdate({ type: GameActionKind.PRESENTER_NEW_CARD });
+            }, 2000);
+        } else if ((gameLogicState.presenterTime !== null
+            && !gameLogicState.presenterTime) || (gameLogicState.presenterState.didGetBlackjack && !gameLogicState.isShowingResults)) {
+            dispatchLogicUpdate({ type: GameActionKind.ALL_UPDATES_DONE, payload: { currentUserId, resultsCb: stopGameCb } });
+        }
+        return () => clearTimeout(timer);
+    }, [currentUserId, gameLogicState, stopGameCb]);
     useEffect(() => {
         let timer: NodeJS.Timeout;
         if (isShowingResults) {

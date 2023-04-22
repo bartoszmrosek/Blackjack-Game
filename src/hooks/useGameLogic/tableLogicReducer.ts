@@ -14,8 +14,10 @@ export enum GameActionKind {
     SET_GAME_PLAYERS = "SET_GAME_PLAYERS",
     SWITCH_GAME_STATE = "SWITCH_GAME_STATE",
     RESET_GAME = "RESET_GAME",
-    ALL_ASKING_DONE = "ALL_ASKING_DONE",
+    ALL_UPDATES_DONE = "ALL_UPDATES_DONE",
     ASK_FOR_PLAYER_DECISION = "ASK_FOR_PLAYER_DECISION",
+    START_PRESENTER_TIME = "START_PRESENTER_TIME",
+    PRESENTER_NEW_CARD = "PRESENTER_NEW_CARD",
     UPDATE_PLAYER_STATE = "UPDATE_PLAYER_STATE",
 }
 
@@ -29,15 +31,19 @@ export type GameActions = {
     type: GameActionKind.UPDATE_PLAYER_STATE;
     payload: { playerIndex: number; decision: PlayerDecision; };
 } | {
-    type: GameActionKind.ALL_ASKING_DONE;
+    type: GameActionKind.ALL_UPDATES_DONE;
     payload: { currentUserId: string; resultsCb: (funds: number) => void; };
 } | {
-    type: GameActionKind.RESET_GAME | GameActionKind.SWITCH_GAME_STATE;
+    type: GameActionKind.RESET_GAME
+    | GameActionKind.SWITCH_GAME_STATE
+    | GameActionKind.START_PRESENTER_TIME
+    | GameActionKind.PRESENTER_NEW_CARD;
 };
 
 export interface TableState {
     isGameStarted: boolean;
     isShowingResults: boolean;
+    presenterTime: boolean | null;
     gamePlayers: OfflineRoundPlayer[];
     presenterState: PresenterState;
     askingState: CurrentlyAskingState | null;
@@ -47,6 +53,7 @@ export interface TableState {
 export const initialGameState: TableState = {
     isGameStarted: false,
     isShowingResults: false,
+    presenterTime: null,
     gamePlayers: [],
     presenterState: { cards: [], score: [0], didGetBlackjack: false },
     askingState: null,
@@ -190,39 +197,22 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
                     return state;
             }
         }
-        case GameActionKind.ALL_ASKING_DONE:
+        case GameActionKind.ALL_UPDATES_DONE:
         {
-            const mutablePresenterState = { ...state.presenterState };
-            const mutableCardsInGame = [...state.cardsInPlay];
-            const updatePresenterState = (presenter: TableState["presenterState"], iteration: number) => {
-                if (!presenter.didGetBlackjack && Math.min(...presenter.score) < 17) {
-                    const newCard = pickNewCardFromDeck(mutableCardsInGame);
-                    const newScore = getAllPermutations(mutablePresenterState.score, getCardValues(newCard));
-                    mutablePresenterState.cards = [...mutablePresenterState.cards, newCard];
-                    mutablePresenterState.score = newScore;
-                    if (iteration === 0 && Math.max(...newScore) === 21) {
-                        mutablePresenterState.didGetBlackjack = true;
-                    }
-                    updatePresenterState(presenter, iteration + 1);
-                }
-            };
-            updatePresenterState(mutablePresenterState, 0);
-
             const newState: TableState = {
                 ...state,
-                presenterState: mutablePresenterState,
                 askingState: null,
                 gamePlayers: state.gamePlayers.map((player) => (
                     {
                         ...player,
                         currentStatus: checkCardRules(
                             { status: player.currentStatus, score: player.cardsScore },
-                            mutablePresenterState.didGetBlackjack ? "blackjack" : Math.min(...mutablePresenterState.score),
+                            state.presenterState.didGetBlackjack ? "blackjack" : Math.min(...state.presenterState.score),
                         ),
                     }
                 )),
-                cardsInPlay: [...mutableCardsInGame],
                 isShowingResults: true,
+                presenterTime: null,
             };
 
             const balanceToAdd = newState.gamePlayers.reduce((acc, player) => {
@@ -237,6 +227,26 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
             }, 0);
             action.payload.resultsCb(balanceToAdd);
             return newState;
+        }
+        case GameActionKind.START_PRESENTER_TIME:
+            return { ...state, presenterTime: true, askingState: null };
+        case GameActionKind.PRESENTER_NEW_CARD:
+        {
+            const { score, didGetBlackjack, cards } = state.presenterState;
+            const newDeck = [...state.cardsInPlay];
+            const newCard = pickNewCardFromDeck(newDeck);
+            const newScore = getAllPermutations(score, getCardValues(newCard));
+            const shouldAskAgain = didGetBlackjack ? false : Math.min(...newScore) < 17;
+            return {
+                ...state,
+                presenterTime: shouldAskAgain,
+                presenterState: {
+                    didGetBlackjack: cards.length === 1 && Math.max(...newScore) === 21,
+                    cards: [...cards, newCard],
+                    score: newScore,
+                },
+                cardsInPlay: newDeck,
+            };
         }
     }
 }
