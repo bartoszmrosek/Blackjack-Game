@@ -2,7 +2,7 @@ import React from "react";
 
 import { setupServer } from "msw/node";
 import { rest } from "msw";
-import { cleanup, fireEvent, screen } from "@testing-library/react";
+import { cleanup, fireEvent, screen, waitFor } from "@testing-library/react";
 import { setupStore } from "../../mainStore";
 import { renderWithProviders } from "../../utils/test-utils";
 import { Rooms } from "./Rooms";
@@ -37,7 +37,7 @@ describe("Rooms", () => {
             expect(screen.getAllByRole("button", { name: "Create & join room" })).toHaveLength(2);
         });
         it("should display joining button next to room on list", async () => {
-            expect(await screen.findByRole("button", { name: "Join" })).toBeInTheDocument();
+            expect(await screen.findByRole("link", { name: "Join" })).toBeInTheDocument();
         });
     });
     describe("displays properly without user logged in", () => {
@@ -76,7 +76,12 @@ describe("Rooms", () => {
         });
     });
     describe("handles creating room request status properly", () => {
-        it.todo("handling routing to new location on success");
+        it("handling routing to new location on success", async () => {
+            fireEvent.click(screen.getAllByRole("button", { name: "Create & join room" })[0]);
+            await waitFor(() => {
+                expect(window.location.pathname).toBe(`/rooms/testingId`);
+            });
+        });
         it("should display creating message while waiting for response", async () => {
             restServer.use(rest.post(TESTING_POST_ROUTE, (req, res, ctx) => res(ctx.delay(500))));
             fireEvent.click(screen.getAllByRole("button", { name: "Create & join room" })[0]);

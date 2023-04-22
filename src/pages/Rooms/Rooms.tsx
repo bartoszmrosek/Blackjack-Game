@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect } from "react";
 import { SyncLoader } from "react-spinners";
+import { Link, useNavigate } from "react-router-dom";
 import { StyledMainWrapper } from "../../components/StyledMainWrapper/StyledMainWrapper";
 import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
 import styles from "./Rooms.module.css";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import { useFetch } from "../../hooks/useFetch";
-import { JoinBtnSubcomponent } from "./JoinBtnSubcomponent";
 import { transformImgUrl } from "../../utils/transformImgUrl";
 
 const Rooms: React.FC = () => {
@@ -14,6 +14,7 @@ const Rooms: React.FC = () => {
     const [isCreatingRoom, creatingStatus, newRoomId, createRoom]
     = useFetch<{ id: string; }>("/rooms/create/", "POST", false, true, false);
     const isUserLogged = useAppSelector(state => state.onlineUser.id) !== -1;
+    const navigate = useNavigate();
 
     const refreshRooms = useCallback(() => {
         getRooms();
@@ -27,10 +28,9 @@ const Rooms: React.FC = () => {
 
     useEffect(() => {
         if (newRoomId !== null) {
-            // for now console log
-            console.log(newRoomId);
+            navigate(`/rooms/${newRoomId.id}`);
         }
-    }, [newRoomId]);
+    }, [navigate, newRoomId]);
 
     return (
         <StyledMainWrapper classNames={styles.roomsWrapper}>
@@ -77,7 +77,9 @@ const Rooms: React.FC = () => {
                                                     <td data-cell="Game id: " className={styles.tableTd}>{gameRoom.id}</td>
                                                     <td data-cell="No. of players: " className={styles.tableTd}>{gameRoom.playersNum}/5</td>
                                                     {isUserLogged && (
-                                                        <JoinBtnSubcomponent roomId={gameRoom.id} />
+                                                        <td className={styles.tableTd}>
+                                                            <Link to={`/rooms/${gameRoom.id}`} className={styles.joinGameBtn}>Join</Link>
+                                                        </td>
                                                     )}
                                                 </tr>
                                             ))
