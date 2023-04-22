@@ -1,11 +1,11 @@
 import { vi } from "vitest";
 import React from "react";
 import { fireEvent } from "@testing-library/react";
-import { renderWithProviders } from "../../../utils/test-utils";
-import { OfflinePlayer } from "../../../types/Player.interface";
-import { BetOverlay } from "./BetOverlay";
-import styles from "./BetOverlay.module.css";
-import { initialOfflineState } from "../../../App/offlineUserSlice";
+import { renderWithProviders } from "../../../../utils/test-utils";
+import { OfflinePlayer } from "../../../../types/Player.interface";
+import { OfflineBetOverlay } from "./OfflineBetOverlay";
+import styles from "../BetOverlay.module.css";
+import { initialOfflineState } from "../../../../App/offlineUserSlice";
 
 const defaultMock = vi.fn();
 const testingPlayer: OfflinePlayer = {
@@ -22,7 +22,7 @@ describe("BetOverlay", () => {
         it("handles undo button", () => {
             const undoMock = vi.fn();
             const { getByAltText } = renderWithProviders(
-                <BetOverlay playerInformations={testingPlayer} updateBet={defaultMock} undoHandler={undoMock} />);
+                <OfflineBetOverlay playerInformations={testingPlayer} updateBet={defaultMock} undoHandler={undoMock} />);
             fireEvent.click(getByAltText("Undo button"));
             expect(undoMock).toHaveBeenCalledWith(testingPlayer);
             expect(undoMock).toHaveBeenCalledTimes(1);
@@ -31,7 +31,7 @@ describe("BetOverlay", () => {
             const playerWithPreviousBet: OfflinePlayer = { ...testingPlayer, bet: { currentBet: 0, previousBet: 500 } };
             const updateMock = vi.fn();
             const { getByAltText } = renderWithProviders(
-                <BetOverlay playerInformations={playerWithPreviousBet} updateBet={updateMock} undoHandler={defaultMock} />);
+                <OfflineBetOverlay playerInformations={playerWithPreviousBet} updateBet={updateMock} undoHandler={defaultMock} />);
             const specialButton = getByAltText("Repeat icon");
             fireEvent.click(specialButton);
             expect(updateMock).toHaveBeenCalledWith(
@@ -43,7 +43,7 @@ describe("BetOverlay", () => {
             const playerWithCurrentBet: OfflinePlayer = { ...testingPlayer, bet: { currentBet: 250, previousBet: 0 } };
             const updateMock = vi.fn();
             const { getByText } = renderWithProviders(
-                <BetOverlay playerInformations={playerWithCurrentBet} updateBet={updateMock} undoHandler={defaultMock} />);
+                <OfflineBetOverlay playerInformations={playerWithCurrentBet} updateBet={updateMock} undoHandler={defaultMock} />);
             const specialButton = getByText("2x");
             fireEvent.click(specialButton);
             expect(updateMock).toHaveBeenCalledWith(
@@ -57,7 +57,7 @@ describe("BetOverlay", () => {
         });
         it("blocks repeat button when funds cannot afford it", () => {
             const playerWithPreviousBet: OfflinePlayer = { ...testingPlayer, bet: { ...testingPlayer.bet, previousBet: 500 } };
-            const { getByAltText } = renderWithProviders(<BetOverlay
+            const { getByAltText } = renderWithProviders(<OfflineBetOverlay
                 playerInformations={playerWithPreviousBet}
                 updateBet={defaultMock}
                 undoHandler={defaultMock}
@@ -73,7 +73,7 @@ describe("BetOverlay", () => {
         });
         it("blocks 2x button when funds cannot afford it", () => {
             const playerWithCurrentBet: OfflinePlayer = { ...testingPlayer, bet: { ...testingPlayer.bet, currentBet: 500 } };
-            const { getByText } = renderWithProviders(<BetOverlay
+            const { getByText } = renderWithProviders(<OfflineBetOverlay
                 playerInformations={playerWithCurrentBet}
                 updateBet={defaultMock}
                 undoHandler={defaultMock}
@@ -90,7 +90,7 @@ describe("BetOverlay", () => {
     });
     it("handles all betting options", () => {
         const betPlacingMock = vi.fn();
-        renderWithProviders(<BetOverlay undoHandler={defaultMock} playerInformations={testingPlayer} updateBet={betPlacingMock} />);
+        renderWithProviders(<OfflineBetOverlay undoHandler={defaultMock} playerInformations={testingPlayer} updateBet={betPlacingMock} />);
         const allBetBtns = document.getElementsByClassName(styles.betButton);
         for (const betBtn of allBetBtns) {
             fireEvent.click(betBtn);

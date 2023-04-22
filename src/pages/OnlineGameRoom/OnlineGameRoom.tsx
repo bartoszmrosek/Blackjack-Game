@@ -80,6 +80,7 @@ const OnlineGameRoom: React.FC = () => {
 
     const trySettingSeatBet = useCallback((seatId: number, bet: number) => {
         if (socket !== null) {
+            setSeatBetsToUpdate(prev => prev.filter((id) => id !== seatId));
             socket.emit("placeBet", bet, seatId, (ack) => {
                 if (ack === 200) { return setActionMessage("Bet accepted"); }
                 return setActionMessage("Bet was not accepted");

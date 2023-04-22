@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { OffLineUserSeat } from "../../components/RoomComponents/UserSeat/Offline/OfflineUserSeat";
 import styles from "./OfflineGameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
-import { BetOverlay } from "../../components/RoomComponents/BetOverlay/BetOverlay";
+import { OfflineBetOverlay } from "../../components/RoomComponents/BetOverlay/Offline/OfflineBetOverlay";
 import { OfflinePlayer } from "../../types/Player.interface";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
@@ -188,7 +188,7 @@ const OfflineGameRoom: React.FC = () => {
                     {betsToUpdate.length > 0 &&
                 !isGameStarted &&
                 currentUser.balance > 0 &&
-                    <BetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
+                    <OfflineBetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
 
                     {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
                         <DecisionOverlay

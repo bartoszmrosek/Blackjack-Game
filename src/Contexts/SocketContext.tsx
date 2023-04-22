@@ -15,7 +15,7 @@ const SocketContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
         let timeout: NodeJS.Timeout;
         if (isOnlineUserLogged) {
             if (socket === null) {
-                const newSocket = io("http://localhost:5678/", { withCredentials: true });
+                const newSocket = io(`http://localhost:5678/`, { withCredentials: true });
                 setSocket(newSocket);
                 newSocket.once("connect_error", (err) => {
                     console.log(err);
