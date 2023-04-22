@@ -7,7 +7,7 @@ interface PresenterSectionProps {
     presenter: Omit<PresenterState, "didGetBlackjack">;
 }
 
-const PresenterSection: React.FC<PresenterSectionProps> = (
+const OnlinePresenterSection: React.FC<PresenterSectionProps> = (
     { presenter },
 ) => {
     return (
@@ -28,4 +28,4 @@ const PresenterSection: React.FC<PresenterSectionProps> = (
     );
 };
 
-export { PresenterSection };
+export { OnlinePresenterSection };

@@ -5,6 +5,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    position: absolute;
+    
+    pointer-events: none;
 }
 
 .message{

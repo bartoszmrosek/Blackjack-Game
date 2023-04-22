@@ -1,7 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../utils/test-utils";
-import { PresenterSection } from "./PresenterSection";
+import { OnlinePresenterSection } from "./OnlinePresenterSection";
 import deck from "../../../../cardDeck.json";
 import { getCardValues } from "../../../../utils/getCardValues";
 import { PresenterState } from "../../../../types/PresenterState.interface";
@@ -14,7 +14,7 @@ const mockedPresenter: PresenterState = {
 };
 describe("PresenterSection", () => {
     beforeEach(() => {
-        renderWithProviders(<PresenterSection presenter={mockedPresenter} />);
+        renderWithProviders(<OnlinePresenterSection presenter={mockedPresenter} />);
     });
     it("should display proper card for presenter", () => {
         expect(screen.getByAltText(`Card ${testingCard}`)).toBeInTheDocument();

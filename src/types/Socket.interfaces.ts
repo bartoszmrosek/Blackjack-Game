@@ -23,9 +23,9 @@ export type GameStatusObject = {
 export interface ServerToClienEvents<IsSender extends boolean = false> {
     gameTimerStarting: (timerTime: number) => void;
     userJoinedSeat: ({ username, userId, seatId }:
-        { username: string; userId: number; seatId: number; }
+        { username: string; userId: number; seatId: number; timer: number; }
     ) => void;
-    userLeftSeat: ({ userId, seatId }: { userId: number; seatId: number; }) => void;
+    userLeftSeat: ({ userId, seatId, username }: { userId: number; seatId: number; username: string; }) => void;
     userLeftGame: (userId: number) => void;
     betPlaced: (bet: number, seatId: number) => void;
     gameStatusUpdate: (

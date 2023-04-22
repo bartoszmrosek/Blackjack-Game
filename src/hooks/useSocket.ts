@@ -74,9 +74,14 @@ const useSocket = (userId: number): UseSocketReturn => {
         if (socket !== null) {
             socket.on("gameTimerStarting", (timeout) => setTimer(timeout));
             socket.on("userJoinedSeat", (seat) => {
+                setAdditionalMessage(`${seat.username} joined on seat ${seat.seatId + 1}`);
                 setSeats(prev => updateArrAt(prev, seat.seatId, { ...seat, bet: 0 }));
+                setTimer(seat.timer);
             });
-            socket.on("userLeftSeat", (seat) => setSeats(prev => updateArrAt(prev, seat.seatId, "empty")));
+            socket.on("userLeftSeat", (seat) => {
+                setAdditionalMessage(`${seat.username} left the seat ${seat.seatId + 1}`);
+                setSeats(prev => updateArrAt(prev, seat.seatId, "empty"));
+            });
             socket.on("userLeftGame", (newUserId) => setSeats(prev => prev.map((seat) => {
                 if (seat === "empty" || seat.userId === newUserId) {
                     return "empty";

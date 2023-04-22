@@ -1,15 +1,15 @@
 import React, { CSSProperties, useCallback } from "react";
-import { useAppSelector } from "../../../hooks/reduxHooks";
-import { OfflinePlayer, OfflineRoundPlayer } from "../../../types/Player.interface";
-import { CardsSpriteLoader } from "../../CardsSpriteLoader/CardsSpriteLoader";
-import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
-import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
-import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";
-import { SecondaryChip } from "../../ChipSvgs/SecondaryChip";
-import { SenaryChip } from "../../ChipSvgs/SenaryChip";
-import { TertiaryChip } from "../../ChipSvgs/TertiaryChip";
-import { StatusVisualizer } from "./StatusVisualizer/StatusVisualizer";
-import styles from "./UserSeat.module.css";
+import { useAppSelector } from "../../../../hooks/reduxHooks";
+import { OfflinePlayer, OfflineRoundPlayer } from "../../../../types/Player.interface";
+import { CardsSpriteLoader } from "../../../CardsSpriteLoader/CardsSpriteLoader";
+import { PrimaryChip } from "../../../ChipSvgs/PrimaryChip";
+import { QuaternaryChip } from "../../../ChipSvgs/QuaternaryChip";
+import { QuinaryChip } from "../../../ChipSvgs/QuinaryChip";
+import { SecondaryChip } from "../../../ChipSvgs/SecondaryChip";
+import { SenaryChip } from "../../../ChipSvgs/SenaryChip";
+import { TertiaryChip } from "../../../ChipSvgs/TertiaryChip";
+import { StatusVisualizer } from "../StatusVisualizer/StatusVisualizer";
+import styles from "../UserSeat.module.css";
 
 interface UserSeatProps {
     isEmpty: boolean;
@@ -29,7 +29,7 @@ interface UserSeatProps {
     } | null;
 }
 
-const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, playerStatus, isCurrentlyDeciding }) => {
+const OffLineUserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isGameStarted, playerStatus, isCurrentlyDeciding }) => {
     const currentUser = useAppSelector((state) => state.offlineUser);
 
     const handleJoin = useCallback(() => {
@@ -145,4 +145,4 @@ const UserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatId, isG
     );
 };
 
-export { UserSeat };
+export { OffLineUserSeat };

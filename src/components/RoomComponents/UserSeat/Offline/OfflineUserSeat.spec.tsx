@@ -1,12 +1,12 @@
 import React from "react";
 import { vi } from "vitest";
 import { fireEvent } from "@testing-library/react";
-import { UserSeat } from "./UserSeat";
-import { renderWithProviders } from "../../../utils/test-utils";
-import deck from "../../../cardDeck.json";
-import { getAllPermutations } from "../../../utils/getAllPermutations";
-import { getCardValues } from "../../../utils/getCardValues";
-import { initialOfflineState } from "../../../App/offlineUserSlice";
+import { OffLineUserSeat } from "./OfflineUserSeat";
+import { renderWithProviders } from "../../../../utils/test-utils";
+import deck from "../../../../cardDeck.json";
+import { getAllPermutations } from "../../../../utils/getAllPermutations";
+import { getCardValues } from "../../../../utils/getCardValues";
+import { initialOfflineState } from "../../../../App/offlineUserSlice";
 
 const defaultMock = vi.fn();
 describe("UserSeat", () => {
@@ -28,7 +28,7 @@ describe("UserSeat", () => {
     };
     describe("displays proper text based on props", () => {
         it("Seat is empty and game didn`t start yet", () => {
-            const { getByRole } = renderWithProviders(<UserSeat
+            const { getByRole } = renderWithProviders(<OffLineUserSeat
                 isCurrentlyDeciding={false}
                 seatId={1}
                 isEmpty={true}
@@ -40,7 +40,7 @@ describe("UserSeat", () => {
             expect(getByRole("button", { name: "Join in next round" })).toBeInTheDocument();
         });
         it("Seat is empty and game already started", () => {
-            const { getByRole } = renderWithProviders(<UserSeat
+            const { getByRole } = renderWithProviders(<OffLineUserSeat
                 isCurrentlyDeciding={true}
                 seatId={1}
                 isEmpty={true}
@@ -52,7 +52,7 @@ describe("UserSeat", () => {
             expect(getByRole("button", { name: "Join now" })).toBeInTheDocument();
         });
         it("Seat is not empty and it`s not current user", () => {
-            const { getByText } = renderWithProviders(<UserSeat
+            const { getByText } = renderWithProviders(<OffLineUserSeat
                 isCurrentlyDeciding={false}
                 isEmpty={false}
                 seatId={1}
@@ -64,7 +64,7 @@ describe("UserSeat", () => {
             expect(getByText(`${testingUser.name}`)).toBeInTheDocument();
         });
         it("Seat is not empty and it`s current user", () => {
-            const { getByRole } = renderWithProviders(<UserSeat
+            const { getByRole } = renderWithProviders(<OffLineUserSeat
                 isCurrentlyDeciding={true}
                 isEmpty={false}
                 seatId={1}
@@ -93,7 +93,7 @@ describe("UserSeat", () => {
                 ...testingActions,
                 userJoin: joinMock,
             };
-            const { getByRole } = renderWithProviders(<UserSeat
+            const { getByRole } = renderWithProviders(<OffLineUserSeat
                 isCurrentlyDeciding={false}
                 isEmpty={true}
                 isGameStarted={false}
@@ -111,7 +111,7 @@ describe("UserSeat", () => {
                 ...testingActions,
                 userLeave: leaveMock,
             };
-            const { getByRole } = renderWithProviders(<UserSeat
+            const { getByRole } = renderWithProviders(<OffLineUserSeat
                 isCurrentlyDeciding={false}
                 isEmpty={false}
                 seatId={1}
@@ -133,7 +133,7 @@ describe("UserSeat", () => {
             expect(leaveMock).toHaveBeenCalledWith({ ...testingUser, seatNumber: 1 });
         });
         test("everything is disabled when no funds can be found", () => {
-            const { getByRole } = renderWithProviders(<UserSeat
+            const { getByRole } = renderWithProviders(<OffLineUserSeat
                 isCurrentlyDeciding={false}
                 isEmpty={true}
                 seatId={1}
@@ -158,7 +158,7 @@ describe("UserSeat", () => {
                 status: "playing" as const,
                 scorePermutations: getAllPermutations(getCardValues(twoPickedCards[0]), getCardValues(twoPickedCards[1])),
             };
-            const { getByAltText, getByText } = renderWithProviders(<UserSeat
+            const { getByAltText, getByText } = renderWithProviders(<OffLineUserSeat
                 isEmpty={false}
                 isGameStarted={true}
                 isCurrentlyDeciding={false}

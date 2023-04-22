@@ -6,14 +6,16 @@ import {
     removeReservedBalance,
 } from "../../App/offlineUserSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { UserSeat } from "../../components/RoomComponents/UserSeat/UserSeat";
+import { OffLineUserSeat } from "../../components/RoomComponents/UserSeat/Offline/OfflineUserSeat";
 import styles from "./OfflineGameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
 import { BetOverlay } from "../../components/RoomComponents/BetOverlay/BetOverlay";
 import { OfflinePlayer } from "../../types/Player.interface";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
-import { PresenterSection } from "../../components/RoomComponents/PresenterSection/Offline/PresenterSection";
+import {
+    OfflinePresenterSection,
+} from "../../components/RoomComponents/PresenterSection/Offline/OfflinePresenterSection";
 import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
 import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
 
@@ -137,7 +139,7 @@ const OfflineGameRoom: React.FC = () => {
         <main className={styles.background}>
             {!isTooSmallRes ? (
                 <>
-                    <PresenterSection
+                    <OfflinePresenterSection
                         presenter={presenterState}
                         startGameCb={startGame}
                         isGameStarted={isGameStarted}
@@ -154,7 +156,7 @@ const OfflineGameRoom: React.FC = () => {
                                 scorePermutations: currentPlayers[isUserPlayerIndex].cardsScore,
                             } : null;
                             return (
-                                <UserSeat
+                                <OffLineUserSeat
                         // eslint-disable-next-line react/no-array-index-key
                                     key={index}
                                     isGameStarted={isGameStarted}
