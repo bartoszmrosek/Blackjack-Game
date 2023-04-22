@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { StyledMainWrapper } from "../../../components/StyledMainWrapper/StyledMainWrapper";
 import { useAppDispatch } from "../../../hooks/reduxHooks";
 import { logoutOnlineUser } from "../../../App/onlineUserSlice";
@@ -37,6 +37,7 @@ const AuthError: React.FC = () => {
             />
             <h1>Authorization failed, please login again!</h1>
             <p>You will be redirected to home page in {timer} seconds</p>
+            <Link to="/" className={styles.goBack}>Go back</Link>
         </StyledMainWrapper>
     );
 };

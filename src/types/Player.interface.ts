@@ -21,6 +21,8 @@ export interface OfflineRoundPlayer extends OfflinePlayer {
 export type OnlinePendingPlayer = {
     seatId: number;
     bet: number;
+    username: string;
+    userId: number;
 };
 
 export type OnlineActivePlayer = {

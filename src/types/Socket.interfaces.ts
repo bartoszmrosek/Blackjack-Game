@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client";
 import { OnlineActivePlayer, OnlinePendingPlayer, PlayerDecision } from "./Player.interface";
 
-interface GameState {
+export interface GameState {
     isGameStarting: boolean;
     isGameStarted: boolean;
     isGameFinished: boolean;
@@ -11,7 +11,7 @@ interface GameState {
 type WithTimeoutAck<IsSender extends boolean, Args extends any[]> =
 IsSender extends true ? [Error, ...Args] : Args;
 
-type GameStatusObject = {
+export type GameStatusObject = {
     gameState: GameState;
     timer: number;
     activePlayers: OnlineActivePlayer[];

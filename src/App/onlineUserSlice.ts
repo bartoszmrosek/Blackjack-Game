@@ -24,10 +24,13 @@ export const onlineUserSlice = createSlice({
         logoutOnlineUser: () => {
             return { ...initialOnlineUserState };
         },
+        updateBalance: (state, action: PayloadAction<number>) => {
+            return { ...state, balance: action.payload };
+        },
     },
 });
 
-export const { loginOnlineUser, logoutOnlineUser } = onlineUserSlice.actions;
+export const { loginOnlineUser, logoutOnlineUser, updateBalance } = onlineUserSlice.actions;
 
 // eslint-disable-next-line import/no-default-export
 export default onlineUserSlice.reducer;
