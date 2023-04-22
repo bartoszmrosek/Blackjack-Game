@@ -13,7 +13,7 @@ import { BetOverlay } from "../../components/RoomComponents/BetOverlay/BetOverla
 import { OfflinePlayer } from "../../types/Player.interface";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
-import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
+import { PresenterSection } from "../../components/RoomComponents/PresenterSection/Offline/PresenterSection";
 import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
 import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
 

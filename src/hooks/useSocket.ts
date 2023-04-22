@@ -60,22 +60,25 @@ const useSocket = (userId: number): UseSocketReturn => {
 
     function updateGameStatus(gameStatus: GameStatusObject) {
         const combinedUsers: UserSeat[] = [...gameStatus.pendingPlayers, ...gameStatus.activePlayers];
-        combinedUsers.sort((a, b) => a.seatId > b.seatId ? 1 : -1);
-        setSeats(combinedUsers);
+        const newUsersState: ("empty" | UserSeat)[] = [...initialSeats];
+        combinedUsers.forEach((user) => {
+            newUsersState[user.seatId] = user;
+        });
+        setSeats(newUsersState);
         setPresenterState(gameStatus.presenterState);
         setGameState(gameStatus.gameState);
         setCurrentlyAsking(gameStatus.currentlyAsking);
     }
 
     useEffect(() => {
-        if (socket?.connected) {
+        if (socket !== null) {
             socket.on("gameTimerStarting", (timeout) => setTimer(timeout));
             socket.on("userJoinedSeat", (seat) => {
                 setSeats(prev => updateArrAt(prev, seat.seatId, { ...seat, bet: 0 }));
             });
             socket.on("userLeftSeat", (seat) => setSeats(prev => updateArrAt(prev, seat.seatId, "empty")));
-            socket.on("userLeftGame", (userId) => setSeats(prev => prev.map((seat) => {
-                if (seat === "empty" || seat.userId === userId) {
+            socket.on("userLeftGame", (newUserId) => setSeats(prev => prev.map((seat) => {
+                if (seat === "empty" || seat.userId === newUserId) {
                     return "empty";
                 }
                 return seat;
@@ -120,11 +123,25 @@ const useSocket = (userId: number): UseSocketReturn => {
             socket.on("balanceUpdate", (balance) => {
                 onlineUserDispatch(updateBalance(balance));
             });
+            socket.on("gameStarts", (gameStatus) => {
+                setAdditionalMessage("Game has started");
+                updateGameStatus(gameStatus);
+            });
         }
         return () => {
             socket?.removeAllListeners();
         };
     }, [onlineUserDispatch, seats, socket, userId]);
+
+    useEffect(() => {
+        let messageTimeout: NodeJS.Timeout;
+        if (additionalMessage) {
+            messageTimeout = setTimeout(() => {
+                setAdditionalMessage("");
+            }, 5000);
+        }
+        return () => clearTimeout(messageTimeout);
+    }, [additionalMessage]);
 
     return {
         socket,

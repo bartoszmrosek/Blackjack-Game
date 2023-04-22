@@ -65,6 +65,16 @@ export interface ServerToClienEvents<IsSender extends boolean = false> {
         }: GameStatusObject
     ) => void;
     balanceUpdate: (newBalance: number) => void;
+    gameStarts: (
+        {
+            gameState,
+            timer,
+            activePlayers,
+            pendingPlayers,
+            presenterState,
+            currentlyAsking,
+        }: GameStatusObject
+    ) => void;
 }
 
 export interface ClientToServerEvents {

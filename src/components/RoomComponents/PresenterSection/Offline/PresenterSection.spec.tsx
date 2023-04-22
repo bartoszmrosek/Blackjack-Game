@@ -1,10 +1,10 @@
 import { fireEvent, render } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { PresenterState } from "../../../types/PresenterState.interface";
+import { PresenterState } from "../../../../types/PresenterState.interface";
 import { PresenterSection } from "./PresenterSection";
-import deck from "../../../cardDeck.json";
-import { getCardValues } from "../../../utils/getCardValues";
+import deck from "../../../../cardDeck.json";
+import { getCardValues } from "../../../../utils/getCardValues";
 
 const defaultMock = vi.fn();
 const testingCard = deck.deck[9];

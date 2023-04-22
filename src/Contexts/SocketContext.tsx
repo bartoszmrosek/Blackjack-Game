@@ -14,18 +14,21 @@ const SocketContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
     useEffect(() => {
         let timeout: NodeJS.Timeout;
         if (isOnlineUserLogged) {
-            const newSocket = io("http://localhost:5678/", { withCredentials: true });
-            setSocket(newSocket);
-            newSocket.once("connect_error", (err) => {
-                console.log(err);
-                setSocket(null);
-                timeout = setTimeout(() => {
+            if (socket === null) {
+                const newSocket = io("http://localhost:5678/", { withCredentials: true });
+                setSocket(newSocket);
+                newSocket.once("connect_error", (err) => {
+                    console.log(err);
+                    setSocket(null);
                     navigate("/autherror", { replace: true });
-                }, 2000);
-            });
+                });
+            }
         } else if (socket !== null) { socket?.disconnect(); }
-        return () => clearTimeout(timeout);
-    }, [isOnlineUserLogged, navigate]);
+        return () => {
+            socket?.disconnect();
+            clearTimeout(timeout);
+        };
+    }, [isOnlineUserLogged, navigate, socket]);
 
     return (
         <SocketContext.Provider value={socket}>

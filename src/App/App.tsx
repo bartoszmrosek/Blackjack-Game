@@ -18,46 +18,48 @@ const OfflineGameRoom = React.lazy(() => import("../pages/OfflineGameRoom/Offlin
 
 const router = createBrowserRouter([
     {
+        path: "/",
+        element: <Home />,
+    },
+    {
+        path: "/login",
+        element: <Login />,
+    },
+    {
+        path: "/register",
+        element: <Register />,
+    },
+    {
+        path: "/logout",
+        element: <Logout />,
+    },
+    {
+        path: "/autherror",
+        element: <AuthError />,
+    },
+    {
+        path: "/rooms",
+        element: <Rooms />,
+    },
+    {
+        path: "/rooms/offline",
+        element: <React.Suspense fallback={<RoomLoader />}><OfflineGameRoom /></React.Suspense>,
+    },
+    {
+        path: "/rooms/:roomId",
         element: <SocketContextProvider><Outlet /></SocketContextProvider>,
         children: [
             {
-                path: "/",
-                element: <Home />,
-            },
-            {
-                path: "/login",
-                element: <Login />,
-            },
-            {
-                path: "/register",
-                element: <Register />,
-            },
-            {
-                path: "/logout",
-                element: <Logout />,
-            },
-            {
-                path: "/autherror",
-                element: <AuthError />,
-            },
-            {
-                path: "/rooms",
-                element: <Rooms />,
-            },
-            {
-                path: "/rooms/offline",
-                element: <React.Suspense fallback={<RoomLoader />}><OfflineGameRoom /></React.Suspense>,
-            },
-            {
-                path: "/rooms/:roomId",
+                index: true,
                 element: <RequireAuth redirectTo="/autherror"><OnlineGameRoom /></RequireAuth>,
-            },
-            {
-                path: "/credits",
-                element: <Credits />,
             },
         ],
     },
+    {
+        path: "/credits",
+        element: <Credits />,
+    },
+
 ], { basename: "/Blackjack-Game" });
 
 export const App: React.FC = () => {
