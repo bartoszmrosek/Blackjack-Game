@@ -1,7 +1,6 @@
 import React, { CSSProperties, useCallback } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { Player } from "../../../types/Player.interface";
-import { RoundPlayer } from "../../../types/RoundPlayer.interface";
+import { OfflinePlayer, OfflineRoundPlayer } from "../../../types/Player.interface";
 import { CardsSpriteLoader } from "../../CardsSpriteLoader/CardsSpriteLoader";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
@@ -17,15 +16,15 @@ interface UserSeatProps {
     isGameStarted: boolean;
     isCurrentlyDeciding: boolean;
     seatId: number;
-    user: Player;
+    user: OfflinePlayer;
     actions: {
         userJoin: (seatId: number) => void;
-        userLeave: (player: Player) => void;
-        userChgBet: (player: Player) => void;
+        userLeave: (player: OfflinePlayer) => void;
+        userChgBet: (player: OfflinePlayer) => void;
     };
     playerStatus: {
         cards: string[];
-        status: RoundPlayer["currentStatus"];
+        status: OfflineRoundPlayer["currentStatus"];
         scorePermutations: number[];
     } | null;
 }

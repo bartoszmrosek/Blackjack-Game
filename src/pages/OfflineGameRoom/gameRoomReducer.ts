@@ -1,4 +1,4 @@
-import { Player } from "../../types/Player.interface";
+import { OfflinePlayer } from "../../types/Player.interface";
 
 export enum PlayerActionKind {
     JOIN = "JOIN",
@@ -13,7 +13,7 @@ export enum PresenterActionKind {
 
 export interface PlayerActions {
     type: PlayerActionKind;
-    payload: Player;
+    payload: OfflinePlayer;
 }
 
 export interface PresenterActions {
@@ -21,7 +21,7 @@ export interface PresenterActions {
 }
 
 export interface GameRoomState {
-    playersSeats: ("empty" | Player)[];
+    playersSeats: ("empty" | OfflinePlayer)[];
     isGameStarted: boolean;
 }
 

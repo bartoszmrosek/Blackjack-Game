@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useReducer } from "react";
+import { OfflineRoundPlayer, OfflinePlayer, PlayerDecision } from "../../types/Player.interface";
 import { addOfflineBalance } from "../../App/offlineUserSlice";
-import { Player } from "../../types/Player.interface";
-import { RoundPlayer } from "../../types/RoundPlayer.interface";
 import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import {
     CurrentlyAskingState,
@@ -13,8 +12,8 @@ import {
 
 type UseGameLogicReturn = Readonly<
 [
-    (players: Player[]) => void,
-    RoundPlayer[],
+    (players: OfflinePlayer[]) => void,
+    OfflineRoundPlayer[],
     CurrentlyAskingState | null,
     TableState["presenterState"],
 ]
@@ -26,9 +25,9 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
     const currentUserId = useAppSelector(state => state.offlineUser.id);
     const dispatchUserAction = useAppDispatch();
 
-    const setPlayersForGame = useCallback((players: Player[]) => {
+    const setPlayersForGame = useCallback((players: OfflinePlayer[]) => {
         if (!isGameStarted) {
-            const expandedPlayersState: RoundPlayer[] = players.map((player) => (
+            const expandedPlayersState: OfflineRoundPlayer[] = players.map((player) => (
                 {
                     ...player,
                     cards: [],
@@ -41,7 +40,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
         }
     }, [isGameStarted]);
 
-    const makeDecision = useCallback((playerToAskIndex: number, decision: "hit" | "stand" | "doubleDown") => {
+    const makeDecision = useCallback((playerToAskIndex: number, decision: PlayerDecision) => {
         if (decision === "doubleDown") {
             dispatchUserAction(addOfflineBalance(-gamePlayers[playerToAskIndex].bet.currentBet));
         }

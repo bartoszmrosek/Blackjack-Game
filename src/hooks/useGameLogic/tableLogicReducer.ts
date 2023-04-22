@@ -3,11 +3,11 @@ import { getAllPermutations } from "../../utils/getAllPermutations";
 import { getRandomInt } from "../../utils/getRandomInt";
 import deck from "../../cardDeck.json";
 import { PresenterState } from "../../types/PresenterState.interface";
-import { RoundPlayer } from "../../types/RoundPlayer.interface";
+import { OfflineRoundPlayer, PlayerDecision, PlayerStatus } from "../../types/Player.interface";
 
 export interface CurrentlyAskingState {
-    currentlyAsking: Pick<RoundPlayer, "id" | "seatNumber" | "cardsScore" | "bet"> & { theirIndex: number; };
-    makeDecision: (theirIndex: number, decision: "hit" | "stand" | "doubleDown") => void;
+    currentlyAsking: Pick<OfflineRoundPlayer, "id" | "seatNumber" | "cardsScore" | "bet"> & { theirIndex: number; };
+    makeDecision: (theirIndex: number, decision: PlayerDecision) => void;
 }
 
 export enum GameActionKind {
@@ -21,13 +21,13 @@ export enum GameActionKind {
 
 export type GameActions = {
     type: GameActionKind.SET_GAME_PLAYERS;
-    payload: RoundPlayer[];
+    payload: OfflineRoundPlayer[];
 } | {
     type: GameActionKind.ASK_FOR_PLAYER_DECISION;
     payload: CurrentlyAskingState;
 } | {
     type: GameActionKind.UPDATE_PLAYER_STATE;
-    payload: { playerIndex: number; decision: "hit" | "stand" | "doubleDown"; };
+    payload: { playerIndex: number; decision: PlayerDecision; };
 } | {
     type: GameActionKind.ALL_ASKING_DONE;
     payload: { currentUserId: string; resultsCb: (funds: number) => void; };
@@ -38,7 +38,7 @@ export type GameActions = {
 export interface TableState {
     isGameStarted: boolean;
     isShowingResults: boolean;
-    gamePlayers: RoundPlayer[];
+    gamePlayers: OfflineRoundPlayer[];
     presenterState: PresenterState;
     askingState: CurrentlyAskingState | null;
     cardsInPlay: string[];
@@ -54,8 +54,8 @@ export const initialGameState: TableState = {
 };
 
 function checkCardRules(
-    player: { status: RoundPlayer["currentStatus"]; score: number[]; }, presenterScore: number | "blackjack",
-): RoundPlayer["currentStatus"] {
+    player: { status: PlayerStatus; score: number[]; }, presenterScore: number | "blackjack",
+): PlayerStatus {
     if (player.status === "bust" || player.status === "lost") {
         return player.status;
     }
@@ -108,7 +108,7 @@ export function gameLogicReducer(state: TableState, action: GameActions): TableS
                             cardsScore: startingPlayerScore,
                             currentStatus:
                             Math.max(...startingPlayerScore) === 21 ? "blackjack" : "playing",
-                        } satisfies RoundPlayer;
+                        } satisfies OfflineRoundPlayer;
                     })],
                 presenterState: { cards: [newPresenterCard], score: getCardValues(newPresenterCard), didGetBlackjack: false },
                 isGameStarted: true,

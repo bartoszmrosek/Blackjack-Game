@@ -2,13 +2,13 @@ import { vi } from "vitest";
 import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "../../../utils/test-utils";
-import { Player } from "../../../types/Player.interface";
+import { OfflinePlayer } from "../../../types/Player.interface";
 import { BetOverlay } from "./BetOverlay";
 import styles from "./BetOverlay.module.css";
 import { initialOfflineState } from "../../../App/offlineUserSlice";
 
 const defaultMock = vi.fn();
-const testingPlayer: Player = {
+const testingPlayer: OfflinePlayer = {
     id: "1",
     name: "mock",
     bet: {
@@ -28,7 +28,7 @@ describe("BetOverlay", () => {
             expect(undoMock).toHaveBeenCalledTimes(1);
         });
         it("handles repeat button", () => {
-            const playerWithPreviousBet: Player = { ...testingPlayer, bet: { currentBet: 0, previousBet: 500 } };
+            const playerWithPreviousBet: OfflinePlayer = { ...testingPlayer, bet: { currentBet: 0, previousBet: 500 } };
             const updateMock = vi.fn();
             const { getByAltText } = renderWithProviders(
                 <BetOverlay playerInformations={playerWithPreviousBet} updateBet={updateMock} undoHandler={defaultMock} />);
@@ -40,7 +40,7 @@ describe("BetOverlay", () => {
             expect(updateMock).toHaveBeenCalledTimes(1);
         });
         it("handles 2x button", () => {
-            const playerWithCurrentBet: Player = { ...testingPlayer, bet: { currentBet: 250, previousBet: 0 } };
+            const playerWithCurrentBet: OfflinePlayer = { ...testingPlayer, bet: { currentBet: 250, previousBet: 0 } };
             const updateMock = vi.fn();
             const { getByText } = renderWithProviders(
                 <BetOverlay playerInformations={playerWithCurrentBet} updateBet={updateMock} undoHandler={defaultMock} />);
@@ -56,7 +56,7 @@ describe("BetOverlay", () => {
             expect(updateMock).toHaveBeenCalledTimes(1);
         });
         it("blocks repeat button when funds cannot afford it", () => {
-            const playerWithPreviousBet: Player = { ...testingPlayer, bet: { ...testingPlayer.bet, previousBet: 500 } };
+            const playerWithPreviousBet: OfflinePlayer = { ...testingPlayer, bet: { ...testingPlayer.bet, previousBet: 500 } };
             const { getByAltText } = renderWithProviders(<BetOverlay
                 playerInformations={playerWithPreviousBet}
                 updateBet={defaultMock}
@@ -72,7 +72,7 @@ describe("BetOverlay", () => {
             expect(getByAltText("Repeat icon").parentElement).toBeDisabled();
         });
         it("blocks 2x button when funds cannot afford it", () => {
-            const playerWithCurrentBet: Player = { ...testingPlayer, bet: { ...testingPlayer.bet, currentBet: 500 } };
+            const playerWithCurrentBet: OfflinePlayer = { ...testingPlayer, bet: { ...testingPlayer.bet, currentBet: 500 } };
             const { getByText } = renderWithProviders(<BetOverlay
                 playerInformations={playerWithCurrentBet}
                 updateBet={defaultMock}

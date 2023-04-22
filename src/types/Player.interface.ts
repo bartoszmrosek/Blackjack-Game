@@ -1,4 +1,7 @@
-export type Player = {
+export type PlayerStatus = "won" | "lost" | "playing" | "blackjack" | "bust" | "push";
+export type PlayerDecision = "hit" | "stand" | "doubleDown";
+
+export type OfflinePlayer = {
     id: string;
     name: string;
     bet: {
@@ -7,3 +10,23 @@ export type Player = {
     };
     seatNumber: number;
 };
+
+export interface OfflineRoundPlayer extends OfflinePlayer {
+    cards: string[];
+    cardsScore: number[];
+    hasMadeFinalDecision: boolean;
+    currentStatus: PlayerStatus;
+}
+
+export type OnlinePendingPlayer = {
+    seatId: number;
+    bet: number;
+};
+
+export type OnlineActivePlayer = {
+    status: PlayerStatus;
+    cards: string[];
+    cardsScore: number[];
+    decision: PlayerDecision | null;
+    hasMadeFinalDecision: boolean;
+} & OnlinePendingPlayer;

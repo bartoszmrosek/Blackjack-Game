@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../../hooks/reduxHooks";
-import { Player } from "../../../types/Player.interface";
+import { OfflinePlayer } from "../../../types/Player.interface";
 import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
 import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";
@@ -11,9 +11,9 @@ import styles from "./BetOverlay.module.css";
 import { transformImgUrl } from "../../../utils/transformImgUrl";
 
 interface BetOverlayProps {
-    playerInformations: Player;
-    updateBet: (player: Player) => void;
-    undoHandler: (player: Player) => void;
+    playerInformations: OfflinePlayer;
+    updateBet: (player: OfflinePlayer) => void;
+    undoHandler: (player: OfflinePlayer) => void;
 }
 
 const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, undoHandler }) => {

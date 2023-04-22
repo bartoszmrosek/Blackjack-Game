@@ -13,13 +13,13 @@ const Logout: React.FC = () => {
     const onlineUserDispatch = useAppDispatch();
 
     useEffect(() => {
+        onlineUserDispatch(logoutOnlineUser());
         let timer: NodeJS.Timeout;
         if (status !== 0 && status !== 200) {
             timer = setTimeout(() => {
                 makeRequest();
             }, 1000);
         } else if (status === 200) {
-            onlineUserDispatch(logoutOnlineUser());
             navigate("/");
         }
         return () => clearTimeout(timer);

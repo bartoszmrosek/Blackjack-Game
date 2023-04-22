@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { RoomLoader } from "../components/RoomComponents/RoomLoader/RoomLoader";
 import { Credits } from "../pages/Credits/Credits";
 import { Home } from "../pages/Home/Home";
@@ -8,38 +8,49 @@ import { Login } from "../pages/UserOps/Login/Login";
 import { Register } from "../pages/UserOps/Register/Register";
 import { Logout } from "../pages/UserOps/Logout/Logout";
 import { Rooms } from "../pages/Rooms/Rooms";
+import { SocketContextProvider } from "../Contexts/SocketContext";
+import { AuthError } from "../pages/UserOps/AuthError/AuthError";
 
 const OfflineGameRoom = React.lazy(() => import("../pages/OfflineGameRoom/OfflineGameRoom")
     .then(module => ({ default: module.OfflineGameRoom })));
 
 const router = createBrowserRouter([
     {
-        path: "/",
-        element: <Home />,
-    },
-    {
-        path: "/login",
-        element: <Login />,
-    },
-    {
-        path: "/register",
-        element: <Register />,
-    },
-    {
-        path: "/logout",
-        element: <Logout />,
-    },
-    {
-        path: "/rooms",
-        element: <Rooms />,
-    },
-    {
-        path: "/rooms/offline",
-        element: <React.Suspense fallback={<RoomLoader />}><OfflineGameRoom /></React.Suspense>,
-    },
-    {
-        path: "/credits",
-        element: <Credits />,
+        element: <SocketContextProvider><Outlet /></SocketContextProvider>,
+        children: [
+            {
+                path: "/",
+                element: <Home />,
+            },
+            {
+                path: "/login",
+                element: <Login />,
+            },
+            {
+                path: "/register",
+                element: <Register />,
+            },
+            {
+                path: "/logout",
+                element: <Logout />,
+            },
+            {
+                path: "/autherror",
+                element: <AuthError />,
+            },
+            {
+                path: "/rooms",
+                element: <Rooms />,
+            },
+            {
+                path: "/rooms/offline",
+                element: <React.Suspense fallback={<RoomLoader />}><OfflineGameRoom /></React.Suspense>,
+            },
+            {
+                path: "/credits",
+                element: <Credits />,
+            },
+        ],
     },
 ], { basename: "/Blackjack-Game" });
 
