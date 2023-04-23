@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./OnlineGame.module.css";
 import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
 import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
@@ -12,6 +12,7 @@ import { OnlinePresenterSection } from "../../components/RoomComponents/Presente
 import { OnlineUserSeat } from "../../components/RoomComponents/UserSeat/Online/OnlineUserSeat";
 import { OnlineBetOverlay } from "../../components/RoomComponents/BetOverlay/Online/OnlineBetOverlay";
 import { updateBalance } from "../../App/onlineUserSlice";
+import { PlayerBets } from "../../types/Player.interface";
 
 const pickMessageFromCode = (code: number): string => {
     switch (code) {
@@ -34,9 +35,14 @@ const OnlineGameRoom: React.FC = () => {
     const [seatBetsToUpdate, setSeatBetsToUpdate] = useState<{ seatId: number; previousBet: number; bet: number; }[]>([]);
     const [connStatus, setConnStatus] = useState(0);
     const [actionMessage, setActionMessage] = useState("");
+    const navigate = useNavigate();
     const onlineUser = useAppSelector(state => state.onlineUser);
     const onlineUserDispatch = useAppDispatch();
-    const { socket, timer, seats, gameState, currentlyAsking, additionalMessage, presenterState } = useSocket(onlineUser.id);
+
+    const updateBets = useCallback((bets: PlayerBets[]) => setSeatBetsToUpdate(bets), []);
+
+    const { socket, timer, seats, gameState, currentlyAsking, additionalMessage, presenterState } =
+     useSocket(onlineUser.id, updateBets);
 
     useEffect(() => {
         if (roomId) {
@@ -55,10 +61,13 @@ const OnlineGameRoom: React.FC = () => {
         if (connStatus !== 0) {
             statusTimeout = setTimeout(() => {
                 setConnStatus(0);
+                if (connStatus === 404) {
+                    navigate("/rooms");
+                }
             }, 5000);
         }
         return () => clearTimeout(statusTimeout);
-    }, [connStatus]);
+    }, [connStatus, navigate]);
 
     useEffect(() => {
         let actionTimeout: NodeJS.Timeout;
@@ -70,15 +79,22 @@ const OnlineGameRoom: React.FC = () => {
         return () => clearTimeout(actionTimeout);
     }, [actionMessage]);
 
+    const addSeatToUpdateBet = useCallback((seatBet: PlayerBets) => {
+        if (!seatBetsToUpdate.some((queuedSeatId) => queuedSeatId.seatId === seatBet.seatId)) {
+            setSeatBetsToUpdate(prev => [...prev, seatBet]);
+        }
+    }, [seatBetsToUpdate]);
+
     const tryJoiningToSeat = useCallback((seatId: number) => {
         if (socket !== null) {
             socket.emit("joinTableSeat", seatId, (ack) => {
                 if (ack === 406) {
-                    setActionMessage("Seat already occupied");
+                    return setActionMessage("Seat already occupied");
                 }
+                addSeatToUpdateBet({ bet: 0, previousBet: 0, seatId });
             });
         }
-    }, [socket]);
+    }, [addSeatToUpdateBet, socket]);
 
     const trySettingSeatBet = useCallback((seatId: number, bet: number) => {
         if (socket !== null) {
@@ -91,17 +107,14 @@ const OnlineGameRoom: React.FC = () => {
         }
     }, [onlineUserDispatch, socket]);
 
-    const tryLeavingSeat = useCallback((seatId: number) => {
+    const tryLeavingSeat = useCallback((seatId: number, leaveFromUpdateBets?: boolean) => {
         if (socket !== null) {
             socket.emit("leaveTableSeat", seatId);
+            if (leaveFromUpdateBets) {
+                setSeatBetsToUpdate((prev) => prev.filter((seat) => seat.seatId !== seatId));
+            }
         }
     }, [socket]);
-
-    const addSeatToUpdateBet = useCallback((seatBet: { bet: number; previousBet: number; seatId: number; }) => {
-        if (!seatBetsToUpdate.some((queuedSeatId) => queuedSeatId.seatId === seatBet.seatId)) {
-            setSeatBetsToUpdate(prev => [...prev, seatBet]);
-        }
-    }, [seatBetsToUpdate]);
 
     console.log(timer);
     return (

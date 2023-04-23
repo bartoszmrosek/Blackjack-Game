@@ -4,6 +4,7 @@ import { GameState, GameStatusObject, TypedSocket } from "../types/Socket.interf
 import { updateArrAt } from "../utils/updateArrAt";
 import {
     OnlineActivePlayer as ActiveUserSeat,
+    PlayerBets,
     PlayerDecision,
     OnlinePendingPlayer as UserSeat,
 } from "../types/Player.interface";
@@ -47,7 +48,7 @@ const initialPresenterState: PresenterState = {
 };
 const initialCurrentlyAsking: CurrentlyAsking = null;
 
-const useSocket = (userId: number): UseSocketReturn => {
+const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) => void): UseSocketReturn => {
     const [timer, setTimer] = useState(0);
     const [seats, setSeats] = useState<("empty" | UserSeat | ActiveUserSeat)[]>(initialSeats);
     const [gameState, setGameState] = useState<GameState>(initialGameState);
@@ -93,7 +94,13 @@ const useSocket = (userId: number): UseSocketReturn => {
                 setAdditionalMessage(`${bet} placed on seat no. ${seatId + 1}`);
                 setSeats(prev => updateArrAt(prev, seatId, { ...prev[seatId] as UserSeat, bet }));
             });
-            socket.on("gameStatusUpdate", updateGameStatus);
+            socket.on("gameStatusUpdate", (gameStatus) => {
+                updateGameStatus(gameStatus);
+                if (gameStatus.gameState.isGameStarting && pushBetsToUpdate) {
+                    const playersToUpdateBet = gameStatus.pendingPlayers.filter((player) => player.previousBet !== 0);
+                    pushBetsToUpdate(playersToUpdateBet);
+                }
+            });
             socket.on("askingStatusUpdate", (askingState) => {
                 setCurrentlyAsking(askingState);
             });
@@ -135,6 +142,9 @@ const useSocket = (userId: number): UseSocketReturn => {
             socket.on("gameStarts", (gameStatus) => {
                 setAdditionalMessage("Game has started");
                 updateGameStatus(gameStatus);
+                if (pushBetsToUpdate) {
+                    pushBetsToUpdate([]);
+                }
             });
         }
         return () => {

@@ -13,7 +13,7 @@ import { PlayerBets } from "../../../../types/Player.interface";
 interface BetOverlayProps {
     playerInformations: PlayerBets;
     updateBet: (seatId: number, bet: number) => void;
-    undoHandler: (seatId: number) => void;
+    undoHandler: (seatId: number, shouldRemoveItself?: boolean) => void;
 }
 
 const OnlineBetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, undoHandler }) => {
@@ -38,7 +38,7 @@ const OnlineBetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updat
     }, [canRepeat, playerInformations, updateBet]);
 
     const handleUndoButton = useCallback(() => {
-        undoHandler(playerInformations.seatId);
+        undoHandler(playerInformations.seatId, true);
     }, [playerInformations, undoHandler]);
 
     useEffect(() => {

@@ -25,7 +25,7 @@ describe("OnlineBetOverlay", () => {
             const { getByAltText } = renderWithProviders(
                 <OnlineBetOverlay playerInformations={testingPlayer} updateBet={defaultMock} undoHandler={undoMock} />);
             fireEvent.click(getByAltText("Undo button"));
-            expect(undoMock).toHaveBeenCalledWith(testingPlayer.seatId);
+            expect(undoMock).toHaveBeenCalledWith(testingPlayer.seatId, true);
             expect(undoMock).toHaveBeenCalledTimes(1);
         });
         it("handles repeat button", () => {
