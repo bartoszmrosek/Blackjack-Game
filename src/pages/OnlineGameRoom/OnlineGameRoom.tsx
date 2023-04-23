@@ -4,12 +4,14 @@ import styles from "./OnlineGame.module.css";
 import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
 import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
 import { UserInformations } from "../../components/Overlays/UserInformations/UserInformations";
-import { useAppSelector } from "../../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { useSocket } from "../../hooks/useSocket";
 import { RoomLoader } from "../../components/RoomComponents/RoomLoader/RoomLoader";
 import { ImportantMessage } from "../../components/RoomComponents/ImportantMessage/ImportantMessage";
 import { OnlinePresenterSection } from "../../components/RoomComponents/PresenterSection/Online/OnlinePresenterSection";
 import { OnlineUserSeat } from "../../components/RoomComponents/UserSeat/Online/OnlineUserSeat";
+import { OnlineBetOverlay } from "../../components/RoomComponents/BetOverlay/Online/OnlineBetOverlay";
+import { updateBalance } from "../../App/onlineUserSlice";
 
 const pickMessageFromCode = (code: number): string => {
     switch (code) {
@@ -29,10 +31,11 @@ const pickMessageFromCode = (code: number): string => {
 const OnlineGameRoom: React.FC = () => {
     const { roomId } = useParams();
     const [isConnecting, setIsConnecting] = useState(true);
-    const [seatBetsToUpdate, setSeatBetsToUpdate] = useState<number[]>([]);
+    const [seatBetsToUpdate, setSeatBetsToUpdate] = useState<{ seatId: number; previousBet: number; bet: number; }[]>([]);
     const [connStatus, setConnStatus] = useState(0);
     const [actionMessage, setActionMessage] = useState("");
     const onlineUser = useAppSelector(state => state.onlineUser);
+    const onlineUserDispatch = useAppDispatch();
     const { socket, timer, seats, gameState, currentlyAsking, additionalMessage, presenterState } = useSocket(onlineUser.id);
 
     useEffect(() => {
@@ -61,14 +64,13 @@ const OnlineGameRoom: React.FC = () => {
         let actionTimeout: NodeJS.Timeout;
         if (actionMessage) {
             actionTimeout = setTimeout(() => {
-                setConnStatus(0);
+                setActionMessage("");
             }, 5000);
         }
         return () => clearTimeout(actionTimeout);
     }, [actionMessage]);
 
     const tryJoiningToSeat = useCallback((seatId: number) => {
-        console.log("a");
         if (socket !== null) {
             socket.emit("joinTableSeat", seatId, (ack) => {
                 if (ack === 406) {
@@ -80,13 +82,14 @@ const OnlineGameRoom: React.FC = () => {
 
     const trySettingSeatBet = useCallback((seatId: number, bet: number) => {
         if (socket !== null) {
-            setSeatBetsToUpdate(prev => prev.filter((id) => id !== seatId));
-            socket.emit("placeBet", bet, seatId, (ack) => {
+            setSeatBetsToUpdate(prev => prev.filter((updatedBet) => updatedBet.seatId !== seatId));
+            socket.emit("placeBet", bet, seatId, (ack, newBalance) => {
+                if (newBalance) { onlineUserDispatch(updateBalance(newBalance)); }
                 if (ack === 200) { return setActionMessage("Bet accepted"); }
                 return setActionMessage("Bet was not accepted");
             });
         }
-    }, [socket]);
+    }, [onlineUserDispatch, socket]);
 
     const tryLeavingSeat = useCallback((seatId: number) => {
         if (socket !== null) {
@@ -94,14 +97,13 @@ const OnlineGameRoom: React.FC = () => {
         }
     }, [socket]);
 
-    const addSeatToUpdateBet = useCallback((seatId: number) => {
-        if (!seatBetsToUpdate.some((queuedSeatId) => queuedSeatId === seatId)) {
-            setSeatBetsToUpdate(prev => [...prev, seatId]);
+    const addSeatToUpdateBet = useCallback((seatBet: { bet: number; previousBet: number; seatId: number; }) => {
+        if (!seatBetsToUpdate.some((queuedSeatId) => queuedSeatId.seatId === seatBet.seatId)) {
+            setSeatBetsToUpdate(prev => [...prev, seatBet]);
         }
     }, [seatBetsToUpdate]);
 
-    console.log(socket, timer, seats, gameState, currentlyAsking, additionalMessage);
-    console.log(trySettingSeatBet);
+    console.log(timer);
     return (
         <main className={styles.onlineGameRoomWrapper}>
             {isConnecting ? <RoomLoader /> : (
@@ -130,13 +132,29 @@ const OnlineGameRoom: React.FC = () => {
                             );
                         })}
                     </div>
-                    {!connStatus && actionMessage && <ImportantMessage message={actionMessage} />}
-                    {!connStatus && !actionMessage && additionalMessage && <ImportantMessage message={additionalMessage} />}
+                    {connStatus === 0 && actionMessage && <ImportantMessage message={actionMessage} />}
+                    {connStatus === 0 && !actionMessage && additionalMessage && <ImportantMessage message={additionalMessage} />}
                 </>
             )}
-            {connStatus && <ImportantMessage message={pickMessageFromCode(connStatus)} />}
+            {seatBetsToUpdate.length !== 0 && (
+                <OnlineBetOverlay
+                    playerInformations={seatBetsToUpdate[0]}
+                    updateBet={trySettingSeatBet}
+                    undoHandler={tryLeavingSeat}
+                />
+            )}
+            {connStatus !== 0 && <ImportantMessage message={pickMessageFromCode(connStatus)} />}
             <UserInformations username={onlineUser.username} />
-            <BalanceInformations currentBalance={1000} shouldDisplayBets={true} totalInBets={50} />
+            <BalanceInformations
+                currentBalance={onlineUser.balance}
+                shouldDisplayBets={true}
+                totalInBets={seats.reduce((acc, seat) => {
+                    if (seat !== "empty" && seat.userId === onlineUser.id) {
+                        return acc + seat.bet;
+                    }
+                    return acc;
+                }, 0)}
+            />
             <GoBackButton />
         </main>
     );

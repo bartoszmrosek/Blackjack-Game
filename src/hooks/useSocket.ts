@@ -74,9 +74,10 @@ const useSocket = (userId: number): UseSocketReturn => {
         if (socket !== null) {
             socket.on("gameTimerStarting", (timeout) => setTimer(timeout));
             socket.on("userJoinedSeat", (seat) => {
+                const { timer: seatTimer, ...restOfSeat } = seat;
                 setAdditionalMessage(`${seat.username} joined on seat ${seat.seatId + 1}`);
-                setSeats(prev => updateArrAt(prev, seat.seatId, { ...seat, bet: 0 }));
-                setTimer(seat.timer);
+                setSeats(prev => updateArrAt(prev, seat.seatId, { ...restOfSeat, bet: 0, previousBet: 0 }));
+                setTimer(seatTimer);
             });
             socket.on("userLeftSeat", (seat) => {
                 setAdditionalMessage(`${seat.username} left the seat ${seat.seatId + 1}`);
@@ -88,7 +89,10 @@ const useSocket = (userId: number): UseSocketReturn => {
                 }
                 return seat;
             })));
-            socket.on("betPlaced", (bet, seatId) => setSeats(prev => updateArrAt(prev, seatId, { ...prev[seatId] as UserSeat, bet })));
+            socket.on("betPlaced", (bet, seatId) => {
+                setAdditionalMessage(`${bet} placed on seat no. ${seatId + 1}`);
+                setSeats(prev => updateArrAt(prev, seatId, { ...prev[seatId] as UserSeat, bet }));
+            });
             socket.on("gameStatusUpdate", updateGameStatus);
             socket.on("askingStatusUpdate", (askingState) => {
                 setCurrentlyAsking(askingState);

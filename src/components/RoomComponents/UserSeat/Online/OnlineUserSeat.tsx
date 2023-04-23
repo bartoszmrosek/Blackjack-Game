@@ -20,7 +20,7 @@ interface UserSeatProps {
     actions: {
         userJoin: (seatId: number) => void;
         userLeave: (seatId: number) => void;
-        userChgBet: (seatId: number) => void;
+        userChgBet: (seatBet: { bet: number; seatId: number; previousBet: number; }) => void;
     };
 }
 
@@ -38,10 +38,10 @@ const OnlineUserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatI
     }, [actions, user]);
 
     const handleBetChg = useCallback(() => {
-        if (user !== null) {
-            actions.userChgBet(user.seatId);
+        if (user !== null && user.userId === currentUser.id) {
+            actions.userChgBet({ seatId: user.seatId, bet: user.bet, previousBet: user.previousBet });
         }
-    }, [actions, user]);
+    }, [actions, currentUser.id, user]);
 
     const pickBetChip = useCallback(() => {
         if (user === null) { return null; }
@@ -122,7 +122,10 @@ const OnlineUserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatI
                 </div>
             )}
             <div
-                className={`${styles.pickedChip} ${isCurrentlyDeciding ? styles.chipCurrentlyDeciding : null}`}
+                className={`
+                ${styles.pickedChip}
+                 ${isCurrentlyDeciding ? styles.chipCurrentlyDeciding : null}
+                  ${user === null || user.userId !== currentUser.id ? styles.chipDisabled : null}`}
                 onClick={handleBetChg}
                 data-testid="chip-in-betting"
             >

@@ -81,7 +81,7 @@ export interface ClientToServerEvents {
     joinGameTable: (roomId: string, callback: (code: number) => void) => void;
     joinTableSeat: (seatId: number, callback: (ack: number) => void) => void;
     leaveTableSeat: (seatId: number) => void;
-    placeBet: (bet: number, seatId: number, callback: (ack: number) => void) => void;
+    placeBet: (bet: number, seatId: number, callback: (ack: number, newBalance?: number) => void) => void;
 }
 
 export type TypedSocket = Socket<ServerToClienEvents, ClientToServerEvents>;

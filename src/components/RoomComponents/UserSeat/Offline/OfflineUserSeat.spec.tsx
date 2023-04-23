@@ -9,7 +9,7 @@ import { getCardValues } from "../../../../utils/getCardValues";
 import { initialOfflineState } from "../../../../App/offlineUserSlice";
 
 const defaultMock = vi.fn();
-describe("UserSeat", () => {
+describe("OfflineUserSeat", () => {
     const testingUser = {
         id: "1",
         name: "mock",

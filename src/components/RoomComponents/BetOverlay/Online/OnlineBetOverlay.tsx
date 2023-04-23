@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../../../hooks/reduxHooks";
-import { OfflinePlayer } from "../../../../types/Player.interface";
 import { PrimaryChip } from "../../../ChipSvgs/PrimaryChip";
 import { QuaternaryChip } from "../../../ChipSvgs/QuaternaryChip";
 import { QuinaryChip } from "../../../ChipSvgs/QuinaryChip";
@@ -9,48 +8,42 @@ import { SenaryChip } from "../../../ChipSvgs/SenaryChip";
 import { TertiaryChip } from "../../../ChipSvgs/TertiaryChip";
 import { transformImgUrl } from "../../../../utils/transformImgUrl";
 import styles from "../BetOverlay.module.css";
+import { PlayerBets } from "../../../../types/Player.interface";
 
 interface BetOverlayProps {
-    playerInformations: OnlinePendingPlayer | OnlineActivePlayer;
-    updateBet: (player: OnlinePendingPlayer | OnlineActivePlayer) => void;
-    undoHandler: (player: OnlinePendingPlayer | OnlineActivePlayer) => void;
+    playerInformations: PlayerBets;
+    updateBet: (seatId: number, bet: number) => void;
+    undoHandler: (seatId: number) => void;
 }
 
 const OnlineBetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, undoHandler }) => {
     const [canRepeat, setCanRepeat] = useState<boolean>(
-        playerInformations.bet.currentBet === 0 &&
-        playerInformations.bet.previousBet !== 0);
-    const { reservedBalance, balance: currentUserBalance } = useAppSelector(state => state.offlineUser);
-    const { currentBet, previousBet } = playerInformations.bet;
+        playerInformations.bet === 0 &&
+        playerInformations.previousBet !== 0);
+    const currentUserBalance = useAppSelector(state => state.onlineUser.balance);
 
     const buttonHandler = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
         const betAmount = parseInt(event.currentTarget.id.split("-")[1], 10);
         if (betAmount > 0 && betAmount <= 1000 && !Number.isNaN(betAmount)) {
-            updateBet({ ...playerInformations, bet: { previousBet: currentBet, currentBet: betAmount } });
+            updateBet(playerInformations.seatId, betAmount);
         }
-    }, [currentBet, playerInformations, updateBet]);
+    }, [playerInformations.seatId, updateBet]);
 
     const handleSpecialBtn = useCallback(() => {
         if (canRepeat) {
-            updateBet({
-                ...playerInformations,
-                bet: { previousBet: currentBet, currentBet: previousBet },
-            });
+            updateBet(playerInformations.seatId, playerInformations.previousBet);
         } else {
-            updateBet({
-                ...playerInformations,
-                bet: { previousBet: currentBet, currentBet: 2 * currentBet },
-            });
+            updateBet(playerInformations.seatId, playerInformations.bet * 2);
         }
-    }, [canRepeat, currentBet, playerInformations, previousBet, updateBet]);
+    }, [canRepeat, playerInformations, updateBet]);
 
     const handleUndoButton = useCallback(() => {
-        undoHandler(playerInformations);
+        undoHandler(playerInformations.seatId);
     }, [playerInformations, undoHandler]);
 
     useEffect(() => {
-        setCanRepeat((currentBet === 0 && previousBet !== 0));
-    }, [currentBet, playerInformations, previousBet]);
+        setCanRepeat((playerInformations.bet === 0 && playerInformations.previousBet !== 0));
+    }, [playerInformations]);
 
     return (
         <div className={styles.overlayWrapper}>
@@ -84,9 +77,9 @@ const OnlineBetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updat
                         className={`${styles.specialBtn} ${canRepeat && styles.repeatBtnWrapper}`}
                         onClick={handleSpecialBtn}
                         disabled={
-                            !previousBet && !currentBet
-                            || (reservedBalance + previousBet > currentUserBalance)
-                            || (reservedBalance + currentBet > currentUserBalance)
+                            !playerInformations.previousBet && !playerInformations.bet
+                            || (currentUserBalance - playerInformations.previousBet < 0)
+                            || (currentUserBalance - playerInformations.bet < 0)
                         }
                     >
                         {canRepeat ? (

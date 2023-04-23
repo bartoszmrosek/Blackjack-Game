@@ -21,6 +21,7 @@ export interface OfflineRoundPlayer extends OfflinePlayer {
 export type OnlinePendingPlayer = {
     seatId: number;
     bet: number;
+    previousBet: number;
     username: string;
     userId: number;
 };
@@ -32,3 +33,5 @@ export type OnlineActivePlayer = {
     decision: PlayerDecision | null;
     hasMadeFinalDecision: boolean;
 } & OnlinePendingPlayer;
+
+export type PlayerBets = Pick<OnlinePendingPlayer, "seatId" | "bet" | "previousBet">;
