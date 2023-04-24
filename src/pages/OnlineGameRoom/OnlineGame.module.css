@@ -32,3 +32,9 @@
   align-items: center;
   justify-content: space-evenly;
 }
+
+.timer{
+  position: absolute;
+  top: 15%;
+  right: 0;
+}

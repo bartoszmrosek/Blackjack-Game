@@ -103,7 +103,7 @@ const OfflineGameRoom: React.FC = () => {
     }, [currentUserDispatch, isGameStarted, playersSeats, setCurrentPlayers]);
 
     const decisionInterceptor = useCallback((decision: "hit" | "stand" | "doubleDown", theirIndex?: number) => {
-        if (theirIndex) {
+        if (theirIndex !== undefined) {
             if (decision === "doubleDown") {
                 const doublingDownPlayer = currentPlayers[theirIndex];
                 dispatch({

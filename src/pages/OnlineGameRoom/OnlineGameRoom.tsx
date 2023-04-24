@@ -14,6 +14,7 @@ import { OnlineBetOverlay } from "../../components/RoomComponents/BetOverlay/Onl
 import { loginOnlineUser, updateBalance } from "../../App/onlineUserSlice";
 import { PlayerBets } from "../../types/Player.interface";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
+import { Timer } from "../../components/Overlays/Timer/Timer";
 
 const pickMessageFromCode = (code: number): string => {
     switch (code) {
@@ -174,6 +175,7 @@ const OnlineGameRoom: React.FC = () => {
             )}
             {connStatus !== 0 && <ImportantMessage message={pickMessageFromCode(connStatus)} />}
             <UserInformations username={onlineUser.username} />
+            <Timer maxTime={timer.time / 1000 === 1000 ? 0 : timer.time / 1000} />
             <BalanceInformations
                 currentBalance={onlineUser.balance}
                 shouldDisplayBets={true}

@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
+import { v4 as uuidv4 } from "uuid";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 import styles from "./DecisionOverlay.module.css";
 
@@ -26,11 +27,12 @@ const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBe
                 break;
         }
     }, [canDoubleDown, decisionCb, theirIndex]);
+    const randomKey = uuidv4();
 
     return (
         <SwitchTransition mode="out-in">
             <CSSTransition
-                key={currentBet}
+                key={randomKey}
                 timeout={500}
                 classNames={{
                     enter: styles.enter,

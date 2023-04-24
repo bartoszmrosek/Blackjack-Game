@@ -27,7 +27,7 @@ type CurrentlyAsking = {
 type UseSocketReturn = Readonly<
 {
     socket: TypedSocket | null;
-    timer: number;
+    timer: { time: number; };
     seats: ("empty" | UserSeat)[];
     gameState: GameState;
     presenterState: PresenterState;
@@ -49,7 +49,7 @@ const initialPresenterState: PresenterState = {
 const initialCurrentlyAsking: CurrentlyAsking = null;
 
 const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) => void): UseSocketReturn => {
-    const [timer, setTimer] = useState(0);
+    const [timer, setTimer] = useState<{ time: number; }>({ time: 0 });
     const [seats, setSeats] = useState<("empty" | UserSeat | ActiveUserSeat)[]>(initialSeats);
     const [gameState, setGameState] = useState<GameState>(initialGameState);
     const [presenterState, setPresenterState] = useState<PresenterState>(initialPresenterState);
@@ -69,16 +69,24 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
         setPresenterState(gameStatus.presenterState);
         setGameState(gameStatus.gameState);
         setCurrentlyAsking(gameStatus.currentlyAsking);
+        setTimer({ time: gameStatus.timer });
     }
 
     useEffect(() => {
         if (socket !== null) {
-            socket.on("gameTimerStarting", (timeout) => setTimer(timeout));
+            socket.on("gameTimerStarting", (timeout) => {
+                setTimeout(() => {
+                    if (pushBetsToUpdate) {
+                        pushBetsToUpdate([]);
+                    }
+                }, timeout);
+                setTimer({ time: timeout });
+            });
             socket.on("userJoinedSeat", (seat) => {
                 const { timer: seatTimer, ...restOfSeat } = seat;
                 setAdditionalMessage(`${seat.username} joined on seat ${seat.seatId + 1}`);
                 setSeats(prev => updateArrAt(prev, seat.seatId, { ...restOfSeat, bet: 0, previousBet: 0 }));
-                setTimer(seatTimer);
+                setTimer({ time: seatTimer });
             });
             socket.on("userLeftSeat", (seat) => {
                 setAdditionalMessage(`${seat.username} left the seat ${seat.seatId + 1}`);
@@ -90,7 +98,8 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
                 }
                 return seat;
             })));
-            socket.on("betPlaced", (bet, seatId) => {
+            socket.on("betPlaced", (bet, seatId, newTimer) => {
+                setTimer({ time: newTimer });
                 setAdditionalMessage(`${bet} placed on seat no. ${seatId + 1}`);
                 setSeats(prev => updateArrAt(prev, seatId, { ...prev[seatId] as UserSeat, bet }));
             });
@@ -122,9 +131,11 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
                 }
             });
             socket.on("getPlayerDecision", (seatId, cb) => {
+                setTimer({ time: timer.time === 10000 ? 9000 : 10000 });
                 setCurrentlyAsking({ seatId, userId, cb });
             });
             socket.on("presenterTime", (gameStatus) => {
+                setTimer({ time: 0 });
                 setAdditionalMessage("All players have made decisions");
                 updateGameStatus(gameStatus);
             });
