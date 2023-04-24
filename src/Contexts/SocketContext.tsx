@@ -5,6 +5,7 @@ import { TypedSocket } from "../types/Socket.interfaces";
 import { useAppSelector } from "../hooks/reduxHooks";
 
 const SocketContext = createContext<TypedSocket | null>(null);
+const serverURL = import.meta.env.PROD ? "https://blackjackapi-rpoa.onrender.com/" : `http://localhost:5678/`;
 
 const SocketContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [socket, setSocket] = useState<TypedSocket | null>(null);
@@ -15,7 +16,7 @@ const SocketContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
         let timeout: NodeJS.Timeout;
         if (isOnlineUserLogged) {
             if (socket === null) {
-                const newSocket = io(`http://localhost:5678/`, { withCredentials: true });
+                const newSocket = io(serverURL, { withCredentials: true });
                 setSocket(newSocket);
                 newSocket.once("connect_error", (err) => {
                     console.log(err);
