@@ -125,7 +125,6 @@ const OnlineGameRoom: React.FC = () => {
         }
     }, [socket]);
 
-    console.log(timer);
     const askingSeat = currentlyAsking ? seats[currentlyAsking.seatId] : null;
     return (
         <main className={styles.onlineGameRoomWrapper}>

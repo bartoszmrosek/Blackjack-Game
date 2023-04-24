@@ -11,10 +11,11 @@ import { Rooms } from "../pages/Rooms/Rooms";
 import { SocketContextProvider } from "../Contexts/SocketContext";
 import { AuthError } from "../pages/UserOps/AuthError/AuthError";
 import { RequireAuth } from "./RequireAuth";
-import { OnlineGameRoom } from "../pages/OnlineGameRoom/OnlineGameRoom";
 
 const OfflineGameRoom = React.lazy(() => import("../pages/OfflineGameRoom/OfflineGameRoom")
     .then(module => ({ default: module.OfflineGameRoom })));
+const OnlineGameRoom = React.lazy(() => import("../pages/OnlineGameRoom/OnlineGameRoom")
+    .then(module => ({ default: module.OnlineGameRoom })));
 
 const router = createBrowserRouter([
     {
@@ -51,7 +52,12 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <RequireAuth redirectTo="/autherror"><OnlineGameRoom /></RequireAuth>,
+                element:
+    <RequireAuth redirectTo="/autherror">
+        <React.Suspense fallback={<RoomLoader />}>
+            <OnlineGameRoom />
+        </React.Suspense>
+    </RequireAuth>,
             },
         ],
     },

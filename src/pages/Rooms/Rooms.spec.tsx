@@ -23,7 +23,7 @@ beforeAll(() => restServer.listen());
 beforeEach(() => restServer.resetHandlers());
 afterAll(() => restServer.close());
 
-const GLOBAL_STORE_WITH_LOGGED_USER = setupStore({ onlineUser: { id: 1, username: "a", reservedBalance: 0, balance: 1000 } });
+const GLOBAL_STORE_WITH_LOGGED_USER = setupStore({ onlineUser: { id: 1, username: "a", balance: 1000 } });
 describe("Rooms", () => {
     beforeEach(() => {
         renderWithProviders(<Rooms />, { store: GLOBAL_STORE_WITH_LOGGED_USER });

@@ -3,8 +3,17 @@
     top: 15%;
     right: 0;
 
-    --timerWidth: 10rem;
-    --timerHeight: 10rem;
+    margin-right: 1rem;
+
+    --timerWidth: 8rem;
+    --timerHeight: 8rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--positiveColor);
 }
 
 .baseTimer{

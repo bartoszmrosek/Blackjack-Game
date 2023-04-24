@@ -105,6 +105,9 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
             });
             socket.on("gameStatusUpdate", (gameStatus) => {
                 updateGameStatus(gameStatus);
+                if (gameStatus.pendingPlayers.length === 0 && gameStatus.activePlayers.length === 0) {
+                    setAdditionalMessage("Not enough players to start");
+                }
                 if (gameStatus.gameState.isGameStarting && pushBetsToUpdate) {
                     const playersToUpdateBet = gameStatus.pendingPlayers.filter(
                         (player) => player.previousBet !== 0 && userId === player.userId,
@@ -131,7 +134,7 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
                 }
             });
             socket.on("getPlayerDecision", (seatId, cb) => {
-                setTimer({ time: timer.time === 10000 ? 9000 : 10000 });
+                setTimer(prev => ({ time: prev.time !== 10000 ? 10000 : 9000 }));
                 setCurrentlyAsking({ seatId, userId, cb });
             });
             socket.on("presenterTime", (gameStatus) => {

@@ -62,6 +62,7 @@ const Timer: React.FC<TimerProps> = ({ maxTime }) => {
     if (timeLeft > 0) {
         return (
             <div className={styles.wrapper}>
+                <h1>Time for action:</h1>
                 <div className={styles.baseTimer}>
                     <svg className={styles.baseTimerSvg} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <g className={styles.baseTimerCircle}>
