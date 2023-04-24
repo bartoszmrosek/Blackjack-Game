@@ -40,7 +40,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
         }
     }, [isGameStarted]);
 
-    const makeDecision = useCallback((playerToAskIndex: number, decision: PlayerDecision) => {
+    const makeDecision = useCallback((decision: PlayerDecision, playerToAskIndex: number) => {
         if (decision === "doubleDown") {
             dispatchUserAction(addOfflineBalance(-gamePlayers[playerToAskIndex].bet.currentBet));
         }

@@ -7,7 +7,7 @@ import { OfflineRoundPlayer, PlayerDecision, PlayerStatus } from "../../types/Pl
 
 export interface CurrentlyAskingState {
     currentlyAsking: Pick<OfflineRoundPlayer, "id" | "seatNumber" | "cardsScore" | "bet"> & { theirIndex: number; };
-    makeDecision: (theirIndex: number, decision: PlayerDecision) => void;
+    makeDecision: (decision: PlayerDecision, theirIndex: number) => void;
 }
 
 export enum GameActionKind {

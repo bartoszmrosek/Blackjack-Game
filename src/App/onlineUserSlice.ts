@@ -4,14 +4,12 @@ type OnlineUserState = {
     id: number;
     username: string;
     balance: number;
-    reservedBalance: number;
 };
 
 export const initialOnlineUserState: OnlineUserState = {
     id: -1,
     username: "",
     balance: 0,
-    reservedBalance: 0,
 };
 
 export const onlineUserSlice = createSlice({

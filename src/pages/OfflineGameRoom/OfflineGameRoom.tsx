@@ -102,21 +102,23 @@ const OfflineGameRoom: React.FC = () => {
         }
     }, [currentUserDispatch, isGameStarted, playersSeats, setCurrentPlayers]);
 
-    const decisionInterceptor = useCallback((theirIndex: number, decision: "hit" | "stand" | "doubleDown") => {
-        if (decision === "doubleDown") {
-            const doublingDownPlayer = currentPlayers[theirIndex];
-            dispatch({
-                type: PlayerActionKind.UPDATE_BET,
-                payload: {
-                    ...doublingDownPlayer,
-                    bet: {
-                        ...doublingDownPlayer.bet,
-                        currentBet: doublingDownPlayer.bet.currentBet * 2,
+    const decisionInterceptor = useCallback((decision: "hit" | "stand" | "doubleDown", theirIndex?: number) => {
+        if (theirIndex) {
+            if (decision === "doubleDown") {
+                const doublingDownPlayer = currentPlayers[theirIndex];
+                dispatch({
+                    type: PlayerActionKind.UPDATE_BET,
+                    payload: {
+                        ...doublingDownPlayer,
+                        bet: {
+                            ...doublingDownPlayer.bet,
+                            currentBet: doublingDownPlayer.bet.currentBet * 2,
+                        },
                     },
-                },
-            });
+                });
+            }
+            currentlyAsking?.makeDecision(decision, theirIndex);
         }
-        currentlyAsking?.makeDecision(theirIndex, decision);
     }, [currentPlayers, currentlyAsking]);
 
     useEffect(() => {
@@ -195,6 +197,7 @@ const OfflineGameRoom: React.FC = () => {
                             decisionCb={decisionInterceptor}
                             theirIndex={currentlyAsking.currentlyAsking.theirIndex}
                             currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
+                            isInOnlineMode={false}
                         />
                     )}
                 </>

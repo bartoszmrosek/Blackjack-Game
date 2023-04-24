@@ -11,8 +11,9 @@ import { ImportantMessage } from "../../components/RoomComponents/ImportantMessa
 import { OnlinePresenterSection } from "../../components/RoomComponents/PresenterSection/Online/OnlinePresenterSection";
 import { OnlineUserSeat } from "../../components/RoomComponents/UserSeat/Online/OnlineUserSeat";
 import { OnlineBetOverlay } from "../../components/RoomComponents/BetOverlay/Online/OnlineBetOverlay";
-import { updateBalance } from "../../App/onlineUserSlice";
+import { loginOnlineUser, updateBalance } from "../../App/onlineUserSlice";
 import { PlayerBets } from "../../types/Player.interface";
+import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 
 const pickMessageFromCode = (code: number): string => {
     switch (code) {
@@ -46,15 +47,22 @@ const OnlineGameRoom: React.FC = () => {
 
     useEffect(() => {
         if (roomId) {
-            socket?.emit("joinGameTable", roomId, (status) => {
+            socket?.emit("joinGameTable", roomId, (status, userOnServer) => {
                 setConnStatus(status);
                 setIsConnecting(false);
+                if (status === 200 && userOnServer && onlineUser.id !== userOnServer.userId) {
+                    onlineUserDispatch(loginOnlineUser({
+                        id: userOnServer.userId,
+                        balance: userOnServer.balance,
+                        username: userOnServer.username,
+                    }));
+                }
             });
         } else {
             setIsConnecting(false);
             setConnStatus(404);
         }
-    }, [roomId, socket]);
+    }, [onlineUser.id, onlineUserDispatch, roomId, socket]);
 
     useEffect(() => {
         let statusTimeout: NodeJS.Timeout;
@@ -117,6 +125,7 @@ const OnlineGameRoom: React.FC = () => {
     }, [socket]);
 
     console.log(timer);
+    const askingSeat = currentlyAsking ? seats[currentlyAsking.seatId] : null;
     return (
         <main className={styles.onlineGameRoomWrapper}>
             {isConnecting ? <RoomLoader /> : (
@@ -148,6 +157,13 @@ const OnlineGameRoom: React.FC = () => {
                     {connStatus === 0 && actionMessage && <ImportantMessage message={actionMessage} />}
                     {connStatus === 0 && !actionMessage && additionalMessage && <ImportantMessage message={additionalMessage} />}
                 </>
+            )}
+            {currentlyAsking?.cb && (
+                <DecisionOverlay
+                    decisionCb={currentlyAsking.cb}
+                    isInOnlineMode={true}
+                    currentBet={askingSeat !== "empty" && askingSeat !== null ? askingSeat.bet : 0}
+                />
             )}
             {seatBetsToUpdate.length !== 0 && (
                 <OnlineBetOverlay

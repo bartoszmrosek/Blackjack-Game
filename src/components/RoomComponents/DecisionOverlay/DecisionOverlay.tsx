@@ -4,24 +4,25 @@ import { useAppSelector } from "../../../hooks/reduxHooks";
 import styles from "./DecisionOverlay.module.css";
 
 interface DecisionOverlayProps {
-    decisionCb: (theirIndex: number, decision: "hit" | "stand" | "doubleDown") => void;
+    decisionCb: (decision: "hit" | "stand" | "doubleDown", theirIndex?: number) => void;
     currentBet: number;
-    theirIndex: number;
+    theirIndex?: number;
+    isInOnlineMode: boolean;
 }
 
-const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBet, theirIndex }) => {
-    const userBalance = useAppSelector(state => state.offlineUser.balance);
+const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBet, theirIndex, isInOnlineMode }) => {
+    const userBalance = useAppSelector(state => isInOnlineMode ? state.onlineUser.balance : state.offlineUser.balance);
     const canDoubleDown = userBalance - currentBet >= 0;
     const makeDecision = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         switch (e.currentTarget.id) {
             case "decision-hit":
-                decisionCb(theirIndex, "hit");
+                decisionCb("hit", theirIndex);
                 break;
             case "decision-stand":
-                decisionCb(theirIndex, "stand");
+                decisionCb("stand", theirIndex);
                 break;
             case "decision-doubledown":
-                if (canDoubleDown) { decisionCb(theirIndex, "doubleDown"); }
+                if (canDoubleDown) { decisionCb("doubleDown", theirIndex); }
                 break;
         }
     }, [canDoubleDown, decisionCb, theirIndex]);
@@ -29,7 +30,7 @@ const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBe
     return (
         <SwitchTransition mode="out-in">
             <CSSTransition
-                key={theirIndex}
+                key={currentBet}
                 timeout={500}
                 classNames={{
                     enter: styles.enter,

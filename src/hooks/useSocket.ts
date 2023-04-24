@@ -97,7 +97,9 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
             socket.on("gameStatusUpdate", (gameStatus) => {
                 updateGameStatus(gameStatus);
                 if (gameStatus.gameState.isGameStarting && pushBetsToUpdate) {
-                    const playersToUpdateBet = gameStatus.pendingPlayers.filter((player) => player.previousBet !== 0);
+                    const playersToUpdateBet = gameStatus.pendingPlayers.filter(
+                        (player) => player.previousBet !== 0 && userId === player.userId,
+                    );
                     pushBetsToUpdate(playersToUpdateBet);
                 }
             });
@@ -150,7 +152,7 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
         return () => {
             socket?.removeAllListeners();
         };
-    }, [onlineUserDispatch, seats, socket, userId]);
+    }, [onlineUserDispatch, pushBetsToUpdate, seats, socket, userId]);
 
     useEffect(() => {
         let messageTimeout: NodeJS.Timeout;
