@@ -89,6 +89,14 @@ td[data-cell="No. of players: "]{
     background-color: var(--positiveColor);
 
     font-size: 100%;
+
+    text-decoration: none;
+
+    color: black;
+}
+
+.joinGameBtn:hover{
+    filter: brightness(0.85);
 }
 
 .refreshBtn{

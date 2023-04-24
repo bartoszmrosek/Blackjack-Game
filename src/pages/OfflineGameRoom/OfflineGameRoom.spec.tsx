@@ -2,7 +2,7 @@
 import { act, cleanup, fireEvent, screen, within } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { renderWithProviders } from "../../utils/test-utils";
+import { advanceTimerTimes, renderWithProviders } from "../../utils/test-utils";
 import { OfflineGameRoom } from "./OfflineGameRoom";
 import deck from "../../cardDeck.json";
 import { getCardValues } from "../../utils/getCardValues";
@@ -156,7 +156,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 expect(screen.getByTestId("is-deciding 4 false")).toBeInTheDocument();
-                expect(screen.getAllByAltText("Card", { exact: false })).toHaveLength(9);
+                expect(screen.getAllByAltText("Card", { exact: false })).toHaveLength(5);
             });
             it("on hit draws another card and can decide again", () => {
                 const hitBtn = screen.getByRole("button", { name: "+" });
@@ -168,7 +168,7 @@ describe("GameRoom", () => {
                 const doubleDownBtn = screen.getByRole("button", { name: "2x" });
                 fireEvent.click(doubleDownBtn);
                 expect(screen.getByTestId("is-deciding 4 false")).toBeInTheDocument();
-                expect(screen.getAllByAltText("Card", { exact: false })).toHaveLength(10);
+                expect(screen.getAllByAltText("Card", { exact: false })).toHaveLength(6);
             });
             it("on double down updates user global balance", () => {
                 const doubleDownBtn = screen.getByRole("button", { name: "2x" });
@@ -192,6 +192,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
+                advanceTimerTimes(5);
                 expect(screen.getByAltText("User won icon")).toBeInTheDocument();
             });
             it("if player score < presenter score display lost status", () => {
@@ -201,6 +202,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
+                advanceTimerTimes(3);
                 expect(screen.getByAltText("User lost icon")).toBeInTheDocument();
             });
             it("if player score === presenter score display push status", () => {
@@ -211,6 +213,7 @@ describe("GameRoom", () => {
                 vi.spyOn(randomInt, "getRandomInt").mockReturnValueOnce(25).mockReturnValueOnce(15);
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
+                advanceTimerTimes(3);
                 expect(screen.getByAltText("User push icon")).toBeInTheDocument();
             });
             it("if player score === 21 and has only 2 cards display blackjack", () => {
@@ -224,6 +227,7 @@ describe("GameRoom", () => {
                 vi.spyOn(randomInt, "getRandomInt").mockReturnValueOnce(20);
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
+                advanceTimerTimes(1);
                 const presenterSection = screen.getByTestId("presenter-section");
                 const presenterCards = within(presenterSection).getAllByAltText("Card", { exact: false });
                 expect(presenterCards).toHaveLength(2);
@@ -234,6 +238,7 @@ describe("GameRoom", () => {
                 vi.spyOn(randomInt, "getRandomInt").mockReturnValueOnce(20);
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
+                advanceTimerTimes(1);
                 const presenterSection = screen.getByTestId("presenter-section");
                 const presenterCards = within(presenterSection).getAllByAltText("Card", { exact: false });
                 const userSection = screen.getByTestId("cards-for-1");
@@ -248,19 +253,19 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                act(() => {
-                    vi.advanceTimersToNextTimer();
-                });
             });
             it("should update user balance if met winning conditions", () => {
+                advanceTimerTimes(4);
                 expect(testingGlobalStore.getState()).toMatchObject(
                     { offlineUser: { ...initialOfflineState, balance: 1000 + BET_VALUES[1] - BET_VALUES[0] } },
                 );
             });
             it("should restart game after some time", () => {
+                advanceTimerTimes(5);
                 expect(screen.getByRole("button", { name: "Start game" })).toBeInTheDocument();
             });
             it("takes all players to update bets on reset", () => {
+                advanceTimerTimes(5);
                 expect(screen.getByText("REPEAT")).toBeInTheDocument();
             });
         });

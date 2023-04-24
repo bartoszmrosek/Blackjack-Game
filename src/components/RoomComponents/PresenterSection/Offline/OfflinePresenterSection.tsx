@@ -1,7 +1,7 @@
 import React from "react";
-import { PresenterState } from "../../../types/PresenterState.interface";
-import { CardsSpriteLoader } from "../../CardsSpriteLoader/CardsSpriteLoader";
-import styles from "./PresenterSection.module.css";
+import { PresenterState } from "../../../../types/PresenterState.interface";
+import { CardsSpriteLoader } from "../../../CardsSpriteLoader/CardsSpriteLoader";
+import styles from "../PresenterSection.module.css";
 
 interface PresenterSectionProps {
     presenter: PresenterState;
@@ -10,7 +10,7 @@ interface PresenterSectionProps {
     startGameCb: () => void;
 }
 
-const PresenterSection: React.FC<PresenterSectionProps> = (
+const OfflinePresenterSection: React.FC<PresenterSectionProps> = (
     { presenter, isGameStarted, isAnyPlayerInSeat, startGameCb },
 ) => {
     return (
@@ -39,4 +39,4 @@ const PresenterSection: React.FC<PresenterSectionProps> = (
     );
 };
 
-export { PresenterSection };
+export { OfflinePresenterSection };

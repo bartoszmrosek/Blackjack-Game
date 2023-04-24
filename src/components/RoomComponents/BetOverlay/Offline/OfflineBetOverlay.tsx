@@ -1,22 +1,22 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useAppSelector } from "../../../hooks/reduxHooks";
-import { Player } from "../../../types/Player.interface";
-import { PrimaryChip } from "../../ChipSvgs/PrimaryChip";
-import { QuaternaryChip } from "../../ChipSvgs/QuaternaryChip";
-import { QuinaryChip } from "../../ChipSvgs/QuinaryChip";
-import { SecondaryChip } from "../../ChipSvgs/SecondaryChip";
-import { SenaryChip } from "../../ChipSvgs/SenaryChip";
-import { TertiaryChip } from "../../ChipSvgs/TertiaryChip";
-import styles from "./BetOverlay.module.css";
-import { transformImgUrl } from "../../../utils/transformImgUrl";
+import { useAppSelector } from "../../../../hooks/reduxHooks";
+import { OfflinePlayer } from "../../../../types/Player.interface";
+import { PrimaryChip } from "../../../ChipSvgs/PrimaryChip";
+import { QuaternaryChip } from "../../../ChipSvgs/QuaternaryChip";
+import { QuinaryChip } from "../../../ChipSvgs/QuinaryChip";
+import { SecondaryChip } from "../../../ChipSvgs/SecondaryChip";
+import { SenaryChip } from "../../../ChipSvgs/SenaryChip";
+import { TertiaryChip } from "../../../ChipSvgs/TertiaryChip";
+import { transformImgUrl } from "../../../../utils/transformImgUrl";
+import styles from "../BetOverlay.module.css";
 
 interface BetOverlayProps {
-    playerInformations: Player;
-    updateBet: (player: Player) => void;
-    undoHandler: (player: Player) => void;
+    playerInformations: OfflinePlayer;
+    updateBet: (player: OfflinePlayer) => void;
+    undoHandler: (player: OfflinePlayer) => void;
 }
 
-const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, undoHandler }) => {
+const OfflineBetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, undoHandler }) => {
     const [canRepeat, setCanRepeat] = useState<boolean>(
         playerInformations.bet.currentBet === 0 &&
         playerInformations.bet.previousBet !== 0);
@@ -107,4 +107,4 @@ const BetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updateBet, 
     );
 };
 
-export { BetOverlay };
+export { OfflineBetOverlay };

@@ -44,7 +44,7 @@ const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, sh
         if (userData && pathForRequest === "/login/") {
             const { id, username, balance } = userData as Record<string, string | number>;
             if (typeof id === "number" && typeof username === "string" && typeof balance === "number") {
-                onlineUserDispatch(loginOnlineUser({ id, username, balance, reservedBalance: 0 }));
+                onlineUserDispatch(loginOnlineUser({ id, username, balance }));
             }
         }
     }, [onlineUserDispatch, pathForRequest, userData]);

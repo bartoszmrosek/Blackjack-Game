@@ -67,7 +67,6 @@ const useFetch = <T>(path: string,
         }
         return () => clearTimeout(timer);
     }, [status, data, shouldDataPersist]);
-
     return [
         isLoading,
         status,

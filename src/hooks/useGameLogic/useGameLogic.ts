@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useReducer } from "react";
+import { OfflineRoundPlayer, OfflinePlayer, PlayerDecision } from "../../types/Player.interface";
 import { addOfflineBalance } from "../../App/offlineUserSlice";
-import { Player } from "../../types/Player.interface";
-import { RoundPlayer } from "../../types/RoundPlayer.interface";
 import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import {
     CurrentlyAskingState,
@@ -13,8 +12,8 @@ import {
 
 type UseGameLogicReturn = Readonly<
 [
-    (players: Player[]) => void,
-    RoundPlayer[],
+    (players: OfflinePlayer[]) => void,
+    OfflineRoundPlayer[],
     CurrentlyAskingState | null,
     TableState["presenterState"],
 ]
@@ -26,9 +25,9 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
     const currentUserId = useAppSelector(state => state.offlineUser.id);
     const dispatchUserAction = useAppDispatch();
 
-    const setPlayersForGame = useCallback((players: Player[]) => {
+    const setPlayersForGame = useCallback((players: OfflinePlayer[]) => {
         if (!isGameStarted) {
-            const expandedPlayersState: RoundPlayer[] = players.map((player) => (
+            const expandedPlayersState: OfflineRoundPlayer[] = players.map((player) => (
                 {
                     ...player,
                     cards: [],
@@ -41,7 +40,7 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
         }
     }, [isGameStarted]);
 
-    const makeDecision = useCallback((playerToAskIndex: number, decision: "hit" | "stand" | "doubleDown") => {
+    const makeDecision = useCallback((decision: PlayerDecision, playerToAskIndex: number) => {
         if (decision === "doubleDown") {
             dispatchUserAction(addOfflineBalance(-gamePlayers[playerToAskIndex].bet.currentBet));
         }
@@ -78,11 +77,23 @@ const useGameLogic = (stopGameCb: (funds: number) => void, resetGameCb: () => vo
                     },
                 });
             }
-        } else {
-            dispatchLogicUpdate({ type: GameActionKind.ALL_ASKING_DONE, payload: { currentUserId, resultsCb: stopGameCb } });
+        } else if (gameLogicState.isGameStarted && gameLogicState.presenterTime === null) {
+            dispatchLogicUpdate({ type: GameActionKind.START_PRESENTER_TIME });
         }
     }
 
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (gameLogicState.isGameStarted && gameLogicState.presenterTime && !gameLogicState.presenterState.didGetBlackjack) {
+            timer = setTimeout(() => {
+                dispatchLogicUpdate({ type: GameActionKind.PRESENTER_NEW_CARD });
+            }, 2000);
+        } else if ((gameLogicState.presenterTime !== null
+            && !gameLogicState.presenterTime) || (gameLogicState.presenterState.didGetBlackjack && !gameLogicState.isShowingResults)) {
+            dispatchLogicUpdate({ type: GameActionKind.ALL_UPDATES_DONE, payload: { currentUserId, resultsCb: stopGameCb } });
+        }
+        return () => clearTimeout(timer);
+    }, [currentUserId, gameLogicState, stopGameCb]);
     useEffect(() => {
         let timer: NodeJS.Timeout;
         if (isShowingResults) {

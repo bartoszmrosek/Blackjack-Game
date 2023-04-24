@@ -1,10 +1,10 @@
 import React from "react";
-import { RoundPlayer } from "../../../../types/RoundPlayer.interface";
+import { PlayerStatus } from "../../../../types/Player.interface";
 import styles from "./StatusVisualizer.module.css";
 import { transformImgUrl } from "../../../../utils/transformImgUrl";
 
 interface StatusVisualizerProps {
-    status: RoundPlayer["currentStatus"];
+    status: PlayerStatus;
 }
 
 const StatusVisualizer: React.FC<StatusVisualizerProps> = ({ status }) => {

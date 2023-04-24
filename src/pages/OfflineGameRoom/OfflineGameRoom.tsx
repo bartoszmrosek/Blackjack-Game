@@ -6,34 +6,36 @@ import {
     removeReservedBalance,
 } from "../../App/offlineUserSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { UserSeat } from "../../components/RoomComponents/UserSeat/UserSeat";
+import { OffLineUserSeat } from "../../components/RoomComponents/UserSeat/Offline/OfflineUserSeat";
 import styles from "./OfflineGameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
-import { BetOverlay } from "../../components/RoomComponents/BetOverlay/BetOverlay";
-import { Player } from "../../types/Player.interface";
+import { OfflineBetOverlay } from "../../components/RoomComponents/BetOverlay/Offline/OfflineBetOverlay";
+import { OfflinePlayer } from "../../types/Player.interface";
 import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
 import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
-import { PresenterSection } from "../../components/RoomComponents/PresenterSection/PresenterSection";
+import {
+    OfflinePresenterSection,
+} from "../../components/RoomComponents/PresenterSection/Offline/OfflinePresenterSection";
 import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
 import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
 
 const OfflineGameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
     const { playersSeats, isGameStarted } = gameRoomState;
-    const [betsToUpdate, setBetsToUpdate] = useState<Player[]>([]);
+    const [betsToUpdate, setBetsToUpdate] = useState<OfflinePlayer[]>([]);
     const currentUser = useAppSelector((state) => state.offlineUser);
     const currentUserDispatch = useAppDispatch();
     const [fundsToAdd, setFundsToAdd] = useState<number>(0);
     const [isTooSmallRes, setIsTooSmallRes] = useState(window.innerHeight < 800 || window.innerWidth < 1200);
 
     const stopGame = useCallback((funds: number) => {
-        const previouslyPlacedBets = playersSeats.filter((seat) => (seat !== "empty")) as Player[];
+        const previouslyPlacedBets = playersSeats.filter((seat) => (seat !== "empty")) as OfflinePlayer[];
         setBetsToUpdate(previouslyPlacedBets.map((bettingPlayer) =>
             ({ ...bettingPlayer, bet: { currentBet: 0, previousBet: bettingPlayer.bet.currentBet } })));
         setFundsToAdd(funds);
     }, [playersSeats]);
 
-    const removeUserFromGame = useCallback((player: Player) => {
+    const removeUserFromGame = useCallback((player: OfflinePlayer) => {
         dispatch({ type: PlayerActionKind.LEAVE, payload: player });
         setBetsToUpdate(bets => {
             return bets.filter((bet) => {
@@ -54,11 +56,11 @@ const OfflineGameRoom: React.FC = () => {
 
     const [setCurrentPlayers, currentPlayers, currentlyAsking, presenterState] = useGameLogic(stopGame, resetGame);
 
-    const addBetToUpdate = useCallback((player: Player) => {
+    const addBetToUpdate = useCallback((player: OfflinePlayer) => {
         setBetsToUpdate(bets => [...bets, player]);
     }, []);
 
-    const updateBet = useCallback((player: Player) => {
+    const updateBet = useCallback((player: OfflinePlayer) => {
         const currentBetChange = player.bet.currentBet - player.bet.previousBet;
         if (currentUser.reservedBalance + currentBetChange <= currentUser.balance) {
             dispatch({ type: PlayerActionKind.UPDATE_BET, payload: player });
@@ -71,8 +73,8 @@ const OfflineGameRoom: React.FC = () => {
         const indexOfOtherSeatBet = playersSeats.findIndex((player) => {
             return player !== "empty" && player.id === currentUser.id;
         });
-        const betFromOtherSeat = playersSeats[indexOfOtherSeatBet] as Player;
-        const newPlayer: Player = {
+        const betFromOtherSeat = playersSeats[indexOfOtherSeatBet] as OfflinePlayer;
+        const newPlayer: OfflinePlayer = {
             id: currentUser.id,
             name: currentUser.username,
             bet: {
@@ -92,7 +94,7 @@ const OfflineGameRoom: React.FC = () => {
     const startGame = useCallback(() => {
         if (!isGameStarted) {
             currentUserDispatch(offlineGameFundReservation());
-            const allCurrentPlayers = playersSeats.filter(player => player !== "empty") as Player[];
+            const allCurrentPlayers = playersSeats.filter(player => player !== "empty") as OfflinePlayer[];
             if (allCurrentPlayers.length > 0) {
                 setCurrentPlayers(allCurrentPlayers);
                 dispatch({ type: PresenterActionKind.START_GAME });
@@ -100,21 +102,23 @@ const OfflineGameRoom: React.FC = () => {
         }
     }, [currentUserDispatch, isGameStarted, playersSeats, setCurrentPlayers]);
 
-    const decisionInterceptor = useCallback((theirIndex: number, decision: "hit" | "stand" | "doubleDown") => {
-        if (decision === "doubleDown") {
-            const doublingDownPlayer = currentPlayers[theirIndex];
-            dispatch({
-                type: PlayerActionKind.UPDATE_BET,
-                payload: {
-                    ...doublingDownPlayer,
-                    bet: {
-                        ...doublingDownPlayer.bet,
-                        currentBet: doublingDownPlayer.bet.currentBet * 2,
+    const decisionInterceptor = useCallback((decision: "hit" | "stand" | "doubleDown", theirIndex?: number) => {
+        if (theirIndex !== undefined) {
+            if (decision === "doubleDown") {
+                const doublingDownPlayer = currentPlayers[theirIndex];
+                dispatch({
+                    type: PlayerActionKind.UPDATE_BET,
+                    payload: {
+                        ...doublingDownPlayer,
+                        bet: {
+                            ...doublingDownPlayer.bet,
+                            currentBet: doublingDownPlayer.bet.currentBet * 2,
+                        },
                     },
-                },
-            });
+                });
+            }
+            currentlyAsking?.makeDecision(decision, theirIndex);
         }
-        currentlyAsking?.makeDecision(theirIndex, decision);
     }, [currentPlayers, currentlyAsking]);
 
     useEffect(() => {
@@ -137,7 +141,7 @@ const OfflineGameRoom: React.FC = () => {
         <main className={styles.background}>
             {!isTooSmallRes ? (
                 <>
-                    <PresenterSection
+                    <OfflinePresenterSection
                         presenter={presenterState}
                         startGameCb={startGame}
                         isGameStarted={isGameStarted}
@@ -154,7 +158,7 @@ const OfflineGameRoom: React.FC = () => {
                                 scorePermutations: currentPlayers[isUserPlayerIndex].cardsScore,
                             } : null;
                             return (
-                                <UserSeat
+                                <OffLineUserSeat
                         // eslint-disable-next-line react/no-array-index-key
                                     key={index}
                                     isGameStarted={isGameStarted}
@@ -186,13 +190,14 @@ const OfflineGameRoom: React.FC = () => {
                     {betsToUpdate.length > 0 &&
                 !isGameStarted &&
                 currentUser.balance > 0 &&
-                    <BetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
+                    <OfflineBetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
 
                     {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
                         <DecisionOverlay
                             decisionCb={decisionInterceptor}
                             theirIndex={currentlyAsking.currentlyAsking.theirIndex}
                             currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
+                            isInOnlineMode={false}
                         />
                     )}
                 </>

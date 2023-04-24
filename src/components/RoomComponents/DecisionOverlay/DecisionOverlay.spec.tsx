@@ -13,19 +13,21 @@ describe("Decision overlay", () => {
             decisionCb={callbackMock}
             theirIndex={1}
             currentBet={0}
+            isInOnlineMode={false}
         />);
         const allButtons = getAllByRole("button");
         allButtons.forEach((button) => fireEvent.click(button));
         expect(callbackMock).toHaveBeenCalledTimes(3);
-        expect(callbackMock).toHaveBeenCalledWith(1, "doubleDown");
-        expect(callbackMock).toHaveBeenCalledWith(1, "stand");
-        expect(callbackMock).toHaveBeenCalledWith(1, "hit");
+        expect(callbackMock).toHaveBeenCalledWith("doubleDown", 1);
+        expect(callbackMock).toHaveBeenCalledWith("stand", 1);
+        expect(callbackMock).toHaveBeenCalledWith("hit", 1);
     });
     it("blocks double down button if funds cannot afford it", () => {
         const { getByRole } = renderWithProviders(<DecisionOverlay
             decisionCb={defaultMock}
             theirIndex={1}
             currentBet={100}
+            isInOnlineMode={false}
         />, {
             preloadedState: {
                 offlineUser: {

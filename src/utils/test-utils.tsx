@@ -1,9 +1,10 @@
 import { PreloadedState } from "@reduxjs/toolkit";
-import { render, RenderOptions } from "@testing-library/react";
+import { act, render, RenderOptions } from "@testing-library/react";
 import React, { PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 
+import { vi } from "vitest";
 import { AppStore, setupStore } from "../mainStore";
 import { RootState } from "../rootReducer";
 
@@ -33,4 +34,12 @@ export function renderWithProviders(
     }
 
     return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
+}
+
+export function advanceTimerTimes(times: number): void {
+    for (let i = 0; i < times; i++) {
+        act(() => {
+            vi.advanceTimersToNextTimer();
+        });
+    }
 }
