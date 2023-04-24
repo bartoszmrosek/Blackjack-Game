@@ -2,16 +2,16 @@
 import { act, cleanup, fireEvent, screen, within } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { advanceTimerTimes, renderWithProviders } from "../../utils/test-utils";
+import { advanceTimerTimes, renderWithProviders } from "../../../utils/test-utils";
 import { OfflineGameRoom } from "./OfflineGameRoom";
-import deck from "../../cardDeck.json";
-import { getCardValues } from "../../utils/getCardValues";
-import { setupStore } from "../../mainStore";
-import { initialOfflineState, resetOfflineUserSlice } from "../../App/offlineUserSlice";
-import * as randomInt from "../../utils/getRandomInt";
-import { getAllPermutations } from "../../utils/getAllPermutations";
+import deck from "../../../cardDeck.json";
+import { getCardValues } from "../../../utils/getCardValues";
+import { setupStore } from "../../../mainStore";
+import { initialOfflineState, resetOfflineUserSlice } from "../../../App/offlineUserSlice";
+import * as randomInt from "../../../utils/getRandomInt";
+import { getAllPermutations } from "../../../utils/getAllPermutations";
 
-vi.mock("../../utils/getRandomInt", () => {
+vi.mock("../../../utils/getRandomInt", () => {
     return {
         getRandomInt: vi.fn((param: number, param2: number) => {
             switch (param2) {

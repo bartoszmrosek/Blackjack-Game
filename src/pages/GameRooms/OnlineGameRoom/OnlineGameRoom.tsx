@@ -1,20 +1,24 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import styles from "./OnlineGame.module.css";
-import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
-import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
-import { UserInformations } from "../../components/Overlays/UserInformations/UserInformations";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { useSocket } from "../../hooks/useSocket";
-import { RoomLoader } from "../../components/RoomComponents/RoomLoader/RoomLoader";
-import { ImportantMessage } from "../../components/RoomComponents/ImportantMessage/ImportantMessage";
-import { OnlinePresenterSection } from "../../components/RoomComponents/PresenterSection/Online/OnlinePresenterSection";
-import { OnlineUserSeat } from "../../components/RoomComponents/UserSeat/Online/OnlineUserSeat";
-import { OnlineBetOverlay } from "../../components/RoomComponents/BetOverlay/Online/OnlineBetOverlay";
-import { loginOnlineUser, updateBalance } from "../../App/onlineUserSlice";
-import { PlayerBets } from "../../types/Player.interface";
-import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
-import { Timer } from "../../components/Overlays/Timer/Timer";
+import styles from "../GameRoom.module.css";
+import { GoBackButton } from "../../../components/Overlays/GoBackButton/GoBackButton";
+import { BalanceInformations } from "../../../components/Overlays/BalanceInformations/BalanceInformations";
+import { UserInformations } from "../../../components/Overlays/UserInformations/UserInformations";
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
+import { useSocket } from "../../../hooks/useSocket";
+import { RoomLoader } from "../../../components/RoomComponents/RoomLoader/RoomLoader";
+import { ImportantMessage } from "../../../components/RoomComponents/ImportantMessage/ImportantMessage";
+import {
+    OnlinePresenterSection,
+} from "../../../components/RoomComponents/PresenterSection/Online/OnlinePresenterSection";
+import { OnlineUserSeat } from "../../../components/RoomComponents/UserSeat/Online/OnlineUserSeat";
+import { OnlineBetOverlay } from "../../../components/RoomComponents/BetOverlay/Online/OnlineBetOverlay";
+import { loginOnlineUser, updateBalance } from "../../../App/onlineUserSlice";
+import { PlayerBets } from "../../../types/Player.interface";
+import { DecisionOverlay } from "../../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
+import { Timer } from "../../../components/Overlays/Timer/Timer";
+import { useSize } from "../../../hooks/useSize";
+import { MovingArrows } from "../../../components/RoomComponents/MovingArrows/MovingArrows";
 
 const pickMessageFromCode = (code: number): string => {
     switch (code) {
@@ -38,6 +42,8 @@ const OnlineGameRoom: React.FC = () => {
     const [connStatus, setConnStatus] = useState(0);
     const [actionMessage, setActionMessage] = useState("");
     const navigate = useNavigate();
+    const [movingController, setMovingController] = useState(2);
+    const { width } = useSize();
     const onlineUser = useAppSelector(state => state.onlineUser);
     const onlineUserDispatch = useAppDispatch();
 
@@ -125,13 +131,45 @@ const OnlineGameRoom: React.FC = () => {
         }
     }, [socket]);
 
+    const moveRightConrol = useCallback(() => {
+        setMovingController(prev => {
+            if (prev + 1 < 5) {
+                return prev + 1;
+            }
+            return prev;
+        });
+    }, []);
+
+    const moveLeftControl = useCallback(() => {
+        setMovingController(prev => {
+            if (prev - 1 >= 0) {
+                return prev - 1;
+            }
+            return prev;
+        });
+    }, []);
+
+    useEffect(() => {
+        if (currentlyAsking !== null) {
+            setMovingController(currentlyAsking.seatId);
+        }
+    }, [currentlyAsking]);
+
     const askingSeat = currentlyAsking ? seats[currentlyAsking.seatId] : null;
+    const userSeatWidth = width > 920 ? 30 : 50;
+    const defaultTranslate = width > 920 ? 35 : 25;
     return (
         <main className={styles.onlineGameRoomWrapper}>
             {isConnecting ? <RoomLoader /> : (
                 <>
                     <OnlinePresenterSection presenter={presenterState} />
-                    <div className={styles.userSeats}>
+                    <div
+                        className={styles.userSeats}
+                        style={
+                        {
+                            transform: width < 1320 ? `translate(${defaultTranslate - movingController * userSeatWidth}vw)` : "",
+                        }}
+                    >
                         {seats.map((seat, index) => {
                             const user = seat === "empty" ? null : seat;
                             return (
@@ -188,6 +226,14 @@ const OnlineGameRoom: React.FC = () => {
                     return acc;
                 }, 0)}
             />
+            {width < 1320 && (
+                <MovingArrows
+                    nextCallback={moveRightConrol}
+                    previousCallback={moveLeftControl}
+                    isNextPossible={movingController + 1 < 5}
+                    isPrevPossible={movingController - 1 >= 0}
+                />
+            )}
             <GoBackButton />
         </main>
     );

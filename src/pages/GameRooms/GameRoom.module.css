@@ -1,4 +1,4 @@
-.background{
+.background, .onlineGameRoomWrapper{
     background-color: #388E3C;
     width: 100vw;
     height: 100vh;
@@ -36,19 +36,6 @@
 
 .userSeats > *{
   width: 50vw;
-}
-
-.notSupportedDevice{
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  
-  font-size: 130%;
-  color: wheat;
 }
 
 @media only screen and (min-width: 920px) {

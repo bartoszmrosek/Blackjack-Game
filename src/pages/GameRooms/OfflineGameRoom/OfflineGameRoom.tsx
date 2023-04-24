@@ -4,22 +4,22 @@ import {
     addOfflineReservedBalance,
     offlineGameFundReservation,
     removeReservedBalance,
-} from "../../App/offlineUserSlice";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { OffLineUserSeat } from "../../components/RoomComponents/UserSeat/Offline/OfflineUserSeat";
-import styles from "./OfflineGameRoom.module.css";
+} from "../../../App/offlineUserSlice";
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
+import { OffLineUserSeat } from "../../../components/RoomComponents/UserSeat/Offline/OfflineUserSeat";
+import styles from "../GameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
-import { OfflineBetOverlay } from "../../components/RoomComponents/BetOverlay/Offline/OfflineBetOverlay";
-import { OfflinePlayer } from "../../types/Player.interface";
-import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
-import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
+import { OfflineBetOverlay } from "../../../components/RoomComponents/BetOverlay/Offline/OfflineBetOverlay";
+import { OfflinePlayer } from "../../../types/Player.interface";
+import { useGameLogic } from "../../../hooks/useGameLogic/useGameLogic";
+import { DecisionOverlay } from "../../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 import {
     OfflinePresenterSection,
-} from "../../components/RoomComponents/PresenterSection/Offline/OfflinePresenterSection";
-import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
-import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
-import { MovingArrows } from "../../components/RoomComponents/MovingArrows/MovingArrows";
-import { useSize } from "../../hooks/useSize";
+} from "../../../components/RoomComponents/PresenterSection/Offline/OfflinePresenterSection";
+import { GoBackButton } from "../../../components/Overlays/GoBackButton/GoBackButton";
+import { BalanceInformations } from "../../../components/Overlays/BalanceInformations/BalanceInformations";
+import { MovingArrows } from "../../../components/RoomComponents/MovingArrows/MovingArrows";
+import { useSize } from "../../../hooks/useSize";
 
 const OfflineGameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
@@ -225,12 +225,14 @@ const OfflineGameRoom: React.FC = () => {
                     isInOnlineMode={false}
                 />
             )}
-            <MovingArrows
-                nextCallback={moveRightConrol}
-                previousCallback={moveLeftControl}
-                isNextPossible={movingController + 1 < 5}
-                isPrevPossible={movingController - 1 >= 0}
-            />
+            {width < 1320 && (
+                <MovingArrows
+                    nextCallback={moveRightConrol}
+                    previousCallback={moveLeftControl}
+                    isNextPossible={movingController + 1 < 5}
+                    isPrevPossible={movingController - 1 >= 0}
+                />
+            )}
             <GoBackButton />
         </main>
     );

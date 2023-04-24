@@ -1,4 +1,4 @@
-import { OfflinePlayer } from "../../types/Player.interface";
+import { OfflinePlayer } from "../../../types/Player.interface";
 
 export enum PlayerActionKind {
     JOIN = "JOIN",
