@@ -71,16 +71,18 @@ const OffLineUserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seat
     const PickedChip = pickBetChip();
 
     return isEmpty ? (
-        <button
-            onClick={handleJoin}
-            className={`${styles.joinBtn}`}
-            disabled={currentUser.balance <= 0 || isGameStarted}
-        >
-            {
+        <div className={styles.joinBtnWrapper}>
+            <button
+                onClick={handleJoin}
+                className={`${styles.joinBtn}`}
+                disabled={currentUser.balance <= 0 || isGameStarted}
+            >
+                {
                 currentUser.balance <= 0 ? "No funds left" :
                     isGameStarted ? "Join in next round" : "Join now"
             }
-        </button>
+            </button>
+        </div>
     ) : (
         <div className={`${styles.activePlayer}`}>
             {playerStatus && (

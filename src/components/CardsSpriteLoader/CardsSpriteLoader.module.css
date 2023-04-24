@@ -1,0 +1,12 @@
+.cardSize{
+    --cardWidth: 75px;
+
+    width: var(--cardWidth);
+    height: calc(var(--cardWidth) * 1.5);
+}
+
+@media only screen and (min-width: 650px) {
+    .cardSize{
+        --cardWidth: 100px;
+    }
+}

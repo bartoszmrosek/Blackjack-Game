@@ -1,5 +1,6 @@
 import React, { CSSProperties, useCallback } from "react";
 import { transformImgUrl } from "../../utils/transformImgUrl";
+import localStyles from "./CardsSpriteLoader.module.css";
 
 interface CardsSpriteLoaderProps {
     cardId: string;
@@ -54,8 +55,8 @@ const CardsSpriteLoader: React.FC<CardsSpriteLoaderProps> = ({ cardId, className
 
     return (
         <div
-            style={{ width: "100px", height: "150px", ...styles }}
-            className={classNames}
+            style={{ ...styles }}
+            className={`${classNames} ${localStyles.cardSize}`}
         >
             <img
                 style={pickImgFromSprite()}

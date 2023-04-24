@@ -24,13 +24,18 @@
     position: absolute;
     bottom: 5%;
 
-    width: 100%;
+    width: max-content;
     height: 20%;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
+
+    transition: transform 2s ease-in-out;
+}
+
+.userSeats > *{
+  width: 50vw;
 }
 
 .notSupportedDevice{
@@ -44,4 +49,19 @@
   
   font-size: 130%;
   color: wheat;
+}
+
+@media only screen and (min-width: 920px) {
+    .userSeats > * {
+      width: 30vw;
+    }
+}
+
+@media only screen and (min-width: 1320px) {
+  .userSeats{
+    left: 12.5vw;
+  }
+  .userSeats > *{
+    width: 15vw;
+  }
 }

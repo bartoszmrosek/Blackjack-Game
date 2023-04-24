@@ -174,7 +174,10 @@ const OnlineGameRoom: React.FC = () => {
             )}
             {connStatus !== 0 && <ImportantMessage message={pickMessageFromCode(connStatus)} />}
             <UserInformations username={onlineUser.username} />
-            <Timer maxTime={timer.time / 1000 === 1000 ? 0 : timer.time / 1000} />
+            <Timer
+                maxTime={timer.time / 1000 === 1000 ? 0 : timer.time / 1000}
+                descriptionOverwrite={timer.message}
+            />
             <BalanceInformations
                 currentBalance={onlineUser.balance}
                 shouldDisplayBets={true}
