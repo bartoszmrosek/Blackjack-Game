@@ -192,7 +192,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                advanceTimerTimes(4);
+                advanceTimerTimes(5);
                 expect(screen.getByAltText("User won icon")).toBeInTheDocument();
             });
             it("if player score < presenter score display lost status", () => {
@@ -202,7 +202,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                advanceTimerTimes(2);
+                advanceTimerTimes(3);
                 expect(screen.getByAltText("User lost icon")).toBeInTheDocument();
             });
             it("if player score === presenter score display push status", () => {
@@ -213,7 +213,7 @@ describe("GameRoom", () => {
                 vi.spyOn(randomInt, "getRandomInt").mockReturnValueOnce(25).mockReturnValueOnce(15);
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
-                advanceTimerTimes(2);
+                advanceTimerTimes(3);
                 expect(screen.getByAltText("User push icon")).toBeInTheDocument();
             });
             it("if player score === 21 and has only 2 cards display blackjack", () => {
