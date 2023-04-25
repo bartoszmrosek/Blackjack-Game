@@ -11,7 +11,7 @@ const OnlinePresenterSection: React.FC<PresenterSectionProps> = (
     { presenter },
 ) => {
     return (
-        <section className={styles.presenterContainer} data-testid="presenter-section">
+        <section className={`${styles.presenterContainer} ${styles.onlinePresenter}`} data-testid="presenter-section">
             {presenter.cards.map((card, index) =>
             // eslint-disable-next-line react/no-array-index-key
                 <CardsSpriteLoader cardId={card} key={index} />,

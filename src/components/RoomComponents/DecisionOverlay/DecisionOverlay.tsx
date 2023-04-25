@@ -8,10 +8,11 @@ interface DecisionOverlayProps {
     decisionCb: (decision: "hit" | "stand" | "doubleDown", theirIndex?: number) => void;
     currentBet: number;
     theirIndex?: number;
+    customAnimationKey?: string;
     isInOnlineMode: boolean;
 }
 
-const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBet, theirIndex, isInOnlineMode }) => {
+const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, customAnimationKey, currentBet, theirIndex, isInOnlineMode }) => {
     const userBalance = useAppSelector(state => isInOnlineMode ? state.onlineUser.balance : state.offlineUser.balance);
     const canDoubleDown = userBalance - currentBet >= 0;
     const makeDecision = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -32,7 +33,7 @@ const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBe
     return (
         <SwitchTransition mode="out-in">
             <CSSTransition
-                key={randomKey}
+                key={customAnimationKey || theirIndex || randomKey}
                 timeout={500}
                 classNames={{
                     enter: styles.enter,

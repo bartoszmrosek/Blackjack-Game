@@ -7,11 +7,10 @@
     right: 0;
     margin: 1rem;
 
-    width: min(16rem, 90%);
+    width: min(14rem, 90%);
     height: 5em;
 
     gap: 10%;
-
 }
 
 .accordion{
@@ -23,7 +22,7 @@
 }
 
 .accordionItem{
-    font-size: 150%;
+    font-size: 125%;
     height: 100%;
 
     display: flex;
@@ -88,4 +87,13 @@
     width: 1em;
 
     transition: transform 1s;
+}
+
+@media only screen and (min-width: 650px) {
+    .userInformations{
+        width: min(16rem, 90%);
+    }
+    .accordionItem{
+        font-size: 150%;
+    }
 }

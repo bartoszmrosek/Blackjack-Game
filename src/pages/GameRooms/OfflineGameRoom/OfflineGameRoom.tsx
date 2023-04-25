@@ -155,8 +155,8 @@ const OfflineGameRoom: React.FC = () => {
         }
     }, [currentlyAsking]);
 
-    const userSeatWidth = width > 920 ? 30 : 50;
-    const defaultTranslate = width > 920 ? 35 : 25;
+    const userSeatWidth = width >= 920 ? 30 : 50;
+    const defaultTranslate = width >= 920 ? 35 : 25;
 
     return (
         <main className={styles.background}>

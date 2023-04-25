@@ -12,6 +12,8 @@
     pointer-events: none;
 
     background-color: rgba(0,0,0,0.1);
+
+    font-size: 70%;
 }
 
 .message{
@@ -24,6 +26,6 @@
     justify-content: center;
     align-items: center;
 
-    color: var(--negativeColor);
+    color: #d6dd04;
 }
 

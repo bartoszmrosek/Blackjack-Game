@@ -182,7 +182,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                advanceTimerTimes(5);
+                advanceTimerTimes(4);
                 expect(screen.getByAltText("User won icon")).toBeInTheDocument();
             });
             it("if player score < presenter score display lost status", () => {
@@ -192,7 +192,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                advanceTimerTimes(3);
+                advanceTimerTimes(2);
                 expect(screen.getByAltText("User lost icon")).toBeInTheDocument();
             });
             it("if player score === presenter score display push status", () => {
@@ -203,7 +203,7 @@ describe("GameRoom", () => {
                 vi.spyOn(randomInt, "getRandomInt").mockReturnValueOnce(25).mockReturnValueOnce(15);
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
-                advanceTimerTimes(3);
+                advanceTimerTimes(2);
                 expect(screen.getByAltText("User push icon")).toBeInTheDocument();
             });
             it("if player score === 21 and has only 2 cards display blackjack", () => {
@@ -217,7 +217,7 @@ describe("GameRoom", () => {
                 vi.spyOn(randomInt, "getRandomInt").mockReturnValueOnce(20);
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                advanceTimerTimes(2);
+                advanceTimerTimes(1);
                 const presenterSection = screen.getByTestId("presenter-section");
                 const presenterCards = within(presenterSection).getAllByAltText("Card", { exact: false });
                 expect(presenterCards).toHaveLength(2);
@@ -228,7 +228,7 @@ describe("GameRoom", () => {
                 vi.spyOn(randomInt, "getRandomInt").mockReturnValueOnce(20);
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                advanceTimerTimes(2);
+                advanceTimerTimes(1);
                 const presenterSection = screen.getByTestId("presenter-section");
                 const presenterCards = within(presenterSection).getAllByAltText("Card", { exact: false });
                 const userSection = screen.getByTestId("cards-for-1");

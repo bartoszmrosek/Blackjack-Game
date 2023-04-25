@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import styles from "../GameRoom.module.css";
 import { GoBackButton } from "../../../components/Overlays/GoBackButton/GoBackButton";
 import { BalanceInformations } from "../../../components/Overlays/BalanceInformations/BalanceInformations";
@@ -155,9 +156,13 @@ const OnlineGameRoom: React.FC = () => {
         }
     }, [currentlyAsking]);
 
+    // This is repair for "flickering" when react transition props was used and was not unique when needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const decisionAnimationKey = useMemo(() => ({ key: uuidv4() }), [currentlyAsking]);
+
     const askingSeat = currentlyAsking ? seats[currentlyAsking.seatId] : null;
-    const userSeatWidth = width > 920 ? 30 : 50;
-    const defaultTranslate = width > 920 ? 35 : 25;
+    const userSeatWidth = width >= 920 ? 30 : 50;
+    const defaultTranslate = width >= 920 ? 35 : 25;
     return (
         <main className={styles.onlineGameRoomWrapper}>
             {isConnecting ? <RoomLoader /> : (
@@ -201,6 +206,7 @@ const OnlineGameRoom: React.FC = () => {
                     decisionCb={currentlyAsking.cb}
                     isInOnlineMode={true}
                     currentBet={askingSeat !== "empty" && askingSeat !== null ? askingSeat.bet : 0}
+                    customAnimationKey={decisionAnimationKey.key}
                 />
             )}
             {seatBetsToUpdate.length !== 0 && (
@@ -212,10 +218,12 @@ const OnlineGameRoom: React.FC = () => {
             )}
             {connStatus !== 0 && <ImportantMessage message={pickMessageFromCode(connStatus)} />}
             <UserInformations username={onlineUser.username} />
-            <Timer
-                maxTime={timer.time / 1000 === 1000 ? 0 : timer.time / 1000}
-                descriptionOverwrite={timer.message}
-            />
+            {width < 650 && timer.message ? null : (
+                <Timer
+                    maxTime={timer.time / 1000 === 1000 ? 0 : timer.time / 1000}
+                    descriptionOverwrite={timer.message}
+                />
+            )}
             <BalanceInformations
                 currentBalance={onlineUser.balance}
                 shouldDisplayBets={true}
