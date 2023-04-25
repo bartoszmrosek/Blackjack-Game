@@ -77,7 +77,7 @@ const Timer: React.FC<TimerProps> = ({ maxTime, descriptionOverwrite }) => {
                             />
                         </g>
                     </svg>
-                    <span id="base-timer-label" className={styles.baseTimerLabel}>
+                    <span id="base-timer-label" className={styles.baseTimerLabel} role="timer">
                         {formatTimeLeft(timeLeft)}
                     </span>
                 </div>

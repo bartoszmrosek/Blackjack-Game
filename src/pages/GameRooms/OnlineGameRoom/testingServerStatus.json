@@ -1,0 +1,55 @@
+{
+    "gameState": {
+        "isGameStarting": false,
+        "isGameStarted": true,
+        "isGameFinished": false
+    },
+    "timer": 1000,
+    "activePlayers": [
+        {
+            "seatId": 2,
+            "bet": 100,
+            "username": "MOCK",
+            "userId": 4,
+            "previousBet": 0,
+            "status": "playing",
+            "hasMadeFinalDecision": false,
+            "cards": [
+                "D-9",
+                "C-2"
+            ],
+            "cardsScore": [
+                11
+            ],
+            "decision": null
+        },
+        {
+            "seatId": 3,
+            "bet": 100,
+            "username": "MOCK",
+            "userId": 4,
+            "previousBet": 0,
+            "status": "playing",
+            "hasMadeFinalDecision": false,
+            "cards": [
+                "S-7",
+                "D-Q"
+            ],
+            "cardsScore": [
+                17
+            ],
+            "decision": null
+        }
+    ],
+    "pendingPlayers": [],
+    "presenterState": {
+        "cards": [
+            "H-8"
+        ],
+        "score": [
+            8
+        ],
+        "didGetBlackjack": false
+    },
+    "currentlyAsking": null
+}

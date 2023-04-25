@@ -82,7 +82,7 @@ const OnlineUserSeat: React.FC<UserSeatProps> = ({ isEmpty, user, actions, seatI
             </button>
         </div>
     ) : (
-        <div className={`${styles.activePlayer}`}>
+        <div className={`${styles.activePlayer}`} data-testid="active-player">
             {user !== null && "status" in user && (
                 <div className={styles.cardsWrapper} data-testid={`cards-for-${seatId}`}>
                     {user.cards.map((card, index) => {
