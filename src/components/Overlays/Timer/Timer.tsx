@@ -48,7 +48,7 @@ const Timer: React.FC<TimerProps> = ({ maxTime, descriptionOverwrite }) => {
             threshold: maxTime / 4,
         },
     }), [maxTime]);
-    const FULL_DASH_ARRAY = pathRef.current ? pathRef.current.getTotalLength() : 0;
+    const FULL_DASH_ARRAY = pathRef.current?.getTotalLength ? pathRef.current.getTotalLength() : 0;
     const updatedDashArray = `${(calculateTimeFraction(timeLeft, maxTime) * FULL_DASH_ARRAY).toFixed(0)} ${FULL_DASH_ARRAY}`;
 
     const pickColor = useCallback(() => {

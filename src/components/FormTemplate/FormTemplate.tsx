@@ -109,9 +109,8 @@ const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, sh
                 {(!arePasswordTheSame
                 ) && (
                     <p className={styles.errorMessage}>
-                        <span>{
-                            !arePasswordTheSame && "Passwords do not match"
-                        }
+                        <span>
+                            {!arePasswordTheSame && "Passwords do not match"}
                         </span>
                     </p>
                 )}
