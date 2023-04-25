@@ -8,10 +8,11 @@ interface DecisionOverlayProps {
     decisionCb: (decision: "hit" | "stand" | "doubleDown", theirIndex?: number) => void;
     currentBet: number;
     theirIndex?: number;
+    customAnimationKey?: string;
     isInOnlineMode: boolean;
 }
 
-const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBet, theirIndex, isInOnlineMode }) => {
+const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, customAnimationKey, currentBet, theirIndex, isInOnlineMode }) => {
     const userBalance = useAppSelector(state => isInOnlineMode ? state.onlineUser.balance : state.offlineUser.balance);
     const canDoubleDown = userBalance - currentBet >= 0;
     const makeDecision = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -32,7 +33,7 @@ const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBe
     return (
         <SwitchTransition mode="out-in">
             <CSSTransition
-                key={randomKey}
+                key={customAnimationKey || theirIndex || randomKey}
                 timeout={500}
                 classNames={{
                     enter: styles.enter,
@@ -42,38 +43,40 @@ const DecisionOverlay: React.FC<DecisionOverlayProps> = ({ decisionCb, currentBe
                 }}
             >
                 <div className={styles.decisionOverlay}>
-                    <h2>MAKE YOUR DECISION</h2>
-                    <section className={styles.buttonsWrapper}>
-                        <div className={styles.singleButton} aria-disabled={!canDoubleDown}>
-                            <button
-                                id="decision-doubledown"
-                                onClick={makeDecision}
-                                disabled={!canDoubleDown}
-                                className={`${styles.decisionBtn} ${styles.doubleDownBtn}`}
-                            >2x
-                            </button>
-                            <p>DOUBLE<br /> DOWN</p>
-                        </div>
-                        <div className={styles.singleButton}>
-                            <button
-                                id="decision-hit"
-                                onClick={makeDecision}
-                                className={`${styles.decisionBtn} ${styles.hitBtn}`}
-                            >
-                                +
-                            </button>
-                            <p>HIT</p>
-                        </div>
-                        <div className={styles.singleButton}>
-                            <button
-                                id="decision-stand"
-                                onClick={makeDecision}
-                                className={`${styles.decisionBtn} ${styles.standBtn}`}
-                            >&minus;
-                            </button>
-                            <p>STAND</p>
-                        </div>
-                    </section>
+                    <div className={styles.contentContainer}>
+                        <h2>MAKE YOUR DECISION</h2>
+                        <section className={styles.buttonsWrapper}>
+                            <div className={styles.singleButton} aria-disabled={!canDoubleDown}>
+                                <button
+                                    id="decision-doubledown"
+                                    onClick={makeDecision}
+                                    disabled={!canDoubleDown}
+                                    className={`${styles.decisionBtn} ${styles.doubleDownBtn}`}
+                                >2x
+                                </button>
+                                <p>DOUBLE<br /> DOWN</p>
+                            </div>
+                            <div className={styles.singleButton}>
+                                <button
+                                    id="decision-hit"
+                                    onClick={makeDecision}
+                                    className={`${styles.decisionBtn} ${styles.hitBtn}`}
+                                >
+                                    +
+                                </button>
+                                <p>HIT</p>
+                            </div>
+                            <div className={styles.singleButton}>
+                                <button
+                                    id="decision-stand"
+                                    onClick={makeDecision}
+                                    className={`${styles.decisionBtn} ${styles.standBtn}`}
+                                >&minus;
+                                </button>
+                                <p>STAND</p>
+                            </div>
+                        </section>
+                    </div>
                 </div>
             </CSSTransition>
         </SwitchTransition>

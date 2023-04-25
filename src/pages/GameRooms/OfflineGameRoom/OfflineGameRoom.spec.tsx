@@ -2,16 +2,16 @@
 import { act, cleanup, fireEvent, screen, within } from "@testing-library/react";
 import React from "react";
 import { vi } from "vitest";
-import { advanceTimerTimes, renderWithProviders } from "../../utils/test-utils";
+import { advanceTimerTimes, renderWithProviders } from "../../../utils/test-utils";
 import { OfflineGameRoom } from "./OfflineGameRoom";
-import deck from "../../cardDeck.json";
-import { getCardValues } from "../../utils/getCardValues";
-import { setupStore } from "../../mainStore";
-import { initialOfflineState, resetOfflineUserSlice } from "../../App/offlineUserSlice";
-import * as randomInt from "../../utils/getRandomInt";
-import { getAllPermutations } from "../../utils/getAllPermutations";
+import deck from "../../../cardDeck.json";
+import { getCardValues } from "../../../utils/getCardValues";
+import { setupStore } from "../../../mainStore";
+import { initialOfflineState, resetOfflineUserSlice } from "../../../App/offlineUserSlice";
+import * as randomInt from "../../../utils/getRandomInt";
+import { getAllPermutations } from "../../../utils/getAllPermutations";
 
-vi.mock("../../utils/getRandomInt", () => {
+vi.mock("../../../utils/getRandomInt", () => {
     return {
         getRandomInt: vi.fn((param: number, param2: number) => {
             switch (param2) {
@@ -70,16 +70,6 @@ describe("GameRoom", () => {
             global.dispatchEvent(new Event("resize"));
             const { getAllByRole } = renderWithProviders(<OfflineGameRoom />);
             expect(getAllByRole("button", { name: "Join now" })).toHaveLength(5);
-        });
-        it("displays message that mobile devices are not supported", () => {
-            cleanup();
-            act(() => {
-                window.innerWidth = 100;
-                window.innerHeight = 100;
-                global.dispatchEvent(new Event("resize"));
-            });
-            const { getByText } = renderWithProviders(<OfflineGameRoom />);
-            expect(getByText("Too small device")).toBeInTheDocument();
         });
     });
 
@@ -192,7 +182,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                advanceTimerTimes(5);
+                advanceTimerTimes(4);
                 expect(screen.getByAltText("User won icon")).toBeInTheDocument();
             });
             it("if player score < presenter score display lost status", () => {
@@ -202,7 +192,7 @@ describe("GameRoom", () => {
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
                 fireEvent.click(standBtn);
-                advanceTimerTimes(3);
+                advanceTimerTimes(2);
                 expect(screen.getByAltText("User lost icon")).toBeInTheDocument();
             });
             it("if player score === presenter score display push status", () => {
@@ -213,7 +203,7 @@ describe("GameRoom", () => {
                 vi.spyOn(randomInt, "getRandomInt").mockReturnValueOnce(25).mockReturnValueOnce(15);
                 const standBtn = screen.getByRole("button", { name: "−" });
                 fireEvent.click(standBtn);
-                advanceTimerTimes(3);
+                advanceTimerTimes(2);
                 expect(screen.getByAltText("User push icon")).toBeInTheDocument();
             });
             it("if player score === 21 and has only 2 cards display blackjack", () => {
@@ -255,17 +245,17 @@ describe("GameRoom", () => {
                 fireEvent.click(standBtn);
             });
             it("should update user balance if met winning conditions", () => {
-                advanceTimerTimes(4);
+                advanceTimerTimes(5);
                 expect(testingGlobalStore.getState()).toMatchObject(
                     { offlineUser: { ...initialOfflineState, balance: 1000 + BET_VALUES[1] - BET_VALUES[0] } },
                 );
             });
             it("should restart game after some time", () => {
-                advanceTimerTimes(5);
+                advanceTimerTimes(6);
                 expect(screen.getByRole("button", { name: "Start game" })).toBeInTheDocument();
             });
             it("takes all players to update bets on reset", () => {
-                advanceTimerTimes(5);
+                advanceTimerTimes(6);
                 expect(screen.getByText("REPEAT")).toBeInTheDocument();
             });
         });

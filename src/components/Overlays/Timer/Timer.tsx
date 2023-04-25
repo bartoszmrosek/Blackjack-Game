@@ -3,6 +3,7 @@ import styles from "./Timer.module.css";
 
 interface TimerProps {
     maxTime: number;
+    descriptionOverwrite?: string;
 }
 
 function formatTimeLeft(time: number) {
@@ -19,7 +20,7 @@ function calculateTimeFraction(timeLeft: number, totalTime: number) {
     return rawTimeFraction - (1 / totalTime) * (1 - rawTimeFraction);
 }
 
-const Timer: React.FC<TimerProps> = ({ maxTime }) => {
+const Timer: React.FC<TimerProps> = ({ maxTime, descriptionOverwrite }) => {
     const [timeLeft, setTimeLeft] = useState(maxTime);
     const pathRef = useRef<SVGPathElement>(null);
 
@@ -62,7 +63,7 @@ const Timer: React.FC<TimerProps> = ({ maxTime }) => {
     if (timeLeft > 0) {
         return (
             <div className={styles.wrapper}>
-                <h1>Time for action:</h1>
+                <h1 className={styles.timerHeader}>{descriptionOverwrite || "Time for action:"}</h1>
                 <div className={styles.baseTimer}>
                     <svg className={styles.baseTimerSvg} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <g className={styles.baseTimerCircle}>

@@ -48,31 +48,33 @@ const OnlineBetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, updat
     return (
         <div className={styles.overlayWrapper}>
             <>
-                <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
+                <div className={`${styles.additionalTextWrapper}`}>
                     <span className={styles.additionalText}>UNDO</span>
                     <button onClick={handleUndoButton} className={styles.undoButton}>
                         <img height="40px" width="40px" src={`${transformImgUrl("/Graphics/undo.svg")}`} alt="Undo button" />
                     </button>
                 </div>
-                <button onClick={buttonHandler} id="bet-1" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <PrimaryChip />
-                </button>
-                <button onClick={buttonHandler} id="bet-5" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <SecondaryChip />
-                </button>
-                <button onClick={buttonHandler} id="bet-10" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <TertiaryChip />
-                </button>
-                <button onClick={buttonHandler} id="bet-25" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <QuaternaryChip />
-                </button>
-                <button onClick={buttonHandler} id="bet-100" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <QuinaryChip />
-                </button>
-                <button onClick={buttonHandler} id="bet-500" className={`${styles.betButton} ${styles.betOperations}`}>
-                    <SenaryChip />
-                </button>
-                <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
+                <div className={styles.chipsWrapper}>
+                    <button onClick={buttonHandler} id="bet-1" className={`${styles.betButton} ${styles.betOperations}`}>
+                        <PrimaryChip />
+                    </button>
+                    <button onClick={buttonHandler} id="bet-5" className={`${styles.betButton} ${styles.betOperations}`}>
+                        <SecondaryChip />
+                    </button>
+                    <button onClick={buttonHandler} id="bet-10" className={`${styles.betButton} ${styles.betOperations}`}>
+                        <TertiaryChip />
+                    </button>
+                    <button onClick={buttonHandler} id="bet-25" className={`${styles.betButton} ${styles.betOperations}`}>
+                        <QuaternaryChip />
+                    </button>
+                    <button onClick={buttonHandler} id="bet-100" className={`${styles.betButton} ${styles.betOperations}`}>
+                        <QuinaryChip />
+                    </button>
+                    <button onClick={buttonHandler} id="bet-500" className={`${styles.betButton} ${styles.betOperations}`}>
+                        <SenaryChip />
+                    </button>
+                </div>
+                <div className={`${styles.additionalTextWrapper}`}>
                     <button
                         className={`${styles.specialBtn} ${canRepeat && styles.repeatBtnWrapper}`}
                         onClick={handleSpecialBtn}

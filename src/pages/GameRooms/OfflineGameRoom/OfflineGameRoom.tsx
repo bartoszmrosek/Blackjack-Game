@@ -4,20 +4,22 @@ import {
     addOfflineReservedBalance,
     offlineGameFundReservation,
     removeReservedBalance,
-} from "../../App/offlineUserSlice";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { OffLineUserSeat } from "../../components/RoomComponents/UserSeat/Offline/OfflineUserSeat";
-import styles from "./OfflineGameRoom.module.css";
+} from "../../../App/offlineUserSlice";
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
+import { OffLineUserSeat } from "../../../components/RoomComponents/UserSeat/Offline/OfflineUserSeat";
+import styles from "../GameRoom.module.css";
 import { gameRoomReducer, initialRoomState, PlayerActionKind, PresenterActionKind } from "./gameRoomReducer";
-import { OfflineBetOverlay } from "../../components/RoomComponents/BetOverlay/Offline/OfflineBetOverlay";
-import { OfflinePlayer } from "../../types/Player.interface";
-import { useGameLogic } from "../../hooks/useGameLogic/useGameLogic";
-import { DecisionOverlay } from "../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
+import { OfflineBetOverlay } from "../../../components/RoomComponents/BetOverlay/Offline/OfflineBetOverlay";
+import { OfflinePlayer } from "../../../types/Player.interface";
+import { useGameLogic } from "../../../hooks/useGameLogic/useGameLogic";
+import { DecisionOverlay } from "../../../components/RoomComponents/DecisionOverlay/DecisionOverlay";
 import {
     OfflinePresenterSection,
-} from "../../components/RoomComponents/PresenterSection/Offline/OfflinePresenterSection";
-import { GoBackButton } from "../../components/Overlays/GoBackButton/GoBackButton";
-import { BalanceInformations } from "../../components/Overlays/BalanceInformations/BalanceInformations";
+} from "../../../components/RoomComponents/PresenterSection/Offline/OfflinePresenterSection";
+import { GoBackButton } from "../../../components/Overlays/GoBackButton/GoBackButton";
+import { BalanceInformations } from "../../../components/Overlays/BalanceInformations/BalanceInformations";
+import { MovingArrows } from "../../../components/RoomComponents/MovingArrows/MovingArrows";
+import { useSize } from "../../../hooks/useSize";
 
 const OfflineGameRoom: React.FC = () => {
     const [gameRoomState, dispatch] = useReducer(gameRoomReducer, initialRoomState);
@@ -26,7 +28,8 @@ const OfflineGameRoom: React.FC = () => {
     const currentUser = useAppSelector((state) => state.offlineUser);
     const currentUserDispatch = useAppDispatch();
     const [fundsToAdd, setFundsToAdd] = useState<number>(0);
-    const [isTooSmallRes, setIsTooSmallRes] = useState(window.innerHeight < 800 || window.innerWidth < 1200);
+    const [movingController, setMovingController] = useState(2);
+    const { width } = useSize();
 
     const stopGame = useCallback((funds: number) => {
         const previouslyPlacedBets = playersSeats.filter((seat) => (seat !== "empty")) as OfflinePlayer[];
@@ -128,84 +131,107 @@ const OfflineGameRoom: React.FC = () => {
         }
     }, [currentUserDispatch, fundsToAdd]);
 
-    useEffect(() => {
-        // Needs to work somehow on mobile, possible solution is that application only works on landscape orientation ?
-        const handleResize = () => {
-            setIsTooSmallRes(window.innerHeight < 800 || window.innerWidth < 1200);
-        };
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
+    const moveRightConrol = useCallback(() => {
+        setMovingController(prev => {
+            if (prev + 1 < 5) {
+                return prev + 1;
+            }
+            return prev;
+        });
     }, []);
+
+    const moveLeftControl = useCallback(() => {
+        setMovingController(prev => {
+            if (prev - 1 >= 0) {
+                return prev - 1;
+            }
+            return prev;
+        });
+    }, []);
+
+    useEffect(() => {
+        if (currentlyAsking !== null) {
+            setMovingController(currentlyAsking.currentlyAsking.seatNumber);
+        }
+    }, [currentlyAsking]);
+
+    const userSeatWidth = width >= 920 ? 30 : 50;
+    const defaultTranslate = width >= 920 ? 35 : 25;
 
     return (
         <main className={styles.background}>
-            {!isTooSmallRes ? (
-                <>
-                    <OfflinePresenterSection
-                        presenter={presenterState}
-                        startGameCb={startGame}
-                        isGameStarted={isGameStarted}
-                        isAnyPlayerInSeat={playersSeats.some((seat) => seat !== "empty")}
-                    />
-                    <div className={styles.userSeats}>
-                        {playersSeats.map((seat, index) => {
-                            const user = seat !== "empty" ? seat :
-                                { name: "empty", id: "empty", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
-                            const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
-                            const playerStatus = isUserPlayerIndex !== -1 ? {
-                                cards: currentPlayers[isUserPlayerIndex].cards,
-                                status: currentPlayers[isUserPlayerIndex].currentStatus,
-                                scorePermutations: currentPlayers[isUserPlayerIndex].cardsScore,
-                            } : null;
-                            return (
-                                <OffLineUserSeat
+            <OfflinePresenterSection
+                presenter={presenterState}
+                startGameCb={startGame}
+                isGameStarted={isGameStarted}
+                isAnyPlayerInSeat={playersSeats.some((seat) => seat !== "empty")}
+            />
+            <div
+                className={styles.userSeats}
+                style={
+                {
+                    transform: width < 1320 ? `translate(${defaultTranslate - movingController * userSeatWidth}vw)` : "",
+                }}
+            >
+                {playersSeats.map((seat, index) => {
+                    const user = seat !== "empty" ? seat :
+                        { name: "empty", id: "empty", bet: { currentBet: 0, previousBet: 0 }, seatNumber: index };
+                    const isUserPlayerIndex = currentPlayers.findIndex((player) => player.seatNumber === index);
+                    const playerStatus = isUserPlayerIndex !== -1 ? {
+                        cards: currentPlayers[isUserPlayerIndex].cards,
+                        status: currentPlayers[isUserPlayerIndex].currentStatus,
+                        scorePermutations: currentPlayers[isUserPlayerIndex].cardsScore,
+                    } : null;
+                    return (
+                        <OffLineUserSeat
                         // eslint-disable-next-line react/no-array-index-key
-                                    key={index}
-                                    isGameStarted={isGameStarted}
-                                    isEmpty={seat === "empty"}
-                                    isCurrentlyDeciding={currentlyAsking?.currentlyAsking.seatNumber === index}
-                                    seatId={index}
-                                    user={user}
-                                    actions={{
-                                        userJoin: joinUserToGame,
-                                        userLeave: removeUserFromGame,
-                                        userChgBet: addBetToUpdate,
-                                    }}
-                                    playerStatus={playerStatus}
-                                />
-                            );
-                        })}
-                    </div>
-                    <BalanceInformations
-                        totalInBets={playersSeats.reduce((acc, player) => {
-                            if (player !== "empty") {
-                                return player.bet.currentBet + acc;
-                            }
-                            return acc;
-                        }, 0)}
-                        shouldDisplayBets={true}
-                        currentBalance={currentUser.balance}
-                    />
+                            key={index}
+                            isGameStarted={isGameStarted}
+                            isEmpty={seat === "empty"}
+                            isCurrentlyDeciding={currentlyAsking?.currentlyAsking.seatNumber === index}
+                            seatId={index}
+                            user={user}
+                            actions={{
+                                userJoin: joinUserToGame,
+                                userLeave: removeUserFromGame,
+                                userChgBet: addBetToUpdate,
+                            }}
+                            playerStatus={playerStatus}
+                        />
+                    );
+                })}
+            </div>
+            <BalanceInformations
+                totalInBets={playersSeats.reduce((acc, player) => {
+                    if (player !== "empty") {
+                        return player.bet.currentBet + acc;
+                    }
+                    return acc;
+                }, 0)}
+                shouldDisplayBets={true}
+                currentBalance={currentUser.balance}
+            />
 
-                    {betsToUpdate.length > 0 &&
+            {betsToUpdate.length > 0 &&
                 !isGameStarted &&
                 currentUser.balance > 0 &&
                     <OfflineBetOverlay playerInformations={betsToUpdate[0]} updateBet={updateBet} undoHandler={removeUserFromGame} />}
 
-                    {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
-                        <DecisionOverlay
-                            decisionCb={decisionInterceptor}
-                            theirIndex={currentlyAsking.currentlyAsking.theirIndex}
-                            currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
-                            isInOnlineMode={false}
-                        />
-                    )}
-                </>
-            ) : (
-                <div className={styles.notSupportedDevice}>
-                    <h1>Too small device</h1>
-                    <p>Switch to desktop computer to play the game!</p>
-                </div>
+            {currentlyAsking !== null && (currentlyAsking.currentlyAsking.id === currentUser.id) && (
+                <DecisionOverlay
+                    decisionCb={decisionInterceptor}
+                    theirIndex={currentlyAsking.currentlyAsking.theirIndex}
+                    currentBet={currentlyAsking.currentlyAsking.bet.currentBet}
+                    isInOnlineMode={false}
+                />
+            )}
+            {width < 1320 && (
+                <MovingArrows
+                    nextCallback={moveRightConrol}
+                    previousCallback={moveLeftControl}
+                    isNextPossible={movingController + 1 < 5}
+                    isPrevPossible={movingController - 1 >= 0}
+                />
             )}
             <GoBackButton />
         </main>

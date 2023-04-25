@@ -1,0 +1,32 @@
+.nextBtn, .previousBtn{
+    position: absolute;
+
+    background-color: transparent;
+    
+    border: 0;
+
+    top: calc(50% - 2rem);
+
+    margin: 0 0.5rem;
+}
+
+.nextBtn:disabled, .previousBtn:disabled{
+    filter: opacity(0.5);
+}
+
+.nextBtn{
+    right: 0;
+}
+
+.previousBtn{
+    left: 0;
+}
+
+.prevImg{
+    width: 2rem;
+}
+
+.nextImg{
+    width: 2rem;
+    transform: rotate(180deg);
+}

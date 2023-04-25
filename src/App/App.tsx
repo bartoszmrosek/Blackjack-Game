@@ -12,9 +12,9 @@ import { SocketContextProvider } from "../Contexts/SocketContext";
 import { AuthError } from "../pages/UserOps/AuthError/AuthError";
 import { RequireAuth } from "./RequireAuth";
 
-const OfflineGameRoom = React.lazy(() => import("../pages/OfflineGameRoom/OfflineGameRoom")
+const OfflineGameRoom = React.lazy(() => import("../pages/GameRooms/OfflineGameRoom/OfflineGameRoom")
     .then(module => ({ default: module.OfflineGameRoom })));
-const OnlineGameRoom = React.lazy(() => import("../pages/OnlineGameRoom/OnlineGameRoom")
+const OnlineGameRoom = React.lazy(() => import("../pages/GameRooms/OnlineGameRoom/OnlineGameRoom")
     .then(module => ({ default: module.OnlineGameRoom })));
 
 const router = createBrowserRouter([

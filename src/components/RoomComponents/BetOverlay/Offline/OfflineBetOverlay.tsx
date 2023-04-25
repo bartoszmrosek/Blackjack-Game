@@ -54,13 +54,13 @@ const OfflineBetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, upda
 
     return (
         <div className={styles.overlayWrapper}>
-            <>
-                <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
-                    <span className={styles.additionalText}>UNDO</span>
-                    <button onClick={handleUndoButton} className={styles.undoButton}>
-                        <img height="40px" width="40px" src={`${transformImgUrl("/Graphics/undo.svg")}`} alt="Undo button" />
-                    </button>
-                </div>
+            <div className={`${styles.additionalTextWrapper}`}>
+                <span className={styles.additionalText}>UNDO</span>
+                <button onClick={handleUndoButton} className={styles.undoButton}>
+                    <img height="40px" width="40px" src={`${transformImgUrl("/Graphics/undo.svg")}`} alt="Undo button" />
+                </button>
+            </div>
+            <div className={styles.chipsWrapper}>
                 <button onClick={buttonHandler} id="bet-1" className={`${styles.betButton} ${styles.betOperations}`}>
                     <PrimaryChip />
                 </button>
@@ -79,30 +79,30 @@ const OfflineBetOverlay: React.FC<BetOverlayProps> = ({ playerInformations, upda
                 <button onClick={buttonHandler} id="bet-500" className={`${styles.betButton} ${styles.betOperations}`}>
                     <SenaryChip />
                 </button>
-                <div className={`${styles.betOperations} ${styles.additionalTextWrapper}`}>
-                    <button
-                        className={`${styles.specialBtn} ${canRepeat && styles.repeatBtnWrapper}`}
-                        onClick={handleSpecialBtn}
-                        disabled={
-                            !previousBet && !currentBet
-                            || (reservedBalance + previousBet > currentUserBalance)
+            </div>
+            <div className={`${styles.additionalTextWrapper}`}>
+                <button
+                    className={`${styles.specialBtn} ${canRepeat && styles.repeatBtnWrapper}`}
+                    onClick={handleSpecialBtn}
+                    disabled={
+                        !previousBet && !currentBet
+                        || (reservedBalance + previousBet > currentUserBalance)
                             || (reservedBalance + currentBet > currentUserBalance)
                         }
-                    >
-                        {canRepeat ? (
-                            <img
-                                src={`${transformImgUrl("/Graphics/repeat.svg")}`}
-                                width="40px"
-                                height="40px"
-                                className={styles.repeatBtn}
-                                alt="Repeat icon"
-                            />
-                        ) :
-                            <span>2x</span>}
-                    </button>
-                    <span className={styles.additionalText}>{canRepeat ? "REPEAT" : "DOUBLE"}</span>
-                </div>
-            </>
+                >
+                    {canRepeat ? (
+                        <img
+                            src={`${transformImgUrl("/Graphics/repeat.svg")}`}
+                            width="40px"
+                            height="40px"
+                            className={styles.repeatBtn}
+                            alt="Repeat icon"
+                        />
+                    ) :
+                        <span>2x</span>}
+                </button>
+                <span className={styles.additionalText}>{canRepeat ? "REPEAT" : "DOUBLE"}</span>
+            </div>
         </div>
     );
 };

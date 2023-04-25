@@ -27,7 +27,7 @@ type CurrentlyAsking = {
 type UseSocketReturn = Readonly<
 {
     socket: TypedSocket | null;
-    timer: { time: number; };
+    timer: { time: number; message?: string; };
     seats: ("empty" | UserSeat)[];
     gameState: GameState;
     presenterState: PresenterState;
@@ -49,7 +49,7 @@ const initialPresenterState: PresenterState = {
 const initialCurrentlyAsking: CurrentlyAsking = null;
 
 const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) => void): UseSocketReturn => {
-    const [timer, setTimer] = useState<{ time: number; }>({ time: 0 });
+    const [timer, setTimer] = useState<{ time: number; message?: string; }>({ time: 0 });
     const [seats, setSeats] = useState<("empty" | UserSeat | ActiveUserSeat)[]>(initialSeats);
     const [gameState, setGameState] = useState<GameState>(initialGameState);
     const [presenterState, setPresenterState] = useState<PresenterState>(initialPresenterState);
@@ -59,7 +59,7 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
 
     const socket = useContext(SocketContext);
 
-    function updateGameStatus(gameStatus: GameStatusObject) {
+    function updateGameStatus(gameStatus: GameStatusObject, timerMessage?: string) {
         const combinedUsers: UserSeat[] = [...gameStatus.pendingPlayers, ...gameStatus.activePlayers];
         const newUsersState: ("empty" | UserSeat)[] = [...initialSeats];
         combinedUsers.forEach((user) => {
@@ -69,7 +69,7 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
         setPresenterState(gameStatus.presenterState);
         setGameState(gameStatus.gameState);
         setCurrentlyAsking(gameStatus.currentlyAsking);
-        setTimer({ time: gameStatus.timer });
+        setTimer({ time: gameStatus.timer, message: timerMessage });
     }
 
     useEffect(() => {
@@ -150,7 +150,7 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
             });
             socket.on("gameEnded", (gameStatus) => {
                 setAdditionalMessage("Game has ended");
-                updateGameStatus(gameStatus);
+                updateGameStatus(gameStatus, "Game resets in:");
             });
             socket.on("balanceUpdate", (balance) => {
                 onlineUserDispatch(updateBalance(balance));
