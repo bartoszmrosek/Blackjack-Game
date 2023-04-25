@@ -14,9 +14,6 @@ describe("AuthError", () => {
         renderWithProviders(<AuthError />, { store: MOCKED_STORE });
         return () => vi.useRealTimers();
     });
-    it("should logout user on render", () => {
-        expect(MOCKED_STORE.getState()).toMatchObject({ onlineUser: initialOnlineUserState });
-    });
     it("should display countdown to redirect", () => {
         expect(screen.getByText("You will be redirected to home page in 8 seconds")).toBeInTheDocument();
     });

@@ -15,14 +15,15 @@ const AuthError: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        onlineUserDispatch(logoutOnlineUser());
         const timeout = setTimeout(() => {
+            onlineUserDispatch(logoutOnlineUser());
             navigate("/", { replace: true });
         }, 8000);
         const interval = setInterval(() => {
             setTimerValue(prev => prev - 1);
         }, 1000);
         return () => {
+            onlineUserDispatch(logoutOnlineUser());
             clearTimeout(timeout);
             clearInterval(interval);
         };

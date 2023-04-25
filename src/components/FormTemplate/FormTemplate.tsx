@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, FormEvent, useRef } from "react";
 import { BeatLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 import { useFetch } from "../../hooks/useFetch";
 import styles from "./FormTemplate.module.css";
 import { useAppDispatch } from "../../hooks/reduxHooks";
@@ -15,8 +16,9 @@ interface FormTemplateProps {
 const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, shouldRepeatPassword }) => {
     const [arePasswordTheSame, setArePasswordTheSame] = useState(true);
     const [isLoading, status, userData, sendForm] = useFetch(
-        `${pathForRequest}`, "POST", false, pathForRequest === "/login/");
+        `${pathForRequest}`, "POST", false, true);
     const formRef = useRef<HTMLFormElement>(null);
+    const navigate = useNavigate();
     const onlineUserDispatch = useAppDispatch();
 
     const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
@@ -41,13 +43,20 @@ const FormTempalate: React.FC<FormTemplateProps> = ({ header, pathForRequest, sh
         }
     }, [status]);
     useEffect(() => {
-        if (userData && pathForRequest === "/login/") {
+        let redirectTimer: NodeJS.Timeout;
+        if (userData) {
             const { id, username, balance } = userData as Record<string, string | number>;
             if (typeof id === "number" && typeof username === "string" && typeof balance === "number") {
                 onlineUserDispatch(loginOnlineUser({ id, username, balance }));
             }
+            if (pathForRequest === "/login/") {
+                redirectTimer = setTimeout(() => {
+                    navigate("/rooms");
+                }, 5000);
+            }
         }
-    }, [onlineUserDispatch, pathForRequest, userData]);
+        return () => clearTimeout(redirectTimer);
+    }, [navigate, onlineUserDispatch, pathForRequest, userData]);
 
     const pickErrorMessage = useCallback(() => {
         switch (status) {
