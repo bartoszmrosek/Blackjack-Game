@@ -178,7 +178,7 @@ describe("OnlineGameRoom", () => {
         });
         it("should displays properly new bet for specific seat", () => {
             act(() => {
-                clientSocket.on.mock.calls[4][1](200, 1, 28000);
+                clientSocket.on.mock.calls[3][1](200, 1, 28000);
             });
             const seatSection = screen.getByTestId("active-player");
             expect(within(seatSection).getByTestId("chip-in-betting")).toBeInTheDocument();
@@ -188,7 +188,7 @@ describe("OnlineGameRoom", () => {
     describe("handle game events properly", () => {
         beforeEach(() => {
             act(() => {
-                clientSocket.on.mock.calls[5][1](testinServerStatus);
+                clientSocket.on.mock.calls[4][1](testinServerStatus);
             });
         });
         it("should display player cards properly", () => {
@@ -208,14 +208,14 @@ describe("OnlineGameRoom", () => {
         });
         it("should display decision overlay when asked for decision", () => {
             act(() => {
-                clientSocket.on.mock.calls[8][1](2, vi.fn());
+                clientSocket.on.mock.calls[7][1](2, vi.fn());
             });
             expect(screen.getByText("MAKE YOUR DECISION")).toBeInTheDocument();
         });
         it("should call decision callback with proper decision on button click", () => {
             const mockedCallback = vi.fn();
             act(() => {
-                clientSocket.on.mock.calls[8][1](2, mockedCallback);
+                clientSocket.on.mock.calls[7][1](2, mockedCallback);
             });
             fireEvent.click(screen.getByRole("button", { name: "+" }));
             expect(mockedCallback).toHaveBeenCalledTimes(1);

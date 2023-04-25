@@ -88,17 +88,13 @@ const useSocket = (userId: number, pushBetsToUpdate?: (seatBets: PlayerBets[]) =
                 setSeats(prev => updateArrAt(prev, seat.seatId, { ...restOfSeat, bet: 0, previousBet: 0 }));
                 setTimer({ time: seatTimer });
             });
-            socket.on("userLeftSeat", (seat) => {
+            socket.on("userLeftSeat", (seat, updatedBalance) => {
+                onlineUserDispatch(updateBalance(updatedBalance));
                 setAdditionalMessage(`${seat.username} left the seat ${seat.seatId + 1}`);
                 setSeats(prev => updateArrAt(prev, seat.seatId, "empty"));
             });
-            socket.on("userLeftGame", (newUserId) => setSeats(prev => prev.map((seat) => {
-                if (seat === "empty" || seat.userId === newUserId) {
-                    return "empty";
-                }
-                return seat;
-            })));
-            socket.on("betPlaced", (bet, seatId, newTimer) => {
+            socket.on("betPlaced", (bet, seatId, newTimer, updatedBalance) => {
+                onlineUserDispatch(updateBalance(updatedBalance));
                 setTimer({ time: newTimer });
                 setAdditionalMessage(`${bet} placed on seat no. ${seatId + 1}`);
                 setSeats(prev => updateArrAt(prev, seatId, { ...prev[seatId] as UserSeat, bet }));
