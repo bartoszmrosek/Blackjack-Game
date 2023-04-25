@@ -15,7 +15,7 @@ const MovingArrows: React.FC<MovingArrowsProps> = ({ nextCallback, previousCallb
             <button onClick={nextCallback} className={styles.nextBtn} disabled={!isNextPossible}>
                 <img
                     src={`${transformImgUrl("/Graphics/goLeft.svg")}`}
-                    alt="Go to previous seat"
+                    alt="Go to next seat"
                     className={styles.nextImg}
                 />
             </button>

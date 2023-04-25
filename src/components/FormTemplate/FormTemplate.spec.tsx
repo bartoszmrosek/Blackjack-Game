@@ -10,10 +10,16 @@ import { renderWithProviders } from "../../utils/test-utils";
 import { setupStore } from "../../mainStore";
 import { initialOnlineUserState } from "../../App/onlineUserSlice";
 
+const newUser = {
+    username: "test",
+    id: 4,
+    balance: 1001,
+};
+
 const TESTING_ROUTE = "http://localhost:5678/api/register/";
 const restServer = setupServer(
     rest.post(TESTING_ROUTE, (req, res, ctx) => {
-        return res(ctx.delay(50), ctx.status(200));
+        return res(ctx.delay(50), ctx.json(newUser));
     }),
 );
 
@@ -118,6 +124,14 @@ describe("FormTemplate", () => {
                 );
                 fireEvent.click(screen.getByText("Submit"));
                 expect(await screen.findByText("Bad request. Try again")).toBeInTheDocument();
+            });
+        });
+        describe("handles register request properly", () => {
+            it("should login user after successfull registration", async () => {
+                fireEvent.click(screen.getByText("Submit"));
+                await waitFor(() => {
+                    expect(TESTING_GLOBAL_STORE.getState().onlineUser).toMatchObject(newUser);
+                });
             });
         });
         describe("handles login request properly", () => {

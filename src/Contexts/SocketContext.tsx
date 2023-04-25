@@ -19,7 +19,7 @@ const SocketContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
                 const newSocket = io(serverURL, { withCredentials: true });
                 setSocket(newSocket);
                 newSocket.once("connect_error", (err) => {
-                    console.log(err);
+                    console.log(`Auth error: ${err}`);
                     setSocket(null);
                     navigate("/autherror", { replace: true });
                 });

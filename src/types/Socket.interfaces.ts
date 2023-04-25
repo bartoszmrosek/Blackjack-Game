@@ -25,9 +25,8 @@ export interface ServerToClienEvents<IsSender extends boolean = false> {
     userJoinedSeat: ({ username, userId, seatId }:
         { username: string; userId: number; seatId: number; timer: number; }
     ) => void;
-    userLeftSeat: ({ userId, seatId, username }: { userId: number; seatId: number; username: string; }) => void;
-    userLeftGame: (userId: number) => void;
-    betPlaced: (bet: number, seatId: number, timer: number) => void;
+    userLeftSeat: ({ userId, seatId, username }: { userId: number; seatId: number; username: string; }, updatedBalance: number) => void;
+    betPlaced: (bet: number, seatId: number, timer: number, updatedBalance: number) => void;
     gameStatusUpdate: (
         {
             gameState,
