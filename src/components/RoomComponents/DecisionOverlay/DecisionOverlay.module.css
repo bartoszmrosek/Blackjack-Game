@@ -4,6 +4,7 @@
 
     width: 100vw;
     height: 100vh;
+    height: 100svh;
 
     display: flex;
     align-items: center;
@@ -62,7 +63,7 @@
 }
 
 .decisionBtn{
-    width: 5rem;
+    width: 4rem;
     aspect-ratio: 1/1;
     
     border-radius: 50%;
@@ -93,4 +94,13 @@
 .standBtn{
     border-color: #f71b1a;
     background-color: rgba(247, 27, 26, 0.7);
+}
+
+@media only screen and (min-width: 650px) {
+    .singleButton{
+        font-size: 100%;
+    }
+    .decisionBtn{
+        width: 5rem;
+    }
 }

@@ -1,6 +1,7 @@
 .mainWrapper{
     width: 100vw;
-    height: 100vh;   
+    height: 100vh;
+    height: 100svh;
 
     background-image: repeating-radial-gradient(
       circle at -10% 50%,

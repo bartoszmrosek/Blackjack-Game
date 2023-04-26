@@ -5,7 +5,7 @@ import { TypedSocket } from "../types/Socket.interfaces";
 import { useAppSelector } from "../hooks/reduxHooks";
 
 const SocketContext = createContext<TypedSocket | null>(null);
-const serverURL = import.meta.env.PROD ? "https://blackjackapi-rpoa.onrender.com/" : `http://localhost:5678/`;
+const serverURL = import.meta.env.PROD ? "https://blackjackapi-rpoa.onrender.com/" : `${import.meta.env.VITE_DEV_HOST}/`;
 
 const SocketContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [socket, setSocket] = useState<TypedSocket | null>(null);
