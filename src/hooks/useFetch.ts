@@ -19,7 +19,7 @@ const useFetch = <T>(path: string,
         fetch(
             import.meta.env.PROD
                 ? `https://blackjackapi-rpoa.onrender.com/api${path}` :
-            `http://localhost:5678/api${path}`,
+            `${import.meta.env.VITE_DEV_HOST}/api${path}`,
             {
                 method,
                 credentials: "include",

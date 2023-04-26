@@ -2,6 +2,7 @@
     background-color: #388E3C;
     width: 100vw;
     height: 100vh;
+    height: 100svh;
     
     background-image: repeating-radial-gradient(
         circle at -10% 50%,
@@ -22,7 +23,7 @@
 
 .userSeats{
     position: absolute;
-    bottom: 5%;
+    bottom: 12.5%;
 
     width: max-content;
     height: 20%;
@@ -41,6 +42,9 @@
 @media only screen and (min-width: 920px) {
     .userSeats > * {
       width: 30vw;
+    }
+    .userSeats{
+      bottom: 5%;
     }
 }
 
